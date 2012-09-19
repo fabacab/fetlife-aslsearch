@@ -6,9 +6,9 @@
  */
 // ==UserScript==
 // @name           FetLife ASL Search
-// @version        0.1
-// @namespace      http://maybemaimed.com/playground/fetlife-aslsearch/
-// @updateURL      https://userscripts.org/scripts/source/146293.user.js
+// @version        0.2
+// @namespace      http://maybemaimed.com/playground/fetlife-age-sex-location-search/
+// @updateURL      https://userscripts.org/scripts/source/????.user.js
 // @description    Allows you to search for FetLife profiles based on age, sex, location, and role.
 // @include        https://fetlife.com/administrative_areas*
 // @include        https://fetlife.com/cities*
@@ -28,6 +28,8 @@
 // @exclude        https://fetlife.com/chat/*
 // @exclude        https://fetlife.com/im_sessions*
 // @exclude        https://fetlife.com/polling/*
+// @grant          GM_xmlhttpRequest
+// @grant          GM_addStyle
 // ==/UserScript==
 
 FL_ASL = {};
@@ -99,7 +101,7 @@ FL_ASL.getSearchParams = function () {
         'age'  : {'min': null, 'max': null},
         'sex'  : [],
         'role' : [],
-        'loc'  : null
+        'loc'  : {}
     };
 
     // Collect age parameters, setting wide defaults.
@@ -123,8 +125,20 @@ FL_ASL.getSearchParams = function () {
     }
 
     // Collect location parameters.
-    // TODO: Create an interface for setting locations other than closest-to-me.
-    r.loc = FL_ASL.getLocationForUser(uw.FetLife.currentUser.id);
+    var search_in = [];
+    var z = FL_ASL.CONFIG.search_form.querySelectorAll('input[name="fl_asl_loc"]');
+    for (var iz = 0; iz < z.length; iz++) {
+        if (z[iz].checked) {
+            search_in.push(z[iz].value);
+        }
+    }
+    // Match location parameter with known location ID.
+    user_loc = FL_ASL.getLocationForUser(uw.FetLife.currentUser.id);
+    for (var xk in user_loc) {
+        if (null !== user_loc[xk] && (-1 !== search_in.indexOf(xk)) ) {
+            r.loc[xk] = user_loc[xk];
+        }
+    }
 
     return r;
 };
@@ -158,7 +172,7 @@ FL_ASL.getUserProfile = function (id) {
     } else {
         FL_ASL.users[id] = {};
         GM_xmlhttpRequest({
-            'method': "GET",
+            'method': 'GET',
             'url': 'https://fetlife.com/users/' + id.toString(),
             'onload': function (response) {
                 FL_ASL.users[id].profile_html = response.responseText;
@@ -254,6 +268,8 @@ FL_ASL.getKinkstersFromURL = function (url) {
  */
 FL_ASL.matchesSearchParams = function (el) {
     var search_params = FL_ASL.getSearchParams();
+
+    // Location omitted because we collect results in an already-location-filtered set.
 
     // Does block match age range?
     age = FL_ASL.getAge(el);
@@ -377,8 +393,11 @@ FL_ASL.main = function () {
     html_string += '</p></fieldset>';
     html_string += '<fieldset><legend>Search for user profiles located in:</legend><p>';
     // TODO: Change "near me" to options offering "my city," "my region," and "my country."
-    html_string += '&hellip;located near me.';
-    html_string += '</p></fieldset>';
+    html_string += '&hellip;located in my ';
+    html_string += '<label><input type="radio" name="fl_asl_loc" value="city_id" />city</label>';
+    html_string += '<label><input type="radio" name="fl_asl_loc" value="area_id" checked="checked" />state/province</label>';
+    html_string += '<label><input type="radio" name="fl_asl_loc" value="country" />country</label>';
+    html_string += '.</p></fieldset>';
     div.innerHTML = html_string;
     FL_ASL.CONFIG.search_form.appendChild(label);
     FL_ASL.CONFIG.search_form.appendChild(div);

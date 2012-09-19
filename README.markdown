@@ -10,7 +10,7 @@ With the FetLife Age/Sex/Location Search user script installed, a few clicks wil
 
 ## System requirements
 
-To use the FetLife Age/Sex/Location Search user script, you must be running [Mozilla Firefox](http://getfirefox.com/) (version 12.0 or higher), with the [Greasemonkey extension](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) installed (at version 0.9 or higher).
+To use the FetLife Age/Sex/Location Search user script, you must be running [Mozilla Firefox](http://getfirefox.com/) (version 12.0 or higher), with the [Greasemonkey extension](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) installed (at version 1.0 or higher).
 
 Sorry, FetLife Age/Sex/Location Search is currently [incompatible with other Web browsers](https://github.com/meitar/fetlife-aslsearch/issues/1). (Please help me fix that!)
 
@@ -32,7 +32,7 @@ You will be presented with a number of additional options that allow you to defi
 
 ![Screenshot of form fields for FetLife Age/Sex/Location Search.](http://i.imgur.com/k6YEm.png)
 
-The image above shows selections that will search for the profile of any person whose gender/sex is Male or FtM, who is between the ages of 21 and 28 (inclusive), and who identifies as a submissive, slave, pet,  bottom, or masochist. Once you've made your selections, click the `Mine! I mean, uh, search…` button. A progress bar will replace the search button showing you how many pages have been searched for a match, as shown below:
+The image above shows selections that will search for the profile of any person whose gender/sex is Male or FtM, who is between the ages of 21 and 28 (inclusive), and who identifies as a submissive, slave, pet,  bottom, or masochist. Once you've made your selections, click the `Mine! (I mean, uh, search…)` button. A progress bar will replace the search button showing you how many pages have been searched for a match, as shown below:
 
 ![Screenshot of FetLife Age/Sex/Location Search running a search.](http://i.imgur.com/zRBnN.png)
 
@@ -46,10 +46,10 @@ To start a new search, simply reload the page.
 
 Before you report a new issue with FetLife Age/Sex/Location Search, please check to ensure your question is not already addressed in the list below.
 
-* [Can I search in a location other than "near me"?](#can-i-search-in-a-location-other-than-near-me)
+* [Can I search in a location other than my own city, state, or country?](#can-i-search-in-a-location-other-than-my-own-city-state-or-country)
 * [Why can I only search for men, not women?](#why-can-i-only-search-for-men-not-women)
 
-### Can I search in a location other than "near me"?
+### Can I search in a location other than my own city, state, or country?
 
 The current version of FetLife Age/Sex/Location Search doesn't provide an interface for you to choose a location directly. However, you can temporarily change the location you list on your own profile to search in different regions. In other words, if you're currently in New York City but want to search for people in Tokyo, temporarily change your FetLife profile's location to Tokyo and run your search again. Afterwards, you can change your FetLife profile's location back to New York City.
 
