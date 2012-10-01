@@ -1,6 +1,6 @@
 # FetLife Age/Sex/Location Search
 
-The FetLife Age/Sex/Location Search user script allows you to search for profiles on [FetLife](https://fetlife.com/) by age, sex, location, or orientation. This user script imlements what is, as of this writing, the [most popular suggestion in the FetLife suggestion box](https://fetlife.com/improvements/78):
+The FetLife Age/Sex/Location Search user script allows you to search for profiles on [FetLife](https://fetlife.com/) by age, sex, location, or orientation. This user script implements what is, as of this writing, the [most popular suggestion in the FetLife suggestion box](https://fetlife.com/improvements/78):
 
 > Search for people by Location/Sex/Orientation/Age
 >
@@ -40,6 +40,8 @@ When a match is found, it will automatically appear with a link allowing you to 
 
 ![Screenshot of FetLife Age/Sex/Location Search having found a match.](http://i.imgur.com/0p66t.png)
 
+When you're viewing any group page, you'll also be given the option to filter your search to members of the group, regardless of the geographic location listed in their profile.
+
 To start a new search, simply reload the page.
 
 ## Frequently Asked Questions
@@ -53,6 +55,17 @@ Before you report a new issue with FetLife Age/Sex/Location Search, please check
 
 The current version of FetLife Age/Sex/Location Search doesn't provide an interface for you to choose a location directly. However, you can temporarily change the location you list on your own profile to search in different regions. In other words, if you're currently in New York City but want to search for people in Tokyo, temporarily change your FetLife profile's location to Tokyo and run your search again. Afterwards, you can change your FetLife profile's location back to New York City.
 
+As of version 0.3 of the FetLife Age/Sex/Location Search, you can also view any group page to search for users in that group regardless of where they say they live.
+
 ### Why can I only search for men, not women?
 
 Because fuck you [that's why](http://www.notjustbitchy.com/?p=496).
+
+## Change log
+
+* Version 0.3:
+** Added support for group membership searches.
+* Version 0.2:
+** Added support for State/Province and Country searches.
+* Version 0.1:
+** Initial release.
