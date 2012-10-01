@@ -1,14 +1,14 @@
 /**
  *
- * This is a Greasemonkey script and must be run using Greasemonkey 0.8 or newer, or Google Chrome.
+ * This is a Greasemonkey script and must be run using Greasemonkey 1.0 or newer.
  *
  * @author maymay <bitetheappleback@gmail.com>
  */
 // ==UserScript==
 // @name           FetLife ASL Search
-// @version        0.2
+// @version        0.3
 // @namespace      http://maybemaimed.com/playground/fetlife-age-sex-location-search/
-// @updateURL      https://userscripts.org/scripts/source/????.user.js
+// @updateURL      https://userscripts.org/scripts/source/146293.user.js
 // @description    Allows you to search for FetLife profiles based on age, sex, location, and role.
 // @include        https://fetlife.com/administrative_areas*
 // @include        https://fetlife.com/cities*
@@ -133,10 +133,14 @@ FL_ASL.getSearchParams = function () {
         }
     }
     // Match location parameter with known location ID.
-    user_loc = FL_ASL.getLocationForUser(uw.FetLife.currentUser.id);
-    for (var xk in user_loc) {
-        if (null !== user_loc[xk] && (-1 !== search_in.indexOf(xk)) ) {
-            r.loc[xk] = user_loc[xk];
+    if ('group' === search_in[0]) {
+        r.loc.group = parseInt(FL_ASL.CONFIG.search_form.querySelector('input[data-flaslgid]').getAttribute('data-flaslgid'));
+    } else {
+        user_loc = FL_ASL.getLocationForUser(uw.FetLife.currentUser.id);
+        for (var xk in user_loc) {
+            if (null !== user_loc[xk] && (-1 !== search_in.indexOf(xk)) ) {
+                r.loc[xk] = user_loc[xk];
+            }
         }
     }
 
@@ -145,6 +149,7 @@ FL_ASL.getSearchParams = function () {
 
 FL_ASL.getLocationForUser = function (id) {
     var r = {
+        'group'  : null,
         'city_id': null,
         'area_id': null,
         'country': null
@@ -182,7 +187,9 @@ FL_ASL.getUserProfile = function (id) {
 };
 
 FL_ASL.getKinkstersInLocation = function (loc_obj) {
-    if (loc_obj.city_id) {
+    if (loc_obj.group) {
+        FL_ASL.getKinkstersInGroup(loc_obj.group);
+    } else if (loc_obj.city_id) {
         FL_ASL.getKinkstersInCity(loc_obj.city_id);
     } else if (loc_obj.area_id) {
         FL_ASL.getKinkstersInArea(loc_obj.area_id);
@@ -205,6 +212,11 @@ FL_ASL.getKinkstersInArea = function (area_id, page) {
 };
 FL_ASL.getKinkstersInCountry = function (country, page) {
     var url = 'https://fetlife.com/countries/' + country.toString() + '/kinksters';
+    url = (page) ? url + '?page=' + page.toString() : url ;
+    FL_ASL.getKinkstersFromURL(url);
+};
+FL_ASL.getKinkstersInGroup = function (group, page) {
+    var url = 'https://fetlife.com/groups/' + group.toString() + '/group_memberships';
     url = (page) ? url + '?page=' + page.toString() : url ;
     FL_ASL.getKinkstersFromURL(url);
 };
@@ -392,9 +404,17 @@ FL_ASL.main = function () {
     //html_string += '<label><input type="checkbox" name="user[role]" value="" />Not Applicable</label>';
     html_string += '</p></fieldset>';
     html_string += '<fieldset><legend>Search for user profiles located in:</legend><p>';
-    // TODO: Change "near me" to options offering "my city," "my region," and "my country."
-    html_string += '&hellip;located in my ';
-    html_string += '<label><input type="radio" name="fl_asl_loc" value="city_id" />city</label>';
+    html_string += '&hellip;located in ';
+    // If we're on a "groups" page,
+    var is_group = window.location.toString().match(/groups\/(\d+)/);
+    if (null !== is_group && is_group[1]) {
+        //offer an additional option to search for users in this group rather than geography.
+        html_string += '<label><input type="radio" name="fl_asl_loc" value="group" data-flaslgid="' + is_group[1] + '"/>this group</label>';
+        // TODO: Add a feature to find group members that match a specific geographic location.
+        //       In other words, implement this: https://fetlife.com/improvements/1715
+        html_string += ', or ';
+    }
+    html_string += ' my <label><input type="radio" name="fl_asl_loc" value="city_id" />city</label>';
     html_string += '<label><input type="radio" name="fl_asl_loc" value="area_id" checked="checked" />state/province</label>';
     html_string += '<label><input type="radio" name="fl_asl_loc" value="country" />country</label>';
     html_string += '.</p></fieldset>';
