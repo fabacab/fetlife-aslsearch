@@ -55,7 +55,7 @@ Before you report a new issue with FetLife Age/Sex/Location Search, please check
 
 The current version of FetLife Age/Sex/Location Search doesn't provide an interface for you to choose a location directly. However, you can temporarily change the location you list on your own profile to search in different regions. In other words, if you're currently in New York City but want to search for people in Tokyo, temporarily change your FetLife profile's location to Tokyo and run your search again. Afterwards, you can change your FetLife profile's location back to New York City.
 
-As of version 0.3.1 of the FetLife Age/Sex/Location Search script, you can also view any group or event page to search for users in that group or event regardless of where they say they live.
+As of version 0.3.2 of the FetLife Age/Sex/Location Search script, you can also view any group, event, or user profile page to search for users in that group, event, or user's friend list regardless of where they say they live.
 
 ### Why can I only search for men, not women?
 
@@ -63,6 +63,8 @@ Because fuck you [that's why](http://www.notjustbitchy.com/?p=496).
 
 ## Change log
 
+* Version 0.3.2:
+** Added support for searching user's friend list.
 * Version 0.3.1:
 ** Added support for event attendee searches.
 * Version 0.3:

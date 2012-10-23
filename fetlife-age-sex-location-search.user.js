@@ -6,7 +6,7 @@
  */
 // ==UserScript==
 // @name           FetLife ASL Search
-// @version        0.3.1
+// @version        0.3.2
 // @namespace      http://maybemaimed.com/playground/fetlife-age-sex-location-search/
 // @updateURL      https://userscripts.org/scripts/source/146293.user.js
 // @description    Allows you to search for FetLife profiles based on age, sex, location, and role.
@@ -133,7 +133,7 @@ FL_ASL.getSearchParams = function () {
         }
     }
     // Match location parameter with known location ID.
-    if ('group' === search_in[0] || 'event' === search_in[0]) {
+    if ('group' === search_in[0] || 'event' === search_in[0] || 'user' === search_in[0]) {
         r.loc[search_in[0]] = parseInt(FL_ASL.CONFIG.search_form.querySelector('input[data-flasl' + search_in[0] + 'id]').getAttribute('data-flasl' + search_in[0] + 'id'));
     } else {
         user_loc = FL_ASL.getLocationForUser(uw.FetLife.currentUser.id);
@@ -190,6 +190,8 @@ FL_ASL.getKinkstersInLocation = function (loc_obj) {
         FL_ASL.getKinkstersInGroup(loc_obj.group);
     } else if (loc_obj.event) {
         FL_ASL.getKinkstersInEvent(loc_obj.event);
+    } else if (loc_obj.user) {
+        FL_ASL.getKinkstersInFriend(loc_obj.user);
     } else if (loc_obj.city_id) {
         FL_ASL.getKinkstersInCity(loc_obj.city_id);
     } else if (loc_obj.area_id) {
@@ -223,6 +225,11 @@ FL_ASL.getKinkstersInGroup = function (group, page) {
 };
 FL_ASL.getKinkstersInEvent = function (event, page) {
     var url = 'https://fetlife.com/events/' + event.toString() + '/rsvps';
+    url = (page) ? url + '?page=' + page.toString() : url ;
+    FL_ASL.getKinkstersFromURL(url);
+};
+FL_ASL.getKinkstersInFriend = function (user_id, page) {
+    var url = 'https://fetlife.com/users/' + user_id.toString() + '/friends';
     url = (page) ? url + '?page=' + page.toString() : url ;
     FL_ASL.getKinkstersFromURL(url);
 };
@@ -412,11 +419,21 @@ FL_ASL.main = function () {
     html_string += '<fieldset><legend>Search for user profiles located in:</legend><p>';
     html_string += '&hellip;located in ';
     // If we're on a "groups" or an "events" page,
-    var is_group_or_event = window.location.toString().match(/(group|event)s\/(\d+)/);
-    if (null !== is_group_or_event) {
+    var is_group_or_event_or_user = window.location.toString().match(/(group|event|user)s\/(\d+)/);
+    if (null !== is_group_or_event_or_user) {
+        switch (is_group_or_event_or_user[1]) {
+            case 'user':
+                var label_text = "user's friends";
+                break;
+            case 'group': // fall through
+            case 'event':
+            default:
+                var label_text = is_group_or_event_or_user[1];
+                break;
+        }
         //offer an additional option to search for users associated with this object rather than geography.
-        html_string += '<label><input type="radio" name="fl_asl_loc" value="' + is_group_or_event[1] + '" data-flasl' + is_group_or_event[1] + 'id="' + is_group_or_event[2] + '"/>this ' + is_group_or_event[1] + '</label>';
-        // TODO: Add a feature to find group or event members that match a specific geographic location.
+        html_string += '<label><input type="radio" name="fl_asl_loc" value="' + is_group_or_event_or_user[1] + '" data-flasl' + is_group_or_event_or_user[1] + 'id="' + is_group_or_event_or_user[2] + '"/>this ' + label_text + '</label>';
+        // TODO: Add a feature to find group or event members or user's friends that match a specific geographic location.
         //       In other words, implement this: https://fetlife.com/improvements/1715
         html_string += ', or ';
     }
