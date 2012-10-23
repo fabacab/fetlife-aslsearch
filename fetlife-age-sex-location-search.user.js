@@ -322,7 +322,7 @@ FL_ASL.matchesSearchParams = function (el) {
     }
 
     // Does block match age range?
-    age = FL_ASL.getAge(el);
+    var age = FL_ASL.getAge(el);
     // Did we supply a minimum age?
     if (search_params.age.min && (search_params.age.min > age) ) {
         return false;
@@ -347,20 +347,20 @@ FL_ASL.matchesSearchParams = function (el) {
 };
 
 FL_ASL.getSex = function (el) {
-    x = el.querySelector('.quiet').innerHTML;
-    sex = x.match(/^\d\d(\S*)/);
+    var x = el.querySelector('.quiet').innerHTML;
+    var sex = x.match(/^\d\d(\S*)/);
     return sex[1];
 };
 
 FL_ASL.getAge = function (el) {
-    x = el.querySelector('.quiet').innerHTML;
-    age = x.match(/^\d\d/);
+    var x = el.querySelector('.quiet').innerHTML;
+    var age = x.match(/^\d\d/);
     return parseInt(age);
 };
 
 FL_ASL.getRole = function (el) {
-    x = el.querySelector('.quiet').innerHTML;
-    role = x.match(/ ?(\S+)?$/);
+    var x = el.querySelector('.quiet').innerHTML;
+    var role = x.match(/ ?(\S+)?$/);
     return role[1];
 };
 FL_ASL.getLocationString = function (el) {
