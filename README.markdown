@@ -40,7 +40,7 @@ When a match is found, it will automatically appear with a link allowing you to 
 
 ![Screenshot of FetLife Age/Sex/Location Search having found a match.](http://i.imgur.com/0p66t.png)
 
-When you're viewing any group or event page, you'll also be given the option to filter your search to members of the group or attendees of the event, regardless of the geographic location listed in their profile.
+When you're viewing any group, event, or user profile page, you'll also be given the option to filter your search to members of the group, attendees of the event, or user's friend list regardless of the geographic location listed in their profile. You can optionally filter these group, event, or user's friend list search results by entering the name of a city, state, or country. Leave the `locatd in` field blank if you don't want to filter the results.
 
 To start a new search, simply reload the page.
 
@@ -63,6 +63,8 @@ Because fuck you [that's why](http://www.notjustbitchy.com/?p=496).
 
 ## Change log
 
+* Version 0.3.3:
+** Added support for arbitrary location filtering by substring.
 * Version 0.3.2:
 ** Added support for searching user's friend list.
 * Version 0.3.1:
