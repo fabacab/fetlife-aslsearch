@@ -10,9 +10,15 @@ With the FetLife Age/Sex/Location Search user script installed, a few clicks wil
 
 ## System requirements
 
-To use the FetLife Age/Sex/Location Search user script, you must be running [Mozilla Firefox](http://getfirefox.com/) (version 12.0 or higher), with the [Greasemonkey extension](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) installed (at version 1.0 or higher).
+The following software must be installed on your system before installing the FetLife Age/Sex/Location Search user script.
 
-Sorry, FetLife Age/Sex/Location Search is currently [incompatible with other Web browsers](https://github.com/meitar/fetlife-aslsearch/issues/1). (Please help me fix that!)
+### Mozilla Firefox
+
+If you use the [Mozilla Firefox](http://getfirefox.com/) web browser (version 12.0 or higher), ensure you have the [Greasemonkey extension](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) installed (at version 1.0 or higher).
+
+### Google Chrome
+
+If you use the [Google Chrome](https://chrome.google.com/) web browser (version 23 or higher), ensure you have the [Tampermonkey extension](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) installed.
 
 ## Installing
 
@@ -22,7 +28,7 @@ To install FetLife Age/Sex/Location Search, go to [http://maybemaimed.com/playgr
 
 If you enjoy this script, please consider tossing a few metaphorical coins in [my cyberbusking hat](http://maybemaimed.com/cyberbusking/). :) Your donations are sincerely appreciated! Can't afford to part with any coin? It's cool. [Tweet your appreciation, instead](https://twitter.com/intent/tweet?text=Ever%20wanted%20to%20search%20%23FetLife%20profiles%20by%20age%2Fsex%2Flocation%2Frole%3F%20Now%20we%20can%3A%20http%3A%2F%2Fmaybemaimed.com%2Fplayground%2Ffetlife-aslsearch%2F%20All%20thx%20to%20%40maymaym%3A%20http%3A%2F%2Fmaybemaimed.com%2Fcyberbusking%2F).
 
-If [maybemaimed.com is censored](http://maybemaimed.com/where-im-censored/) where you are, you can alternatively go to [the Userscripts.org page for FetLife Age/Sex/Location Search](https://userscripts.org/scripts/show/146293) and click on "[Install](http://userscripts.org/scripts/source/146293.user.js)".
+If [maybemaimed.com is censored](http://maybemaimed.com/where-im-censored/) where you are, you can alternatively go to [the Userscripts.org page for FetLife Age/Sex/Location Search](https://userscripts.org/scripts/show/146293) and click on "[Install](http://userscripts.org/scripts/source/146293.user.js)". If the script is also unavailable at Userscripts.org, you can download and install it directly from [GitHub.com](https://github.com/meitar/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js).
 
 ## Using
 
@@ -63,6 +69,8 @@ Because fuck you [that's why](http://www.notjustbitchy.com/?p=496).
 
 ## Change log
 
+* Version 0.3.4:
+** Added support for Google Chrome with the Tampermonkey extension installed.
 * Version 0.3.3:
 ** Added support for arbitrary location filtering by substring.
 * Version 0.3.2:
