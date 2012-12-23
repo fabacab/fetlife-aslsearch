@@ -46,7 +46,7 @@ When a match is found, it will automatically appear with a link allowing you to 
 
 ![Screenshot of FetLife Age/Sex/Location Search having found a match.](http://i.imgur.com/0p66t.png)
 
-When you're viewing any group, event, or user profile page, you'll also be given the option to filter your search to members of the group, attendees of the event, or user's friend list regardless of the geographic location listed in their profile. You can optionally filter these group, event, or user's friend list search results by entering the name of a city, state, or country. Leave the `locatd in` field blank if you don't want to filter the results.
+When you're viewing any group, event, fetish, or user profile page, you'll also be given the option to filter your search to members of the group, attendees of the event, profiles with that fetish, or user's friend list regardless of the geographic location listed in their profile. You can optionally filter these group, event, fetish, or user's friend list search results by entering the name of a city, state, or country. Leave the `located in` field blank if you don't want to filter the results.
 
 To start a new search, simply reload the page.
 
@@ -61,7 +61,7 @@ Before you report a new issue with FetLife Age/Sex/Location Search, please check
 
 The current version of FetLife Age/Sex/Location Search doesn't provide an interface for you to choose a location directly. However, you can temporarily change the location you list on your own profile to search in different regions. In other words, if you're currently in New York City but want to search for people in Tokyo, temporarily change your FetLife profile's location to Tokyo and run your search again. Afterwards, you can change your FetLife profile's location back to New York City.
 
-As of version 0.3.2 of the FetLife Age/Sex/Location Search script, you can also view any group, event, or user profile page to search for users in that group, event, or user's friend list regardless of where they say they live.
+As of version 0.3.5 of the FetLife Age/Sex/Location Search script, you can also view any group, event, fetish, or user profile page to search for users in that group, event, fetish, or user's friend list regardless of where they say they live.
 
 ### Why can I only search for men, not women?
 
@@ -69,6 +69,8 @@ Because fuck you [that's why](http://www.notjustbitchy.com/?p=496).
 
 ## Change log
 
+* Version 0.3.5:
+** Added support for searching profiles while browsing fetish lists.
 * Version 0.3.4:
 ** Added support for Google Chrome with the Tampermonkey extension installed.
 * Version 0.3.3:
