@@ -6,7 +6,7 @@
  */
 // ==UserScript==
 // @name           FetLife ASL Search
-// @version        0.3.5
+// @version        0.3.5.1
 // @namespace      http://maybemaimed.com/playground/fetlife-aslsearch/
 // @updateURL      https://userscripts.org/scripts/source/146293.user.js
 // @description    Allows you to search for FetLife profiles based on age, sex, location, and role.
@@ -377,7 +377,7 @@ FL_ASL.getLocationString = function (el) {
 };
 
 FL_ASL.displayResult = function (el) {
-    var id = el.querySelector('a').href.match(/\d+$/);
+    var id = el.querySelector('a').getAttribute('href').match(/\d+$/);
     var name = el.querySelector('.large a').childNodes[0].nodeValue;
     var a = document.createElement('a');
     a.href = 'https://fetlife.com/conversations/new?with=' + id;

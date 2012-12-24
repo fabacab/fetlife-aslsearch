@@ -69,6 +69,8 @@ Because fuck you [that's why](http://www.notjustbitchy.com/?p=496).
 
 ## Change log
 
+* Version 0.3.5.1
+** Fix bug in Google Chrome where "send ''user'' a message" returned `null`.
 * Version 0.3.5:
 ** Added support for searching profiles while browsing fetish lists.
 * Version 0.3.4:
