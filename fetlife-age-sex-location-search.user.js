@@ -6,7 +6,7 @@
  */
 // ==UserScript==
 // @name           FetLife ASL Search
-// @version        0.3.4
+// @version        0.3.6
 // @namespace      http://maybemaimed.com/playground/fetlife-aslsearch/
 // @updateURL      https://userscripts.org/scripts/source/146293.user.js
 // @description    Allows you to search for FetLife profiles based on age, sex, location, and role.
@@ -70,6 +70,8 @@ FL_ASL.toggleLocationFilter = function (e) {
     switch (e.currentTarget.value) {
         case 'group':
         case 'event':
+        case 'fetish':
+        case 'search':
         case 'user':
             if (el.style.display == 'none') {
                 el.style.display = 'inline';
@@ -141,15 +143,26 @@ FL_ASL.getSearchParams = function () {
         }
     }
     // Match location parameter with known location ID.
-    if ('group' === search_in[0] || 'event' === search_in[0] || 'user' === search_in[0]) {
-        r.loc[search_in[0]] = parseInt(FL_ASL.CONFIG.search_form.querySelector('input[data-flasl' + search_in[0] + 'id]').getAttribute('data-flasl' + search_in[0] + 'id'));
-    } else {
-        user_loc = FL_ASL.getLocationForUser(uw.FetLife.currentUser.id);
-        for (var xk in user_loc) {
-            if (null !== user_loc[xk] && (-1 !== search_in.indexOf(xk)) ) {
-                r.loc[xk] = user_loc[xk];
+    switch (search_in[0]) {
+        // These cases all use numeric object IDs.
+        case 'group':
+        case 'event':
+        case 'user':
+        case 'fetish':
+            r.loc[search_in[0]] = parseInt(FL_ASL.CONFIG.search_form.querySelector('input[data-flasl' + search_in[0] + 'id]').getAttribute('data-flasl' + search_in[0] + 'id'));
+        break;
+        // This case uses a string, so no need to parseInt() it.
+        case 'search':
+            r.loc[search_in[0]] = FL_ASL.CONFIG.search_form.querySelector('input[data-flasl' + search_in[0] + 'id]').getAttribute('data-flasl' + search_in[0] + 'id');
+            break;
+        default:
+            user_loc = FL_ASL.getLocationForUser(uw.FetLife.currentUser.id);
+            for (var xk in user_loc) {
+                if (null !== user_loc[xk] && (-1 !== search_in.indexOf(xk)) ) {
+                    r.loc[xk] = user_loc[xk];
+                }
             }
-        }
+        break;
     }
 
     // Collect location filter, if one was entered.
@@ -205,6 +218,10 @@ FL_ASL.getKinkstersInSet = function (loc_obj) {
         FL_ASL.getKinkstersInEvent(loc_obj.event);
     } else if (loc_obj.user) {
         FL_ASL.getKinkstersInFriend(loc_obj.user);
+    } else if (loc_obj.fetish) {
+        FL_ASL.getKinkstersInFetish(loc_obj.fetish);
+    } else if (loc_obj.search) {
+        FL_ASL.getKinkstersInSearch(loc_obj.search);
     } else if (loc_obj.city_id) {
         FL_ASL.getKinkstersInCity(loc_obj.city_id);
     } else if (loc_obj.area_id) {
@@ -246,6 +263,16 @@ FL_ASL.getKinkstersInFriend = function (user_id, page) {
     url = (page) ? url + '?page=' + page.toString() : url ;
     FL_ASL.getKinkstersFromURL(url);
 };
+FL_ASL.getKinkstersInFetish = function (fetish_id, page) {
+    var url = 'https://fetlife.com/fetishes/' + fetish_id.toString() + '/kinksters';
+    url = (page) ? url + '?page=' + page.toString() : url ;
+    FL_ASL.getKinkstersFromURL(url);
+};
+FL_ASL.getKinkstersInSearch = function (search_string, page) {
+    var url = 'https://fetlife.com/search/kinksters/?q=' + search_string.toString();
+    url = (page) ? url + '&page=' + page.toString() : url ;
+    FL_ASL.getKinkstersFromURL(url);
+};
 FL_ASL.getKinkstersFromURL = function (url) {
     FL_ASL.log('Getting Kinksters list from URL: ' + url);
     prog = document.getElementById(FL_ASL.CONFIG.progress_id);
@@ -274,7 +301,9 @@ FL_ASL.getKinkstersFromURL = function (url) {
             if (next_page > 2) {
                 next_url = url.replace(/\d+$/, next_page.toString());
             } else {
-                next_url = url + '?page=' + next_page.toString();
+                // Already have a query string? If so, append (&) rather than create (?).
+                next_url = (url.match(/\?q=/)) ? url + '&page=' : url + '?page=';
+                next_url += next_page.toString();
             }
 
             // Automatically search on next page if no results found.
@@ -359,7 +388,7 @@ FL_ASL.getLocationString = function (el) {
 };
 
 FL_ASL.displayResult = function (el) {
-    var id = el.querySelector('a').href.match(/\d+$/);
+    var id = el.querySelector('a').getAttribute('href').match(/\d+$/);
     var name = el.querySelector('.large a').childNodes[0].nodeValue;
     var a = document.createElement('a');
     a.href = 'https://fetlife.com/conversations/new?with=' + id;
@@ -437,21 +466,23 @@ FL_ASL.main = function () {
     html_string += '</p></fieldset>';
     html_string += '<fieldset><legend>Search for user profiles located in:</legend><p>';
     html_string += '&hellip;from ';
-    // If we're on a "groups" or an "events" page,
-    var is_group_or_event_or_user = window.location.toString().match(/(group|event|user)s\/(\d+)/);
-    if (null !== is_group_or_event_or_user) {
-        switch (is_group_or_event_or_user[1]) {
+    // If we're on a "groups" or "events" or "user" or "fetish" or "search" page,
+    var which_thing = window.location.toString().match(/(group|event|user|fetish)e?s\/(\d+)/) || window.location.toString().match(/(search)\/kinksters\/?\?(?:page=\d+&)?q=(\S+)/);
+    if (null !== which_thing) {
+        switch (which_thing[1]) {
             case 'user':
                 var label_text = "user's friends";
                 break;
             case 'group': // fall through
             case 'event':
+            case 'fetish':
+            case 'search':
             default:
-                var label_text = is_group_or_event_or_user[1];
+                var label_text = which_thing[1];
                 break;
         }
-        //offer an additional option to search for users associated with this object rather than geography.
-        html_string += '<label><input type="radio" name="fl_asl_loc" value="' + is_group_or_event_or_user[1] + '" data-flasl' + is_group_or_event_or_user[1] + 'id="' + is_group_or_event_or_user[2] + '"/>this ' + label_text + '</label>';
+        // offer an additional option to search for users associated with this object rather than geography.
+        html_string += '<label><input type="radio" name="fl_asl_loc" value="' + which_thing[1] + '" data-flasl' + which_thing[1] + 'id="' + which_thing[2] + '"/>this ' + label_text + '</label>';
         html_string += '<label id="fl_asl_loc_filter_label" style="display: none;"> located in <input type="text" id="fl_asl_loc_filter" name="fl_asl_loc_filter" /></label>';
         html_string += ', or ';
     }
