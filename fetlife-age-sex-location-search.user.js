@@ -452,7 +452,7 @@ FL_ASL.main = function () {
 //    html_string += '<label><input type="checkbox" name="user[sex]" value="FEM" />Femme</label>';
     html_string += '</p></fieldset>';
     html_string += '<fieldset><legend>Search for user profiles between the ages of:</legend><p>';
-    html_string += '&hellip;who are also <label>at least <input type="text" name="min_age" id="min_age" size="2" /> years old</label> and <label>at most <input type="text" name="max_age" id="max_age" size="2" /> years old&hellip;</label>';
+    html_string += '&hellip;who are also <label>at least <input type="text" name="min_age" id="min_age" placeholder="18" size="2" /> years old</label> and <label>at most <input type="text" name="max_age" id="max_age" placeholder="92" size="2" /> years old&hellip;</label>';
     html_string += '</p></fieldset>';
     html_string += '<fieldset><legend>Search for user profiles whose role is:</legend><p>';
     html_string += '&hellip;who identify their role as ';
