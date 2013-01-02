@@ -326,7 +326,7 @@ FL_ASL.getKinkstersFromURL = function (url) {
             }
 
             // Automatically search on next page if no or too few results were found.
-            if (0 === result_count || FL_ASL.CONFIG.min_matches > FL_ASL.total_result_count) {
+            if (0 === result_count || FL_ASL.CONFIG.min_matches >= FL_ASL.total_result_count) {
                 FL_ASL.getKinkstersFromURL(next_url);
                 return false;
             } else {
