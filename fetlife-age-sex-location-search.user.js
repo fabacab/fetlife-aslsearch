@@ -6,7 +6,7 @@
  */
 // ==UserScript==
 // @name           FetLife ASL Search
-// @version        0.3.6
+// @version        0.3.7
 // @namespace      http://maybemaimed.com/playground/fetlife-aslsearch/
 // @updateURL      https://userscripts.org/scripts/source/146293.user.js
 // @description    Allows you to search for FetLife profiles based on age, sex, location, and role.
@@ -27,8 +27,11 @@
 FL_ASL = {};
 FL_ASL.CONFIG = {
     'debug': false, // switch to true to debug.
-    'progress_id': 'fetlife_asl_search_progress'
+    'progress_id': 'fetlife_asl_search_progress',
+    'min_matches': 1 // show at least this many matches before offering to search again
 };
+
+FL_ASL.total_result_count = 0; // How many matches have we found, across all pages, on this load?
 
 // Utility debugging function.
 FL_ASL.log = function (msg) {
@@ -276,6 +279,10 @@ FL_ASL.getKinkstersInSearch = function (search_string, page) {
 };
 FL_ASL.getKinkstersFromURL = function (url) {
     FL_ASL.log('Getting Kinksters list from URL: ' + url);
+    // Set minimum matches, if that's been asked for.
+    if (document.getElementById('fl_asl_min_matches').value) {
+        FL_ASL.CONFIG.min_matches = document.getElementById('fl_asl_min_matches').value;
+    }
     prog = document.getElementById(FL_ASL.CONFIG.progress_id);
     prog.innerHTML = prog.innerHTML + '.';
     GM_xmlhttpRequest({
@@ -293,6 +300,8 @@ FL_ASL.getKinkstersFromURL = function (url) {
                     // display the results in a "results" section in this portion of the page
                     FL_ASL.displayResult(els[i]);
                     result_count++;
+                    // note total results found
+                    FL_ASL.total_result_count += result_count;
                 }
             }
 
@@ -307,11 +316,13 @@ FL_ASL.getKinkstersFromURL = function (url) {
                 next_url += next_page.toString();
             }
 
-            // Automatically search on next page if no results found.
-            if (0 === result_count) {
+            // Automatically search on next page if no or too few results were found.
+            if (0 === result_count || FL_ASL.CONFIG.min_matches >= FL_ASL.total_result_count) {
                 FL_ASL.getKinkstersFromURL(next_url);
                 return false;
             } else {
+                // Reset total_result_count for this load.
+                FL_ASL.total_result_count = 0;
                 // Reset UI search feedback.
                 p = prog.parentNode
                 p.removeChild(prog);
@@ -432,7 +443,7 @@ FL_ASL.main = function () {
 //    html_string += '<label><input type="checkbox" name="user[sex]" value="FEM" />Femme</label>';
     html_string += '</p></fieldset>';
     html_string += '<fieldset><legend>Search for user profiles between the ages of:</legend><p>';
-    html_string += '&hellip;who are also <label>at least <input type="text" name="min_age" id="min_age" size="2" /> years old</label> and <label>at most <input type="text" name="max_age" id="max_age" size="2" /> years old&hellip;</label>';
+    html_string += '&hellip;who are also <label>at least <input type="text" name="min_age" id="min_age" placeholder="18" size="2" /> years old</label> and <label>at most <input type="text" name="max_age" id="max_age" placeholder="92" size="2" /> years old&hellip;</label>';
     html_string += '</p></fieldset>';
     html_string += '<fieldset><legend>Search for user profiles whose role is:</legend><p>';
     html_string += '&hellip;who identify their role as ';
@@ -491,6 +502,9 @@ FL_ASL.main = function () {
     html_string += '<label><input type="radio" name="fl_asl_loc" value="area_id" checked="checked" />state/province</label>';
     html_string += '<label><input type="radio" name="fl_asl_loc" value="country" />country</label>';
     html_string += '.</p></fieldset>';
+    html_string += '<fieldset><legend>Result set options:</legend><p>';
+    html_string += '<label>Return at least <input id="fl_asl_min_matches" name="fl_asl_min_matches" value="" placeholder="1" size="2" /> matches per search.</label> (Set this lower if no results seem to ever appear.)';
+    html_string += '</p></fieldset>';
     div.innerHTML = html_string;
     FL_ASL.CONFIG.search_form.appendChild(label);
     FL_ASL.CONFIG.search_form.appendChild(div);

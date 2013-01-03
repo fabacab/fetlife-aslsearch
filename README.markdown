@@ -69,6 +69,8 @@ Because fuck you [that's why](http://www.notjustbitchy.com/?p=496).
 
 ## Change log
 
+* Version 0.3.7
+** Offer a "return at least X matches per search" option for finding more matches more quickly.
 * Version 0.3.6
 ** Added support for searching on Kinkster Search result pages. Useful for combining FetLife's search-by-username with the more advanced search filtering options provided by this script.
 * Version 0.3.5.1
