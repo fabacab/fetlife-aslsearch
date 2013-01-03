@@ -70,24 +70,24 @@ Because fuck you [that's why](http://www.notjustbitchy.com/?p=496).
 ## Change log
 
 * Version 0.3.7
-** Offer a "return at least X matches per search" option for finding more matches more quickly.
+    * Offer a "return at least X matches per search" option for finding more matches more quickly.
 * Version 0.3.6
-** Added support for searching on Kinkster Search result pages. Useful for combining FetLife's search-by-username with the more advanced search filtering options provided by this script.
+    * Added support for searching on Kinkster Search result pages. Useful for combining FetLife's search-by-username with the more advanced search filtering options provided by this script.
 * Version 0.3.5.1
-** Fix bug in Google Chrome where "send ''user'' a message" returned `null`.
+    * Fix bug in Google Chrome where "send ''user'' a message" returned `null`.
 * Version 0.3.5:
-** Added support for searching profiles while browsing fetish lists.
+    * Added support for searching profiles while browsing fetish lists.
 * Version 0.3.4:
-** Added support for Google Chrome with the Tampermonkey extension installed.
+    * Added support for Google Chrome with the Tampermonkey extension installed.
 * Version 0.3.3:
-** Added support for arbitrary location filtering by substring.
+    * Added support for arbitrary location filtering by substring.
 * Version 0.3.2:
-** Added support for searching user's friend list.
+    * Added support for searching user's friend list.
 * Version 0.3.1:
-** Added support for event attendee searches.
+    * Added support for event attendee searches.
 * Version 0.3:
-** Added support for group membership searches.
+    * Added support for group membership searches.
 * Version 0.2:
-** Added support for State/Province and Country searches.
+    * Added support for State/Province and Country searches.
 * Version 0.1:
-** Initial release.
+    * Initial release.
