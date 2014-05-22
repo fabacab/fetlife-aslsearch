@@ -1,12 +1,11 @@
 /**
- *
  * This is a Greasemonkey script and must be run using a Greasemonkey-compatible browser.
  *
  * @author maymay <bitetheappleback@gmail.com>
  */
 // ==UserScript==
 // @name           FetLife ASL Search
-// @version        0.3.7
+// @version        0.3.8
 // @namespace      http://maybemaimed.com/playground/fetlife-aslsearch/
 // @updateURL      https://userscripts.org/scripts/source/146293.user.js
 // @description    Allows you to search for FetLife profiles based on age, sex, location, and role.
@@ -442,7 +441,7 @@ FL_ASL.main = function () {
     html_string += '<label><input type="checkbox" name="user[sex]" value="M" checked="checked" /> Male</label>';
 //    html_string += '<label><input type="checkbox" name="user[sex]" value="F" /> Female</label>';
 //    html_string += '<label><input type="checkbox" name="user[sex]" value="CD/TV" />Crossdresser/Transvestite</label>';
-    html_string += '<label><input type="checkbox" name="user[sex]" value="MtF" />Trans - Male to Female</label>';
+//    html_string += '<label><input type="checkbox" name="user[sex]" value="MtF" />Trans - Male to Female</label>';
     html_string += '<label><input type="checkbox" name="user[sex]" value="FtM" checked="checked" />Trans - Female to Male</label>';
     html_string += '<label><input type="checkbox" name="user[sex]" value="TG" />Transgender</label>';
     html_string += '<label><input type="checkbox" name="user[sex]" value="GF" />Gender Fluid</label>';
