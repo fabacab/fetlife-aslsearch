@@ -22,9 +22,9 @@ If you use the [Google Chrome](https://chrome.google.com/) web browser (version 
 
 ## Installing
 
-To install FetLife Age/Sex/Location Search, go to [http://maybemaimed.com/playground/fetlife-aslsearch/](http://maybemaimed.com/playground/fetlife-aslsearch/) and click the "[Download and install](https://userscripts.org/scripts/source/146293.user.js)" near the middle of the page:
+To install FetLife Age/Sex/Location Search, go to [http://maybemaimed.com/playground/fetlife-aslsearch/](http://maybemaimed.com/playground/fetlife-aslsearch/) and click the "[Download and install](https://github.com/meitar/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js)" near the middle of the page:
 
-> [Download and install FetLife Age/Sex/Location Search](https://userscripts.org/scripts/source/146293.user.js)
+> [Download and install FetLife Age/Sex/Location Search](https://github.com/meitar/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js)
 
 If you enjoy this script, please consider tossing a few metaphorical coins in [my cyberbusking hat](http://maybemaimed.com/cyberbusking/). :) Your donations are sincerely appreciated! Can't afford to part with any coin? It's cool. [Tweet your appreciation, instead](https://twitter.com/intent/tweet?text=Ever%20wanted%20to%20search%20%23FetLife%20profiles%20by%20age%2Fsex%2Flocation%2Frole%3F%20Now%20we%20can%3A%20http%3A%2F%2Fmaybemaimed.com%2Fplayground%2Ffetlife-aslsearch%2F%20All%20thx%20to%20%40maymaym%3A%20http%3A%2F%2Fmaybemaimed.com%2Fcyberbusking%2F).
 
