@@ -5,11 +5,26 @@
  */
 // ==UserScript==
 // @name           FetLife ASL Search
-// @version        0.3.9
+// @version        0.3.10
 // @namespace      http://maybemaimed.com/playground/fetlife-aslsearch/
 // @updateURL      https://github.com/meitar/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js
 // @description    Allows you to search for FetLife profiles based on age, sex, location, and role.
-// @include        https://fetlife.com/*
+// @require        https://code.jquery.com/jquery-2.1.4.min.js
+// @include        https://fetlife.com/administrative_areas*
+// @include        https://fetlife.com/cities*
+// @include        https://fetlife.com/countries*
+// @include        https://fetlife.com/events*
+// @include        https://fetlife.com/fetishes*
+// @include        https://fetlife.com/fetlife*
+// @include        https://fetlife.com/groups*
+// @include        https://fetlife.com/home*
+// @include        https://fetlife.com/improvements*
+// @include        https://fetlife.com/places*
+// @include        https://fetlife.com/posts*
+// @include        https://fetlife.com/search*
+// @include        https://fetlife.com/users*
+// @include        https://fetlife.com/videos*
+// @include        http://www.creepshield.com/search*
 // @exclude        https://fetlife.com/adgear/*
 // @exclude        https://fetlife.com/chat/*
 // @exclude        https://fetlife.com/im_sessions*
@@ -23,7 +38,45 @@
 // @grant          GM_openInTab
 // ==/UserScript==
 
-FL_ASL = {};
+FL_UI = {}; // FetLife User Interface module
+FL_UI.Text = {
+    'donation_appeal': '<p>FetLife ASL Search is provided as free software, but sadly grocery stores do not offer free food. If you like this script, please consider <a href="http://Cyberbusking.org/">making a donation</a> to support its continued development. &hearts; Thank you. :)</p>'
+};
+FL_UI.Dialog = {};
+FL_UI.Dialog.createLink = function (dialog_id, html_content, parent_node) {
+    var trigger_el = document.createElement('a');
+    trigger_el.setAttribute('class', 'opens-modal');
+    trigger_el.setAttribute('data-opens-modal', dialog_id);
+    trigger_el.innerHTML = html_content;
+    parent_node.appendChild(trigger_el);
+    // Attach event listener to trigger element.
+    parent_node.querySelector('[data-opens-modal="' + dialog_id + '"]').addEventListener('click', function (e) {
+        parent_node.querySelector('[data-opens-modal="' + dialog_id + '"]').dialog("open");
+    });
+};
+FL_UI.Dialog.inject = function (id, title, html_content) {
+    // Inject dialog box HTML. FetLife currently uses Rails 3, so mimic that.
+    // See, for instance, Rails Behaviors: http://josh.github.com/rails-behaviors/
+    var dialog = document.createElement('div');
+    dialog.setAttribute('style', 'display: none; position: absolute; overflow: hidden; z-index: 1000; outline: 0px none;');
+    dialog.setAttribute('class', 'ui-dialog ui-widget ui-widget-content ui-corner-all');
+    dialog.setAttribute('tabindex', '-1');
+    dialog.setAttribute('role', 'dialog');
+    dialog.setAttribute('aria-labelledby', 'ui-dialog-title-' + id);
+    var html_string = '<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix" unselectable="on" style="-moz-user-select: none;">';
+    html_string += '<span class="ui-dialog-title" id="ui-dialog-title-' + id + '" unselectable="on" style="-moz-user-select: none;">' + title + '</span>';
+    html_string += '<a href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button" unselectable="on" style="-moz-user-select: none;">';
+    html_string += '<span class="ui-icon ui-icon-closethick" unselectable="on" style="-moz-user-select: none;">close</span>';
+    html_string += '</a>';
+    html_string += '</div>';
+    html_string += '<div data-modal-title="' + title + '" data-modal-height="280" data-modal-auto-open="false" class="modal ui-dialog-content ui-widget-content" id="' + id + '">';
+    html_string += html_content;
+    html_string += '</div>';
+    dialog.innerHTML = html_string;
+    document.body.appendChild(dialog);
+};
+
+FL_ASL = {}; // FetLife ASL Search module
 FL_ASL.CONFIG = {
     'debug': false, // switch to true to debug.
     'progress_id': 'fetlife_asl_search_progress',
@@ -42,7 +95,35 @@ FL_ASL.log = function (msg) {
 // Initializations.
 var uw = (unsafeWindow) ? unsafeWindow : window ; // Help with Chrome compatibility?
 GM_addStyle('\
-#fetlife_asl_search_options { display: none; }\
+#fetlife_asl_search_ui_container,\
+#fetlife_asl_search_about\
+{ display: none; }\
+#fetlife_asl_search_ui_container > div {\
+    clear: both;\
+    background-color: #111;\
+    position: relative;\
+    top: -2px;\
+}\
+#fetlife_asl_search_ui_container div a, #fetlife_asl_search_results div a {\
+    text-decoration: underline;\
+}\
+#fetlife_asl_search_ui_container div a:hover, #fetlife_asl_search_results div a:hover {\
+    background-color: blue;\
+    text-decoration: underline;\
+}\
+#fetlife_asl_search_ui_container a[data-opens-modal] { cursor: help; }\
+#fetlife_asl_search_ui_container ul.tabs li {\
+    display: inline-block;\
+    margin-right: 10px;\
+}\
+#fetlife_asl_search_ui_container ul.tabs li a { color: #888; }\
+#fetlife_asl_search_ui_container ul.tabs li.in_section a {\
+    background-color: #1b1b1b;\
+    color: #fff;\
+    position: relative;\
+    top: 2px;\
+    padding-top: 5px;\
+}\
 #fetlife_asl_search_options fieldset { clear: both; margin: 0; padding: 0; }\
 #fetlife_asl_search_options legend { display: none; }\
 #fetlife_asl_search_options label {\
@@ -61,7 +142,7 @@ FL_ASL.init = function () {
 window.addEventListener('DOMContentLoaded', FL_ASL.init);
 
 FL_ASL.toggleAslSearch = function () {
-    var el = document.getElementById('fetlife_asl_search_options');
+    var el = document.getElementById('fetlife_asl_search_ui_container');
     if (el.style.display == 'block') {
         el.style.display = 'none';
     } else {
@@ -335,12 +416,15 @@ FL_ASL.getKinkstersFromURL = function (url) {
                 new_prog.setAttribute('id', FL_ASL.CONFIG.progress_id);
                 p.appendChild(new_prog);
             }
+            var div = document.createElement('div');
+            div.innerHTML = FL_UI.Text.donation_appeal;
             btn = document.createElement('button');
             btn.setAttribute('id', 'btn_moar');
             btn.setAttribute('onclick', "var xme = document.getElementById('btn_moar'); xme.parentNode.removeChild(xme); return false;");
             btn.innerHTML = 'Show me MOAR&hellip;';
             btn.addEventListener('click', function(){FL_ASL.getKinkstersFromURL(next_url)});
-            document.getElementById('fetlife_asl_search_results').appendChild(btn);
+            div.appendChild(btn);
+            document.getElementById('fetlife_asl_search_results').appendChild(div);
         }
     });
 };
@@ -416,11 +500,12 @@ FL_ASL.displayResult = function (el) {
     document.getElementById('fetlife_asl_search_results').appendChild(el);
 };
 
-// This is the main() function, executed on page load.
-FL_ASL.main = function () {
-    // Insert ASL search button interface at FetLife "Search" bar.
+FL_ASL.attachSearchForm = function () {
+    var html_string, div;
+
     var label = document.createElement('label');
     label.innerHTML = 'A/S/L?';
+
     var input = document.createElement('input');
     input.setAttribute('style', '-webkit-appearance: checkbox');
     input.setAttribute('type', 'checkbox');
@@ -429,23 +514,57 @@ FL_ASL.main = function () {
     input.setAttribute('value', '1');
     input.addEventListener('click', FL_ASL.toggleAslSearch);
     label.appendChild(input);
-    var div = document.createElement('div');
+
+    var container = document.createElement('div');
+    container.setAttribute('id', 'fetlife_asl_search_ui_container');
+    container.setAttribute('style', 'display: none;');
+
+    // Tab list
+    var ul = document.createElement('ul');
+    ul.setAttribute('class', 'tabs');
+    html_string = '<li data-fl-asl-section-id="fetlife_asl_search_about"><a href="#">About FetLife ASL Search</a></li>';
+    html_string += '<li class="in_section" data-fl-asl-section-id="fetlife_asl_search_options"><a href="#">Online search</a></li>';
+    ul.innerHTML = html_string;
+    ul.addEventListener('click', function (e) {
+        var id_to_show = jQuery(e.target.parentNode).data('fl-asl-section-id');
+        jQuery('#fetlife_asl_search_ui_container ul.tabs li').each(function (e) {
+            if (id_to_show === jQuery(this).data('fl-asl-section-id')) {
+                jQuery(this).addClass('in_section');
+                jQuery('#' + id_to_show).slideDown();
+            } else {
+                jQuery(this).removeClass('in_section');
+                jQuery('#' + jQuery(this).data('fl-asl-section-id')).slideUp();
+            }
+        });
+    });
+    container.appendChild(ul);
+
+    // "About FetLife ASL Search" tab
+    div = document.createElement('div');
+    div.setAttribute('id', 'fetlife_asl_search_about');
+    html_string = '<p>The FetLife Age/Sex/Location Search user script allows you to search for profiles on <a href="https://fetlife.com/">FetLife</a> by age, sex, location, or orientation. This user script implements what is, as of this writing, the <a href="https://fetlife.com/improvements/78">most popular suggestion in the FetLife suggestion box</a>:</p>';
+    html_string += '<blockquote><p>Search for people by Location/Sex/Orientation/Age</p><p>Increase the detail of the kinkster search by allowing us to narrow the definition of the search by the traditional fields.</p></blockquote>';
+    html_string += '<p>With the FetLife Age/Sex/Location Search user script installed, a few clicks will save hours of time. Now you can find profiles that match your specified criteria in a matter of seconds. The script even lets you send a message to the profiles you found right from the search results list.</p>';
+    html_string += '<p>Stay up to date with the <a href="https://github.com/meitar/fetlife-aslsearch/">latest FetLife ASL Search improvements</a>. New versions add new features and improve search performance.</p>';
+    div.innerHTML = html_string + FL_UI.Text.donation_appeal;
+    container.appendChild(div);
+
+    // Main ASL search option interface
+    div = document.createElement('div');
     div.setAttribute('id', 'fetlife_asl_search_options');
-    div.setAttribute('style', 'display: none;');
     html_string = '<fieldset><legend>Search for user profiles of the following gender/sex:</legend><p>';
     html_string += 'Show me profiles of people with a gender/sex of&hellip;';
-    // NOTE: What if the UI only allowed us to find male-ish identified people, not women? What would the response be? :)
     html_string += '<label><input type="checkbox" name="user[sex]" value="M" checked="checked" /> Male</label>';
-//    html_string += '<label><input type="checkbox" name="user[sex]" value="F" /> Female</label>';
-//    html_string += '<label><input type="checkbox" name="user[sex]" value="CD/TV" />Crossdresser/Transvestite</label>';
-//    html_string += '<label><input type="checkbox" name="user[sex]" value="MtF" />Trans - Male to Female</label>';
+    html_string += '<label><input type="checkbox" name="user[sex]" value="F" /> Female</label>';
+    html_string += '<label><input type="checkbox" name="user[sex]" value="CD/TV" />Crossdresser/Transvestite</label>';
+    html_string += '<label><input type="checkbox" name="user[sex]" value="MtF" />Trans - Male to Female</label>';
     html_string += '<label><input type="checkbox" name="user[sex]" value="FtM" checked="checked" />Trans - Female to Male</label>';
     html_string += '<label><input type="checkbox" name="user[sex]" value="TG" />Transgender</label>';
     html_string += '<label><input type="checkbox" name="user[sex]" value="GF" />Gender Fluid</label>';
     html_string += '<label><input type="checkbox" name="user[sex]" value="GQ" />Genderqueer</label>';
     html_string += '<label><input type="checkbox" name="user[sex]" value="IS" />Intersex</label>';
     html_string += '<label><input type="checkbox" name="user[sex]" value="B" />Butch</label>';
-//    html_string += '<label><input type="checkbox" name="user[sex]" value="FEM" />Femme</label>';
+    html_string += '<label><input type="checkbox" name="user[sex]" value="FEM" />Femme</label>';
     html_string += '</p></fieldset>';
     html_string += '<fieldset><legend>Search for user profiles between the ages of:</legend><p>';
     html_string += '&hellip;who are also <label>at least <input type="text" name="min_age" id="min_age" placeholder="18" size="2" /> years old</label> and <label>at most <input type="text" name="max_age" id="max_age" placeholder="92" size="2" /> years old&hellip;</label>';
@@ -478,10 +597,9 @@ FL_ASL.main = function () {
     html_string += '<label><input type="checkbox" name="user[role]" value="Hedonist" />Hedonist</label>';
     html_string += '<label><input type="checkbox" name="user[role]" value="Vanilla" />Vanilla</label>';
     html_string += '<label><input type="checkbox" name="user[role]" value="Unsure" />Unsure</label>';
-    // Note that "Not Applicable" is the equivalent of "it doesn't matter", so we omit this.
-    //html_string += '<label><input type="checkbox" name="user[role]" value="" />Not Applicable</label>';
+    html_string += '<label><input type="checkbox" name="user[role]" value="" />Not Applicable</label>';
     html_string += '</p></fieldset>';
-    html_string += '<fieldset><legend>Search for user profiles located in:</legend><p>';
+    html_string += '<fieldset id="fl_asl_search_loc_fieldset"><legend>Search for user profiles located in:</legend><p>';
     html_string += '&hellip;from ';
     // If we're on a "groups" or "events" or "user" or "fetish" or "search" page,
     var which_thing = window.location.toString().match(/(group|event|user|fetish)e?s\/(\d+)/) || window.location.toString().match(/(search)\/kinksters\/?\?(?:page=\d+&)?q=(\S+)/);
@@ -506,16 +624,42 @@ FL_ASL.main = function () {
     html_string += ' my <label><input type="radio" name="fl_asl_loc" value="city_id" />city</label>';
     html_string += '<label><input type="radio" name="fl_asl_loc" value="area_id" checked="checked" />state/province</label>';
     html_string += '<label><input type="radio" name="fl_asl_loc" value="country" />country</label>';
-    html_string += '.</p></fieldset>';
+    html_string += '. <abbr title="Choose a search set, which is typically a Location such as your City, State/Province, or Country. When you load FetLife ASL Search on certain pages that imply their own search set, such as a user profile (for searching a friends list) a group page (for searching group members) an event (for searching RSVPs), or a fetish (for searching kinksters with that fetish), that implicit option will appear here, too. You can then further filter the profile search results based on the name of a city, state/province, or country."></abbr></p></fieldset>';
     html_string += '<fieldset><legend>Result set options:</legend><p>';
     html_string += '<label>Return at least <input id="fl_asl_min_matches" name="fl_asl_min_matches" value="" placeholder="1" size="2" /> matches per search.</label> (Set this lower if no results seem to ever appear.)';
     html_string += '</p></fieldset>';
     html_string += '<fieldset><legend>Search speed options:</legend><p>';
-    html_string += '<label>Online search speed: Wait <input id="fl_asl_search_sleep_interval" name="fl_asl_search_sleep_interval" value="" placeholder="3" size="2" /> seconds per page.</label> (FetLife has begun banning accounts that search with this script too quickly. The higher you set this, the slower your search will be, but the less likely FetLife will notice that you are using this script.)';
+    html_string += '<label>Online search speed: Aggressive (faster) <input id="fl_asl_search_sleep_interval" name="fl_asl_search_sleep_interval" type="range" min="0" max="10" step="0.5" value="' + FL_ASL.CONFIG.search_sleep_interval + '" /> Stealthy (slower)</label>';
+    html_string += '<br />(Wait <output name="fl_asl_search_sleep_interval" for="fl_asl_search_sleep_interval">' +  FL_ASL.CONFIG.search_sleep_interval + '</output> seconds between searches.) <abbr title="FetLife has begun banning accounts that search with this script too quickly. An aggressive search is faster, but riskier. A stealthier search is slower, but safer."></span>';
     html_string += '</p></fieldset>';
     div.innerHTML = html_string;
+    div.querySelector('input[name="fl_asl_search_sleep_interval"]').addEventListener('input', function (e) {
+        div.querySelector('output[name="fl_asl_search_sleep_interval"]').value = this.value;
+    });
+    // Help buttons
+    FL_UI.Dialog.createLink(
+        'fl_asl_loc-help',
+        '(Help with search sets.)',
+        div.querySelector('#fl_asl_search_loc_fieldset abbr')
+    );
+    FL_UI.Dialog.inject(
+        'fl_asl_loc-help',
+        'About &ldquo;Search sets&rdquo;',
+        div.querySelector('#fl_asl_search_loc_fieldset abbr').getAttribute('title')
+    );
+    FL_UI.Dialog.createLink(
+        'fl_asl_search_sleep_interval-help',
+        '(Help with online search speed.)',
+        div.querySelector('output[name="fl_asl_search_sleep_interval"] + abbr')
+    );
+    FL_UI.Dialog.inject(
+        'fl_asl_search_sleep_interval-help',
+        'About &ldquo;Online search speed&rdquo;',
+        div.querySelector('output[name="fl_asl_search_sleep_interval"] + abbr').getAttribute('title')
+    );
+    container.appendChild(div);
     FL_ASL.CONFIG.search_form.appendChild(label);
-    FL_ASL.CONFIG.search_form.appendChild(div);
+    FL_ASL.CONFIG.search_form.appendChild(container);
     var radio_els = document.querySelectorAll('input[name="fl_asl_loc"]');
     for (var i = 0; i < radio_els.length; i++) {
         radio_els[i].addEventListener('click', FL_ASL.toggleLocationFilter);
@@ -527,6 +671,9 @@ FL_ASL.main = function () {
     btn_submit.innerHTML = 'Mine! (I mean, uh, search&hellip;)';
     btn_submit.addEventListener('click', FL_ASL.aslSubmit);
     div.appendChild(btn_submit);
+    var donation_appeal = document.createElement('div');
+    donation_appeal.innerHTML = FL_UI.Text.donation_appeal;
+    div.appendChild(donation_appeal);
 
     results_container = document.createElement('div');
     results_container.setAttribute('id', 'fetlife_asl_search_results');
@@ -535,6 +682,12 @@ FL_ASL.main = function () {
     prog = document.createElement('p');
     prog.setAttribute('id', FL_ASL.CONFIG.progress_id);
     FL_ASL.CONFIG.search_form.appendChild(prog);
+};
+
+// This is the main() function, executed on page load.
+FL_ASL.main = function () {
+    // Insert ASL search button interface at FetLife "Search" bar.
+    FL_ASL.attachSearchForm();
 };
 
 FAADE = {};
@@ -550,6 +703,7 @@ FAADE.CONFIG = {
 FAADE.log = function (msg) {
     if (!FAADE.CONFIG.debug) { return; }
     GM_log('FETLIFE FAADE: ' + msg);
+    //console.log('FETLIFE FAADE: ' + msg);
 };
 
 // Initializations.
@@ -596,6 +750,11 @@ ul.pictures li a.faade_report_link,\
 #profile ul.friends li { width: auto; }\
 ');
 FAADE.init = function () {
+    // Whenever we load CreepShield, just clear the cookies.
+    if (window.location.hostname.match(/creepshield.com/)) {
+        FAADE.clearCookies();
+        return;
+    }
     FL_ASL.getUserProfile(uw.FetLife.currentUser.id); // run early
     FAADE.injectDialog();
     FAADE.abuser_database = FAADE.getValue('abuser_database', false);
@@ -685,16 +844,16 @@ FAADE.injectDialog = function () {
     faade_dialog.setAttribute('role', 'dialog');
     faade_dialog.setAttribute('aria-labelledby', 'ui-dialog-title-faade');
     var html_string = '<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix" unselectable="on" style="-moz-user-select: none;">';
-    html_string += '<span class="ui-dialog-title" id="ui-dialog-title-faade" unselectable="on" style="-moz-user-select: none;">FetLife Alleged Abusers Database Engine (FAADE)</span>';
+    html_string += '<span class="ui-dialog-title" id="ui-dialog-title-faade" unselectable="on" style="-moz-user-select: none;">Predator Alert Tool for FetLife (PAT-FetLife)</span>';
     html_string += '<a href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button" unselectable="on" style="-moz-user-select: none;">';
     html_string += '<span class="ui-icon ui-icon-closethick" unselectable="on" style="-moz-user-select: none;">close</span>';
     html_string += '</a>';
     html_string += '</div>';
-    html_string += '<div data-modal-title="FetLife Alleged Abusers Database Engine (FAADE)" data-modal-height="280" data-modal-auto-open="false" class="modal ui-dialog-content ui-widget-content" id="faade">';
-    html_string += '<p class="mbm">There have been <span id="faade_reports_to_alert">X</span> new consent violations filed in FAADE that may have been perpetrated near your location (<span id="faade_user_loc">X, X, X</span>).</p>';
-    html_string += '<p>Click "View new nearby FAADE reports" to view the profiles of the people who have been accused of consent violations near your area in new tabs.</p>';
+    html_string += '<div data-modal-title="Predator Alert Tool for FetLife (PAT-FetLife)" data-modal-height="280" data-modal-auto-open="false" class="modal ui-dialog-content ui-widget-content" id="faade">';
+    html_string += '<p class="mbm">There have been <span id="faade_reports_to_alert">X</span> new consent violations filed to the Predator Alert Tool for FetLife that may have been perpetrated near your location (<span id="faade_user_loc">X, X, X</span>).</p>';
+    html_string += '<p>Click "View new nearby PAT-FetLife reports" to view the profiles of the people who have been accused of consent violations near your area in new tabs.</p>';
     html_string += '<p id="faade-actions" class="ac">';
-    html_string += '<a rel="nofollow" class="btnsqr close" data-closes-modal="faade" href="#">View new nearby FAADE reports</a>';
+    html_string += '<a rel="nofollow" class="btnsqr close" data-closes-modal="faade" href="#">View new nearby PAT-FetLife reports</a>';
     html_string += '<span class="i s q">&nbsp;-or-&nbsp;</span>';
     html_string += '<a data-closes-modal="faade" class="close tdn q" href="#">Cancel</a>';
     html_string += '</p>';
@@ -783,6 +942,107 @@ FAADE.broadcastNewProximalReports = function (doc) {
     FAADE.setValue('last_timestamp_checked', latest_timestamp_filed.toString());
 };
 
+FAADE.creepShield = {};
+FAADE.creepShield.checkPhotoUrl = function (url) {
+    // For Chrome, we need to create the multipart request manually because
+    // extensions can't decode FormData objects due to its isolated worlds.
+    // See http://code.google.com/p/tampermonkey/issues/detail?id=183
+    var multipart_boundary = "---xxx111222333444555666777888999";
+    var multipart_data = '--' + multipart_boundary + "\n";
+    multipart_data += 'Content-Disposition: form-data; name="linked_image"';
+    multipart_data += "\n\n";
+    multipart_data += url;
+    multipart_data += "\n";
+    // Mimic hitting the "Search" button.
+    multipart_data += '--' + multipart_boundary + "\n";
+    multipart_data += 'Content-Disposition: form-data; name="submit_linked_image"';
+    multipart_data += "\n\n";
+    multipart_data += 'Search';
+    multipart_data += "\n";
+    multipart_data += '--' + multipart_boundary + '--'; // end
+
+    GM_xmlhttpRequest({
+        'method': 'POST',
+        'url': 'http://www.creepshield.com/search',
+        'headers': {
+            'Content-Type': 'multipart/form-data; boundary=' + multipart_boundary
+        },
+        'data': multipart_data,
+        'onload': function (response) {
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(response.responseText, 'text/html');
+            // If our search was successful,
+            if (doc.querySelector('.search-details')) {
+                // Parse the CreepShield results and display on FetLife.
+                var creep_data = FAADE.creepShield.parseResults(doc);
+                FAADE.creepShield.displayOnFetLife(creep_data);
+            } else {
+                FAADE.log('An error occurred searching CreepShield.com.');
+                if (doc.getElementById('messages')) {
+                    FAADE.creepShield.displayError(doc.getElementById('messages').textContent);
+                }
+            }
+        }
+    });
+};
+FAADE.creepShield.parseResults = function (doc) {
+    var ret = {
+        'searched_url' : doc.querySelector('.searched-image').getAttribute('src'),
+        'matches_count': doc.querySelectorAll('.person').length,
+        'highest_match': doc.querySelector('.match-percentage p:nth-child(2)').textContent.match(/\d+%/),
+        'highest_photo': doc.querySelector('.person-images-inner img'),
+        'person_detail': doc.querySelector('.person-name').textContent
+    };
+    return ret;
+};
+FAADE.creepShield.getDisclaimerHtml = function () {
+    return '<p>This feature is powered by the facial recognition service at <a href="http://creepshield.com/">CreepShield.com</a>. The registered sex offender database is <em>not</em> always a reliable source of information. <a href="https://www.eff.org/deeplinks/2011/04/sexual-predators-please-check-here-match-com-s">Learn more</a>.</p>';
+};
+FAADE.creepShield.displayOnFetLife = function (creep_data) {
+    var base_el = document.querySelector('.pan').parentNode.parentNode;
+    var my_el = document.createElement('div');
+    my_el.setAttribute('class', 'pat-fetlife-creepshield-results');
+    var html = '<h3>Possible Registered Sex Offender matches:</h3>';
+    html += '<ul>';
+    html += '<li>Highest facial match: ' + creep_data.highest_match + '</li>'
+    html += '<li>Most likely offender: <img src="' + creep_data.highest_photo.getAttribute('src') + '" alt="" />' + creep_data.person_detail + '</li>';
+    html += '<li>Total possible matches: ' + creep_data.matches_count + '</li>';
+    html += '</ul>';
+    html += '<form method="POST" action="http://www.creepshield.com/search">';
+    html += '<input type="hidden" name="linked_image" value="' + creep_data.searched_url + '" />';
+    html += '<p>Search for criminal histories and other possible offenders: ';
+    html += '<input type="submit" name="submit_linked_image" value="Search" />';
+    html += '</p>';
+    html += '</form>';
+    html += FAADE.creepShield.getDisclaimerHtml();
+    my_el.innerHTML = html;
+    base_el.appendChild(my_el);
+};
+FAADE.creepShield.displayError = function (msg) {
+    var base_el = document.querySelector('.pan').parentNode.parentNode;
+    var my_el = document.createElement('div');
+    my_el.setAttribute('class', 'pat-fetlife-creepshield-results error');
+    var html = '<p>CreepShield returned an error:</p>';
+    html += '<blockquote><p>' + msg + '</p></blockquote>';
+    html += '<p>If you are being told you need to login before you can do more searches, simply <a href="javascript:window.location.reload();void(0);">reload this page</a> to try again.</p>';
+    html += FAADE.creepShield.getDisclaimerHtml();
+    my_el.innerHTML = html;
+    base_el.appendChild(my_el);
+    // If free search limit was hit, go to CreepShield.com to flush it out.
+    if (msg.match(/You cannot perform any more searches/i)) {
+        GM_openInTab('http://www.creepshield.com/search');
+    }
+};
+
+FAADE.clearCookies = function () {
+    var cookie_list = document.cookie.split(';');
+    for (var i = 0; i < cookie_list.length; i++) {
+        var cookie_name = cookie_list[i].replace(/\s*(\w+)=.+$/, "$1");
+        // To delete a cookie, set its expiration date to a past value.
+        document.cookie = cookie_name + '=;expires=Thu, 01-Jan-1970 00:00:01 GMT;';
+    }
+};
+
 // This is the main() function, executed on page load.
 FAADE.main = function () {
     // Make a list of known alleged abuser user IDs.
@@ -809,6 +1069,13 @@ FAADE.main = function () {
 
         var profile_nick = document.querySelector('h2.bottom').childNodes[0].textContent.match(/\S+/)[0];
         var id_in_url = window.location.href.match(/users\/(\d+)\/?$/)[1];
+        var userpic_el = document.querySelector('.pan');
+        // If we can grab this person's userpic, send it off to CreepSheild for testing.
+        if (userpic_el) {
+            var userpic_src = userpic_el.getAttribute('src');
+            // This will check and call back to the renderer, so we can move on now.
+            FAADE.creepShield.checkPhotoUrl(userpic_src);
+        }
 
         // If we're not viewing our own profile page, insert a report link.
         usr_ops = document.querySelector('#main_content p.quiet');
@@ -847,7 +1114,7 @@ FAADE.main = function () {
                 details_html += '<li class="faade_abuse_report_location">' + abuse_reports[iy].childNodes[6].innerHTML + '</li></ul>';
                 var permalink_html = '<a class="faade_abuse_reported_datetime" rel="bookmark" href="'
                     + window.location + '#faade_abuse_report-' + num.toString()
-                    + '" title="Permalink for FAADE abuse report number ' + num.toString() + ' against '
+                    + '" title="Permalink for PAT-FetLife abuse report number ' + num.toString() + ' against '
                     + profile_nick + '.">' +  abuse_reports[iy].childNodes[1].innerHTML + '</a>';
                 tr.innerHTML += '<th>Abuse report ' + num.toString() + ' (' + permalink_html + '):' + details_html + '</th>';
                 tr.innerHTML += '<td>' + abuse_reports[iy].childNodes[5].innerHTML + '</td>';
