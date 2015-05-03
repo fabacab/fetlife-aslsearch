@@ -34,19 +34,27 @@ If [maybemaimed.com is censored](http://maybemaimed.com/where-im-censored/) wher
 
 To use FetLife Age/Sex/Location Search, [log in to your FetLife.com account](https://fetlife.com/login) and click the "A/S/L?" checkbox in the top navigation bar, near the Search box.
 
-You will be presented with a number of additional options that allow you to define your search criteria based on profile fields. Enter your desired search criteria, as shown.
+![Screenshot of modified FetLife toolbar with the "A/S/L?" add-on installed.](http://i.imgur.com/h3Ahsvg.png)
 
-![Screenshot of form fields for FetLife Age/Sex/Location Search.](http://i.imgur.com/k6YEm.png)
+You will be presented with a number of additional options that allow you to define your search criteria based on various profile fields. Enter your desired search criteria, as shown.
 
-The image above shows selections that will search for the profile of any person whose gender/sex is Male or FtM, who is between the ages of 21 and 28 (inclusive), and who identifies as a submissive, slave, pet,  bottom, or masochist. Once you've made your selections, click the `Mine! (I mean, uh, search…)` button. A progress bar will replace the search button showing you how many pages have been searched for a match, as shown below:
+![Screenshot of form fields for FetLife Age/Sex/Location Search.](http://i.imgur.com/CrqeKsC.png)
+
+The image above shows selections that will search for the profile of any person whose gender/sex is Male or FtM, who is between the ages of 21 and 28 (inclusive), and who identifies as a submissive, slave, pet,  bottom, or masochist.
+
+Click the "Help with <option name>" links to learn more about specific search options. Helpful pop-ups will explain the option in further detail, as shown here:
+
+![Screenshot of the "Help with search set" pop-up.](http://i.imgur.com/ZHZylIB.png)
+
+When you're viewing any group, event, fetish, Kinkster Search result, or user profile page, you'll also be given the option to filter your search to members of the group, attendees of the event, profiles with that fetish, profiles that match the search result set, or user's friend list regardless of the geographic location listed in their profile. You can optionally filter these group, event, fetish, Kinkster Search result, or user's friend list search results by entering the name of a city, state, or country. Leave the `located in` field blank if you don't want to filter the results.
+
+Once you've made your selections, click the `Mine! (I mean, uh, search…)` button. A progress bar will replace the search button, with each dot representing how many pages in your chosen search set have been searched for a match, as shown below:
 
 ![Screenshot of FetLife Age/Sex/Location Search running a search.](http://i.imgur.com/zRBnN.png)
 
 When a match is found, it will automatically appear with a link allowing you to send a message to them. The progress bar will again be replaced with a button allowing you to continue the search. This is shown in the image below:
 
 ![Screenshot of FetLife Age/Sex/Location Search having found a match.](http://i.imgur.com/0p66t.png)
-
-When you're viewing any group, event, fetish, Kinkster Search result, or user profile page, you'll also be given the option to filter your search to members of the group, attendees of the event, profiles with that fetish, profiles that match the search result set, or user's friend list regardless of the geographic location listed in their profile. You can optionally filter these group, event, fetish, Kinkster Search result, or user's friend list search results by entering the name of a city, state, or country. Leave the `located in` field blank if you don't want to filter the results.
 
 To start a new search, simply reload the page.
 
@@ -67,10 +75,14 @@ As of version 0.3.6 of the FetLife Age/Sex/Location Search script, you can also 
 
 FetLife recently began automatically banning accounts that they suspect use unapproved tools (like this script) to make your FetLife experience more of what you want it to be. The good news is that if you email the FetLife carebears you might be able to convince them to reactivate your account. It's important that you insist you were not using any unapproved tools (like this script) to increase your chances of getting your account reactivated.
 
-The latest version of this script includes an "Online search speed: Wait X seconds per page" option that lets you control how quickly your search proceeds; the higher you set this value, the safer your account, but the slower your searches will be. Future versions of this script will prioritize search speed while remaining stealth to keep your account active.
+The latest version of this script includes an "Online search speed: Wait X seconds per page" option that lets you control how quickly your search proceeds. The higher (more stealthy) you set this value, the safer your account, but the slower your searches will be. Future versions of this script will prioritize search speed while remaining stealth to keep your account active.
 
 ## Change log
 
+* Version 0.3.10
+    * Improved user interface.
+        * Detailed help for search options is now available as in-page pop-ups.
+        * The "Online search speed" option is now presented as a slider.
 * Version 0.3.9
     * New option to control online search speed. FetLife has begun banning accounts that use this script if the search speed is too fast. Setting the "Online search speed" value higher will cause your searches to be slower, but is less likely to trigger FetLife's auto-ban.
     * Enable all F-like search options.
