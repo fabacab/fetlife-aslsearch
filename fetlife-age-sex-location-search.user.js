@@ -646,7 +646,7 @@ FL_ASL.ProfileScraper.getAge = function () {
 };
 FL_ASL.ProfileScraper.getGender = function () {
     var x = $x('//h2/*[@class[contains(., "quiet")]]');
-    var ret;
+    var ret = '';
     if (x.length) {
         y = x[0].textContent.match(/[^\d ]+/);
         if (y) {
@@ -657,7 +657,7 @@ FL_ASL.ProfileScraper.getGender = function () {
 };
 FL_ASL.ProfileScraper.getRole = function (body) {
     var x = $x('//h2/*[@class[contains(., "quiet")]]');
-    var ret;
+    var ret = '';
     if (x.length) {
         y = x[0].textContent.match(/ .+/);
         if (y) {
@@ -668,7 +668,7 @@ FL_ASL.ProfileScraper.getRole = function (body) {
 };
 FL_ASL.ProfileScraper.getFriendCount = function (body) {
     var x = $x('//h4[starts-with(., "Friends")]');
-    var ret;
+    var ret = 0;
     if (x.length) {
         ret = x[0].textContent.match(/\(([\d,]+)\)/)[1].replace(',', '');
     }
@@ -702,7 +702,7 @@ FL_ASL.ProfileScraper.getAvatar = function () {
 };
 FL_ASL.ProfileScraper.getSexualOrientation = function () {
     var x = $x('//table//th[starts-with(., "orientation")]/following-sibling::td');
-    var ret;
+    var ret = '';
     if (x.length) {
         ret = x[0].textContent.trim();
     }
@@ -710,7 +710,7 @@ FL_ASL.ProfileScraper.getSexualOrientation = function () {
 };
 FL_ASL.ProfileScraper.getInterestLevel = function () {
     var x = $x('//table//th[starts-with(., "active")]/following-sibling::td');
-    var ret;
+    var ret = [];
     if (x.length) {
         ret = x[0].textContent.trim();
     }
@@ -718,7 +718,7 @@ FL_ASL.ProfileScraper.getInterestLevel = function () {
 };
 FL_ASL.ProfileScraper.getLookingFor = function () {
     var x = $x('//table//th[starts-with(., "is looking for")]/following-sibling::td');
-    var ret;
+    var ret = [];
     if (x.length) {
         ret = x[0].innerHTML.split('<br>');
     }
@@ -780,11 +780,21 @@ FL_ASL.ProfileScraper.getFetishesCuriousAbout = function () {
     }
     return ret;
 };
-FL_ASL.ProfileScraper.getLatestPics = function () {
-    // TODO:
+FL_ASL.ProfileScraper.getPicturesCount = function () {
+    var el = document.getElementById('user_pictures_link');
+    var ret = 0;
+    if (el) {
+        ret = el.nextSibling.textContent.match(/\d+/)[0];
+    }
+    return ret;
 };
-FL_ASL.ProfileScraper.getLatestVids = function () {
-    // TODO:
+FL_ASL.ProfileScraper.getVideosCount = function () {
+    var el = document.getElementById('user_videos_link');
+    var ret = 0;
+    if (el) {
+        ret = el.nextSibling.textContent.match(/\d+/)[0];
+    }
+    return ret;
 };
 FL_ASL.ProfileScraper.getLatestPosts = function () {
     // TODO:
@@ -827,8 +837,8 @@ FL_ASL.scrapeProfile = function (user_id) {
         'last_activity': FL_ASL.ProfileScraper.getLastActivity(),
         'fetishes_into': FL_ASL.ProfileScraper.getFetishesInto(),
         'fetishes_curious_about': FL_ASL.ProfileScraper.getFetishesCuriousAbout(),
-        'latest_pics': FL_ASL.ProfileScraper.getLatestPics(),
-        'latest_vids': FL_ASL.ProfileScraper.getLatestVids(),
+        'latest_pics': FL_ASL.ProfileScraper.getPicturesCount(),
+        'latest_vids': FL_ASL.ProfileScraper.getVideosCount(),
         'latest_posts': FL_ASL.ProfileScraper.getLatestPosts(),
         'groups_lead': FL_ASL.ProfileScraper.getGroupsLead(),
         'groups_member_of': FL_ASL.ProfileScraper.getGroupsMemberOf(),
