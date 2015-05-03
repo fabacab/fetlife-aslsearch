@@ -9,6 +9,7 @@
 // @namespace      http://maybemaimed.com/playground/fetlife-aslsearch/
 // @updateURL      https://github.com/meitar/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js
 // @description    Allows you to search for FetLife profiles based on age, sex, location, and role.
+// @require        https://code.jquery.com/jquery-2.1.4.min.js
 // @include        https://fetlife.com/administrative_areas*
 // @include        https://fetlife.com/cities*
 // @include        https://fetlife.com/countries*
@@ -23,6 +24,7 @@
 // @include        https://fetlife.com/search*
 // @include        https://fetlife.com/users*
 // @include        https://fetlife.com/videos*
+// @include        https://www.creepshield.com/search*
 // @exclude        https://fetlife.com/adgear/*
 // @exclude        https://fetlife.com/chat/*
 // @exclude        https://fetlife.com/im_sessions*
@@ -34,7 +36,9 @@
 
 FL_ASL = {};
 FL_ASL.CONFIG = {
-    'debug': false, // switch to true to debug.
+    'debug': true, // switch to true to debug.
+    'gasapp_url': 'https://script.google.com/macros/s/AKfycbz5XZeR_99CVvqjdO6jZrzU1F4fq-skVsVZup3SH4UeQ3dmf7M/exec',
+    'gasapp_url_development': 'https://script.google.com/macros/s/AKfycbzmr_X2Qdgk9pa_YXq8oaksRI4YA-hdmNRCmVO5OfM/dev',
     'progress_id': 'fetlife_asl_search_progress',
     'min_matches': 1, // show at least this many matches before offering to search again
     'search_sleep_interval': 3 // default wait time in seconds between auto-searches
@@ -47,6 +51,59 @@ FL_ASL.log = function (msg) {
     if (!FL_ASL.CONFIG.debug) { return; }
     GM_log('FETLIFE ASL SEARCH: ' + msg);
 };
+
+// XPath Helper function
+// @see http://wiki.greasespot.net/XPath_Helper
+function $x() {
+  var x='';
+  var node=document;
+  var type=0;
+  var fix=true;
+  var i=0;
+  var cur;
+
+  function toArray(xp) {
+    var final=[], next;
+    while (next=xp.iterateNext()) {
+      final.push(next);
+    }
+    return final;
+  }
+
+  while (cur=arguments[i++]) {
+    switch (typeof cur) {
+      case "string": x+=(x=='') ? cur : " | " + cur; continue;
+      case "number": type=cur; continue;
+      case "object": node=cur; continue;
+      case "boolean": fix=cur; continue;
+    }
+  }
+
+  if (fix) {
+    if (type==6) type=4;
+    if (type==7) type=5;
+  }
+
+  // selection mistake helper
+  if (!/^\//.test(x)) x="//"+x;
+
+  // context mistake helper
+  if (node!=document && !/^\./.test(x)) x="."+x;
+
+  var result=document.evaluate(x, node, null, type, null);
+  if (fix) {
+    // automatically return special type
+    switch (type) {
+      case 1: return result.numberValue;
+      case 2: return result.stringValue;
+      case 3: return result.booleanValue;
+      case 8:
+      case 9: return result.singleNodeValue;
+    }
+  }
+
+  return fix ? toArray(result) : result;
+}
 
 // Initializations.
 var uw = (unsafeWindow) ? unsafeWindow : window ; // Help with Chrome compatibility?
@@ -425,9 +482,7 @@ FL_ASL.displayResult = function (el) {
     document.getElementById('fetlife_asl_search_results').appendChild(el);
 };
 
-// This is the main() function, executed on page load.
-FL_ASL.main = function () {
-    // Insert ASL search button interface at FetLife "Search" bar.
+FL_ASL.attachSearchForm = function () {
     var label = document.createElement('label');
     label.innerHTML = 'A/S/L?';
     var input = document.createElement('input');
@@ -443,18 +498,17 @@ FL_ASL.main = function () {
     div.setAttribute('style', 'display: none;');
     html_string = '<fieldset><legend>Search for user profiles of the following gender/sex:</legend><p>';
     html_string += 'Show me profiles of people with a gender/sex of&hellip;';
-    // NOTE: What if the UI only allowed us to find male-ish identified people, not women? What would the response be? :)
     html_string += '<label><input type="checkbox" name="user[sex]" value="M" checked="checked" /> Male</label>';
-//    html_string += '<label><input type="checkbox" name="user[sex]" value="F" /> Female</label>';
-//    html_string += '<label><input type="checkbox" name="user[sex]" value="CD/TV" />Crossdresser/Transvestite</label>';
-//    html_string += '<label><input type="checkbox" name="user[sex]" value="MtF" />Trans - Male to Female</label>';
+    html_string += '<label><input type="checkbox" name="user[sex]" value="F" /> Female</label>';
+    html_string += '<label><input type="checkbox" name="user[sex]" value="CD/TV" />Crossdresser/Transvestite</label>';
+    html_string += '<label><input type="checkbox" name="user[sex]" value="MtF" />Trans - Male to Female</label>';
     html_string += '<label><input type="checkbox" name="user[sex]" value="FtM" checked="checked" />Trans - Female to Male</label>';
     html_string += '<label><input type="checkbox" name="user[sex]" value="TG" />Transgender</label>';
     html_string += '<label><input type="checkbox" name="user[sex]" value="GF" />Gender Fluid</label>';
     html_string += '<label><input type="checkbox" name="user[sex]" value="GQ" />Genderqueer</label>';
     html_string += '<label><input type="checkbox" name="user[sex]" value="IS" />Intersex</label>';
     html_string += '<label><input type="checkbox" name="user[sex]" value="B" />Butch</label>';
-//    html_string += '<label><input type="checkbox" name="user[sex]" value="FEM" />Femme</label>';
+    html_string += '<label><input type="checkbox" name="user[sex]" value="FEM" />Femme</label>';
     html_string += '</p></fieldset>';
     html_string += '<fieldset><legend>Search for user profiles between the ages of:</legend><p>';
     html_string += '&hellip;who are also <label>at least <input type="text" name="min_age" id="min_age" placeholder="18" size="2" /> years old</label> and <label>at most <input type="text" name="max_age" id="max_age" placeholder="92" size="2" /> years old&hellip;</label>';
@@ -487,8 +541,7 @@ FL_ASL.main = function () {
     html_string += '<label><input type="checkbox" name="user[role]" value="Hedonist" />Hedonist</label>';
     html_string += '<label><input type="checkbox" name="user[role]" value="Vanilla" />Vanilla</label>';
     html_string += '<label><input type="checkbox" name="user[role]" value="Unsure" />Unsure</label>';
-    // Note that "Not Applicable" is the equivalent of "it doesn't matter", so we omit this.
-    //html_string += '<label><input type="checkbox" name="user[role]" value="" />Not Applicable</label>';
+    html_string += '<label><input type="checkbox" name="user[role]" value="" />Not Applicable</label>';
     html_string += '</p></fieldset>';
     html_string += '<fieldset><legend>Search for user profiles located in:</legend><p>';
     html_string += '&hellip;from ';
@@ -544,6 +597,259 @@ FL_ASL.main = function () {
     prog = document.createElement('p');
     prog.setAttribute('id', FL_ASL.CONFIG.progress_id);
     FL_ASL.CONFIG.search_form.appendChild(prog);
+};
+
+// ****************************************************
+//
+// Google Apps Script interface
+//
+// ****************************************************
+FL_ASL.GAS = {};
+FL_ASL.GAS.ajaxPost = function (data)  {
+    FL_ASL.log('POSTing profile data for ' + data.nickname + ' (' + data.user_id + ')');
+//    console.log(data);
+    var url = (FL_ASL.CONFIG.debug)
+        ? FL_ASL.CONFIG.gasapp_url_development
+        : FL_ASL.CONFIG.gasapp_url;
+    GM_xmlhttpRequest({
+        'method': 'POST',
+        'url': url,
+        'data': 'post_data=' + encodeURIComponent(JSON.stringify(data)),
+        'headers': {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        'onload': function (response) {
+//            console.log(response);
+        }
+    });
+};
+
+// ****************************************************
+//
+// Scrapers
+//
+// ****************************************************
+FL_ASL.ProfileScraper = {};
+FL_ASL.ProfileScraper.getNickname = function () {
+    return document.title.split(' - ')[0];
+};
+FL_ASL.ProfileScraper.getAge = function () {
+    var x = $x('//h2/*[@class[contains(., "quiet")]]');
+    var ret;
+    if (x.length) {
+        y = x[0].textContent.match(/^\d+/);
+        if (y) {
+            ret = y[0];
+        }
+    }
+    return ret;
+};
+FL_ASL.ProfileScraper.getGender = function () {
+    var x = $x('//h2/*[@class[contains(., "quiet")]]');
+    var ret;
+    if (x.length) {
+        y = x[0].textContent.match(/[^\d ]+/);
+        if (y) {
+            ret = y[0];
+        }
+    }
+    return ret;
+};
+FL_ASL.ProfileScraper.getRole = function (body) {
+    var x = $x('//h2/*[@class[contains(., "quiet")]]');
+    var ret;
+    if (x.length) {
+        y = x[0].textContent.match(/ .+/);
+        if (y) {
+            ret = y[0].trim();
+        }
+    }
+    return ret;
+};
+FL_ASL.ProfileScraper.getFriendCount = function (body) {
+    var x = $x('//h4[starts-with(., "Friends")]');
+    var ret;
+    if (x.length) {
+        ret = x[0].textContent.match(/\(([\d,]+)\)/)[1].replace(',', '');
+    }
+    return ret;
+};
+FL_ASL.ProfileScraper.isPaidAccount = function () {
+    return (document.querySelector('.fl-badge')) ? true : false;
+};
+FL_ASL.ProfileScraper.getLocation = function () {
+    var x = $x('//h2[@class="bottom"]/following-sibling::p//a');
+    var ret = {};
+    if (3 === x.length) {
+        ret['country'] = x[2].textContent;
+        ret['region'] = x[1].textContent;
+        ret['locality'] = x[0].textContent;
+    } else if (2 === x.length) {
+        ret['country'] = x[1].textContent;
+        ret['region'] = x[0].textContent;
+    } else if (1 === x.length) {
+        ret['country'] = x[0].textContent;
+    }
+    return ret;
+};
+FL_ASL.ProfileScraper.getAvatar = function () {
+    var el = document.querySelector('.pan');
+    var ret;
+    if (el) {
+        ret = el.src;
+    }
+    return ret;
+};
+FL_ASL.ProfileScraper.getSexualOrientation = function () {
+    var x = $x('//table//th[starts-with(., "orientation")]/following-sibling::td');
+    var ret;
+    if (x.length) {
+        ret = x[0].textContent.trim();
+    }
+    return ret;
+};
+FL_ASL.ProfileScraper.getInterestLevel = function () {
+    var x = $x('//table//th[starts-with(., "active")]/following-sibling::td');
+    var ret;
+    if (x.length) {
+        ret = x[0].textContent.trim();
+    }
+    return ret;
+};
+FL_ASL.ProfileScraper.getLookingFor = function () {
+    var x = $x('//table//th[starts-with(., "is looking for")]/following-sibling::td');
+    var ret;
+    if (x.length) {
+        ret = x[0].innerHTML.split('<br>');
+    }
+    return ret;
+};
+FL_ASL.ProfileScraper.getRelationships = function () {
+    var x = $x('//table//th[starts-with(., "relationship status")]/following-sibling::td//a');
+    var ret = [];
+    for (var i = 0; i < x.length; i++) {
+        ret.push(x[i].href.match(/\d+$/)[0]);
+    }
+    return ret;
+};
+FL_ASL.ProfileScraper.getDsRelationships = function () {
+    var x = $x('//table//th[starts-with(., "D/s relationship status")]/following-sibling::td//a');
+    var ret = [];
+    for (var i = 0; i < x.length; i++) {
+        ret.push(x[i].href.match(/\d+$/)[0]);
+    }
+    return ret;
+};
+FL_ASL.ProfileScraper.getBio = function () {
+    var html = '';
+    jQuery($x('//h3[@class][starts-with(., "About me")]')).nextUntil('h3.bottom').each(function () {
+        html += jQuery(this).html();
+    });
+    return html;
+};
+FL_ASL.ProfileScraper.getWebsites = function () {
+    var x = $x('//h3[@class="bottom"][starts-with(., "Websites")]/following-sibling::ul[1]//a');
+    var ret = [];
+    for (var i = 0; i < x.length; i++) {
+        ret.push(x[i].textContent.trim());
+    }
+    return ret;
+};
+FL_ASL.ProfileScraper.getLastActivity = function () {
+    // TODO: Convert this relative date string to a timestamp
+    var x = document.querySelector('#mini_feed .quiet');
+    var ret;
+    if (x) {
+        ret = x.textContent.trim();
+    }
+    return ret;
+};
+FL_ASL.ProfileScraper.getFetishesInto = function () {
+    var x = $x('//h3[@class="bottom"][starts-with(., "Fetishes")]/following-sibling::p[1]//a');
+    var ret = [];
+    for (var i = 0; i < x.length; i++) {
+        ret.push(x[i].textContent.trim());
+    }
+    return ret;
+};
+FL_ASL.ProfileScraper.getFetishesCuriousAbout = function () {
+    var x = $x('//h3[@class="bottom"][starts-with(., "Fetishes")]/following-sibling::p[2]//a');
+    var ret = [];
+    for (var i = 0; i < x.length; i++) {
+        ret.push(x[i].textContent.trim());
+    }
+    return ret;
+};
+FL_ASL.ProfileScraper.getLatestPics = function () {
+    // TODO:
+};
+FL_ASL.ProfileScraper.getLatestVids = function () {
+    // TODO:
+};
+FL_ASL.ProfileScraper.getLatestPosts = function () {
+    // TODO:
+};
+FL_ASL.ProfileScraper.getGroupsLead = function () {
+    // TODO:
+};
+FL_ASL.ProfileScraper.getGroupsMemberOf = function () {
+    // TODO:
+};
+FL_ASL.ProfileScraper.getEventsGoingTo = function () {
+    // TODO:
+};
+FL_ASL.ProfileScraper.getEventsMaybeGoingTo = function () {
+    // TODO:
+};
+
+FL_ASL.scrapeProfile = function (user_id) {
+    if (!window.location.pathname.endsWith(user_id)) {
+        FL_ASL.log('Profile page does not match ' + user_id);
+        return false;
+    }
+    var profile_data = {
+        'user_id': user_id,
+        'nickname': FL_ASL.ProfileScraper.getNickname(),
+        'age': FL_ASL.ProfileScraper.getAge(),
+        'gender': FL_ASL.ProfileScraper.getGender(),
+        'role': FL_ASL.ProfileScraper.getRole(),
+        'friend_count': FL_ASL.ProfileScraper.getFriendCount(),
+        'paid_account': FL_ASL.ProfileScraper.isPaidAccount(),
+        'location': FL_ASL.ProfileScraper.getLocation(),
+        'avatar_url': FL_ASL.ProfileScraper.getAvatar(),
+        'sexual_orientation': FL_ASL.ProfileScraper.getSexualOrientation(),
+        'interest_level': FL_ASL.ProfileScraper.getInterestLevel(),
+        'looking_for': FL_ASL.ProfileScraper.getLookingFor(),
+        'relationships': FL_ASL.ProfileScraper.getRelationships(),
+        'ds_relationships': FL_ASL.ProfileScraper.getDsRelationships(),
+        'bio': FL_ASL.ProfileScraper.getBio(),
+        'websites': FL_ASL.ProfileScraper.getWebsites(),
+        'last_activity': FL_ASL.ProfileScraper.getLastActivity(),
+        'fetishes_into': FL_ASL.ProfileScraper.getFetishesInto(),
+        'fetishes_curious_about': FL_ASL.ProfileScraper.getFetishesCuriousAbout(),
+        'latest_pics': FL_ASL.ProfileScraper.getLatestPics(),
+        'latest_vids': FL_ASL.ProfileScraper.getLatestVids(),
+        'latest_posts': FL_ASL.ProfileScraper.getLatestPosts(),
+        'groups_lead': FL_ASL.ProfileScraper.getGroupsLead(),
+        'groups_member_of': FL_ASL.ProfileScraper.getGroupsMemberOf(),
+        'events_going_to': FL_ASL.ProfileScraper.getEventsGoingTo(),
+        'events_maybe_going_to': FL_ASL.ProfileScraper.getEventsMaybeGoingTo()
+    };
+//    console.log();
+    FL_ASL.GAS.ajaxPost(profile_data);
+}
+
+// This is the main() function, executed on page load.
+FL_ASL.main = function () {
+    // Insert ASL search button interface at FetLife "Search" bar.
+    FL_ASL.attachSearchForm();
+    // If we're on a profile page,
+    var m;
+    if (m = window.location.pathname.match(/users\/(\d+)/)) {
+        FL_ASL.log('Scraping profile ' + m[1]);
+        FL_ASL.scrapeProfile(m[1]);
+    }
+    // TODO: Also scrape the "user_in_list" boxes of various other pages.
 };
 
 // The following is required for Chrome compatibility, as we need "text/html" parsing.
