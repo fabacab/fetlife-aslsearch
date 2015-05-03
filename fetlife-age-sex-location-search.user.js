@@ -5,7 +5,7 @@
  */
 // ==UserScript==
 // @name           FetLife ASL Search
-// @version        0.3.8
+// @version        0.3.9
 // @namespace      http://maybemaimed.com/playground/fetlife-aslsearch/
 // @updateURL      https://github.com/meitar/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js
 // @description    Allows you to search for FetLife profiles based on age, sex, location, and role.
@@ -36,7 +36,8 @@ FL_ASL = {};
 FL_ASL.CONFIG = {
     'debug': false, // switch to true to debug.
     'progress_id': 'fetlife_asl_search_progress',
-    'min_matches': 1 // show at least this many matches before offering to search again
+    'min_matches': 1, // show at least this many matches before offering to search again
+    'search_sleep_interval': 3 // default wait time in seconds between auto-searches
 };
 
 FL_ASL.total_result_count = 0; // How many matches have we found, across all pages, on this load?
@@ -286,10 +287,15 @@ FL_ASL.getKinkstersInSearch = function (search_string, page) {
     FL_ASL.getKinkstersFromURL(url);
 };
 FL_ASL.getKinkstersFromURL = function (url) {
+    var now = new Date(Date.now());
+    FL_ASL.log('Current time: ' + now.toUTCString());
     FL_ASL.log('Getting Kinksters list from URL: ' + url);
     // Set minimum matches, if that's been asked for.
     if (document.getElementById('fl_asl_min_matches').value) {
         FL_ASL.CONFIG.min_matches = document.getElementById('fl_asl_min_matches').value;
+    }
+    if (document.getElementById('fl_asl_search_sleep_interval').value) {
+        FL_ASL.CONFIG.search_sleep_interval = document.getElementById('fl_asl_search_sleep_interval').value;
     }
     prog = document.getElementById(FL_ASL.CONFIG.progress_id);
     prog.innerHTML = prog.innerHTML + '.';
@@ -326,7 +332,7 @@ FL_ASL.getKinkstersFromURL = function (url) {
 
             // Automatically search on next page if no or too few results were found.
             if (0 === result_count || FL_ASL.CONFIG.min_matches >= FL_ASL.total_result_count) {
-                FL_ASL.getKinkstersFromURL(next_url);
+                setTimeout(FL_ASL.getKinkstersFromURL, FL_ASL.CONFIG.search_sleep_interval * 1000, next_url);
                 return false;
             } else {
                 // Reset total_result_count for this load.
@@ -512,6 +518,9 @@ FL_ASL.main = function () {
     html_string += '.</p></fieldset>';
     html_string += '<fieldset><legend>Result set options:</legend><p>';
     html_string += '<label>Return at least <input id="fl_asl_min_matches" name="fl_asl_min_matches" value="" placeholder="1" size="2" /> matches per search.</label> (Set this lower if no results seem to ever appear.)';
+    html_string += '</p></fieldset>';
+    html_string += '<fieldset><legend>Search speed options:</legend><p>';
+    html_string += '<label>Online search speed: Wait <input id="fl_asl_search_sleep_interval" name="fl_asl_search_sleep_interval" value="" placeholder="3" size="2" /> seconds per page.</label> (FetLife has begun banning accounts that search with this script too quickly. The higher you set this, the slower your search will be, but the less likely FetLife will notice that you are using this script.)';
     html_string += '</p></fieldset>';
     div.innerHTML = html_string;
     FL_ASL.CONFIG.search_form.appendChild(label);

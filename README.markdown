@@ -55,7 +55,7 @@ To start a new search, simply reload the page.
 Before you report a new issue with FetLife Age/Sex/Location Search, please check to ensure your question is not already addressed in the list below.
 
 * [Can I search in a location other than my own city, state, or country?](#can-i-search-in-a-location-other-than-my-own-city-state-or-country)
-* [Why can I only search for men, not women?](#why-can-i-only-search-for-men-not-women)
+* [I used this script and FetLife banned my account. What gives?](#i-used-this-script-and-fetlife-banned-my-account-what-gives)
 
 ### Can I search in a location other than my own city, state, or country?
 
@@ -63,12 +63,19 @@ The current version of FetLife Age/Sex/Location Search doesn't provide an interf
 
 As of version 0.3.6 of the FetLife Age/Sex/Location Search script, you can also view any group, event, fetish, Kinkster Search result, or user profile page to search for users in that group, event, fetish, search result list, or user's friend list regardless of where they say they live.
 
-### Why can I only search for men, not women?
+### I used this script and FetLife banned my account. What gives?
 
-Because fuck you [that's why](http://www.notjustbitchy.com/?p=496).
+FetLife recently began automatically banning accounts that they suspect use unapproved tools (like this script) to make your FetLife experience more of what you want it to be. The good news is that if you email the FetLife carebears you might be able to convince them to reactivate your account. It's important that you insist you were not using any unapproved tools (like this script) to increase your chances of getting your account reactivated.
+
+The latest version of this script includes an "Online search speed: Wait X seconds per page" option that lets you control how quickly your search proceeds; the higher you set this value, the safer your account, but the slower your searches will be. Future versions of this script will prioritize search speed while remaining stealth to keep your account active.
 
 ## Change log
 
+* Version 0.3.9
+    * New option to control online search speed. FetLife has begun banning accounts that use this script if the search speed is too fast. Setting the "Online search speed" value higher will cause your searches to be slower, but is less likely to trigger FetLife's auto-ban.
+    * Enable all F-like search options.
+* Version 0.3.8
+    * Disable `MtF` searches. Trans women are women.
 * Version 0.3.7
     * Offer a "return at least X matches per search" option for finding more matches more quickly.
 * Version 0.3.6
