@@ -79,6 +79,8 @@ The latest version of this script includes an "Online search speed: Wait X secon
 
 ## Change log
 
+* Version 0.3.11
+    * Improved stealthiness. This script is now "invisible" to FetLife because it no longer creates any extra HTTP traffic that can be used to detect its use from the network. Take care to use a reasonable "stealthy" search speed, for classic searches, though. **All users are strongly encouraged to update to this version.**
 * Version 0.3.10
     * Improved user interface.
         * Detailed help for search options is now available as in-page pop-ups.
