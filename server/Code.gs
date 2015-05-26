@@ -138,29 +138,106 @@ function processSearchForm (form_object) {
  */
 function buildQuery (params) {
   // always add "where C is not null" to the query to avoid getting inactive user IDs
-  var query = 'select L, B, C, D, E, F, G, I, J, K, M, N, O where C is not null';
+  var query = 'select H, L, B, C, D, E, F, G, I, J, K, M, N, O, W, X where C is not null';
   for (var x in params) {
     if (params[x]) {
       switch (x) {
+        case 'nickname[search]':
+          query += ' and C ' + params['nickname[operator]'] + " '" + params[x] + "'";
+          break;
+        case 'user[bio]':
+          query += ' and R ' + params['user[bio][operator]'] + ' "' + params[x] + '"';
+          break;
+        case 'user[websites]':
+          query += ' and S ' + params['user[websites][operator]'] + ' "' + params[x] + '"';
+          break;
+        case 'user[fetishes_into]':
+          query += ' and U ' + params['user[fetishes_into][operator]'] + ' "' + params[x] + '"';
+          break;
+        case 'user[fetishes_curious_about]':
+          query += ' and V ' + params['user[fetishes_curious_about][operator]'] + ' "' + params[x] + '"';
+          break;
         case 'min_age':
           query += ' and D <= ' + params[x];
           break;
         case 'max_age':
           query += ' and D >= ' + params[x];
           break;
+        case 'friends[count]':
+          query += ' and G ' + params['friends[operator]'] + ' ' + params[x];
+          break;
+        case 'friends[exclude_zero]':
+          query += ' and G != 0';
+          break;
+        case 'pictures[count]':
+          query += ' and W ' + params['pictures[operator]'] + ' ' + params[x];
+          break;
+        case 'pictures[exclude_zero]':
+          query += ' and W != 0';
+          break;
+        case 'videos[count]':
+          query += ' and X ' + params['videos[operator]'] + ' ' + params[x];
+          break;
+        case 'videos[exclude_zero]':
+          query += ' and X != 0';
+          break;
         case 'user[sex]':
           query += ' and (';
-          for (var i in params[x]) {
-            query += 'E="' + params[x][i] + '"';
-            if (i < params[x].length - 1) { query += ' or '; }
+          if ('object' === typeof(params[x])) {
+            for (var i in params[x]) {
+              query += 'E="' + params[x][i] + '"';
+              if (i < params[x].length - 1) { query += ' or '; }
+            }
+          } else {
+            query += 'E="' + params[x] + '"';
+          }
+          query += ')';
+          break;
+        case 'user[sexual_orientation]':
+          query += ' and (';
+          if ('object' === typeof(params[x])) {
+            for (var i in params[x]) {
+              query += 'M="' + params[x][i] + '"';
+              if (i < params[x].length - 1) { query += ' or '; }
+            }
+          } else {
+            query += 'M="' + params[x] + '"';
           }
           query += ')';
           break;
         case 'user[role]':
           query += ' and (';
-          for (var i in params[x]) {
-            query += 'F="' + params[x][i] + '"';
-            if (i < params[x].length - 1) { query += ' or '; }
+          if ('object' === typeof(params[x])) {
+            for (var i in params[x]) {
+              query += 'F="' + params[x][i] + '"';
+              if (i < params[x].length - 1) { query += ' or '; }
+            }
+          } else {
+            query += 'F="' + params[x] + '"';
+          }
+          query += ')';
+          break;
+        case 'user[activity_level]':
+          query += ' and (';
+          if ('object' === typeof(params[x])) {
+            for (var i in params[x]) {
+              query += 'N="' + params[x][i] + '"';
+              if (i < params[x].length - 1) { query += ' or '; }
+            }
+          } else {
+            query += 'N="' + params[x] + '"';
+          }
+          query += ')';
+          break;
+        case 'user[looking_for]':
+          query += ' and (';
+          if ('object' === typeof(params[x])) {
+            for (var i in params[x]) {
+              query += 'O contains "' + params[x][i] + '"';
+              if (i < params[x].length - 1) { query += ' or '; }
+            }
+          } else {
+            query += 'O contains "' + params[x] + '"';
           }
           query += ')';
           break;
@@ -168,11 +245,22 @@ function buildQuery (params) {
           var loc_cols = ['I', 'J', 'K'];
           query += ' and (';
           for (var i in loc_cols) {
-            query += loc_cols[i] + '=lower("' + params[x] + '")';
+            query += loc_cols[i] + '="' + params[x] + '"';
             if (i < loc_cols.length - 1) { query += ' or '; }
           }
           query += ')';
           break;
+        case 'user[type]':
+          if (params[x]) {
+            query += ' and H=' + params[x];
+          }
+          break;
+//        // TODO:
+//        case 'user[vanilla_relationships]':
+//          if (params[x]) {
+//            query += ' and P ' + params[x];
+//          }
+//          break;
       }
     }
   }

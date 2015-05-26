@@ -6,8 +6,11 @@ function showSearchResults (results) {
   });
   var dataset = results.slice(1);
   var table = jQuery('#search-results').dataTable({
+    'destroy': true,
     'data': dataset,
     'columns': headers,
+    'responsive': true,
+    'dom': 'C<"clear">lfrtip',
     'language' : {
       'search' : 'Filter results:'
     }
@@ -18,86 +21,231 @@ function showSearchResults (results) {
 <!-- TODO: i18n!! -->
 <form id="search-form">
 <input type="hidden" name="action" value="query" />
+<fieldset><legend>Search for user profiles with a nickname like:</legend>
+  <p>
+    Search for profiles with a nickname like:
+    <label><input type="search" name="nickname[search]" placeholder="type part of a username" /></label>
+    (<label>as <select name="nickname[operator]">
+      <option value="contains">substring</option>
+      <option value="starts with">prefix</option>
+      <option value="ends with">suffix</option>
+      <option value="matches">regular expression</option>
+      <option value="like">SQL-like wildcards</option>
+    </select></label>)
+  </p>
+</fieldset>
+<fieldset><legend>Search for user profiles with a sexual orientation of:</legend>
+  <p>
+    Show me profiles of people who are&hellip;
+    <label><input type="checkbox" value="Straight" name="user[sexual_orientation]">Straight</label>
+    <label><input type="checkbox" value="Heteroflexible" name="user[sexual_orientation]">Heteroflexible</label>
+    <label><input type="checkbox" value="Bisexual" name="user[sexual_orientation]">Bisexual</label>
+    <label><input type="checkbox" value="Homoflexible" name="user[sexual_orientation]">Homoflexible</label>
+    <label><input type="checkbox" value="Gay" name="user[sexual_orientation]">Gay</label>
+    <label><input type="checkbox" value="Lesbian" name="user[sexual_orientation]">Lesbian</label>
+    <label><input type="checkbox" value="Queer" name="user[sexual_orientation]">Queer</label>
+    <label><input type="checkbox" value="Pansexual" name="user[sexual_orientation]">Pansexual</label>
+    <label><input type="checkbox" value="Fluctuating/Evolving" name="user[sexual_orientation]">Fluctuating/Evolving</label>
+    <label><input type="checkbox" value="Asexual" name="user[sexual_orientation]">Asexual</label>
+    <label><input type="checkbox" value="Unsure" name="user[sexual_orientation]">Unsure</label>
+    <label><input type="checkbox" value="Not Applicable" name="user[sexual_orientation]">Not Applicable</label>
+  </p>
+</fieldset>
 <fieldset><legend>Search for user profiles of the following gender/sex:</legend>
   <p>
     Show me profiles of people with a gender/sex of&hellip;
-    <label>
-      <input type="checkbox" value="M" name="user[sex]"> Male
-    </label>
-    <label>
-       <input type="checkbox" value="F" name="user[sex]"> Female
-    </label>
-    <label>
-      <input type="checkbox" value="CD/TV" name="user[sex]">Crossdresser/Transvestite
-    </label>
-    <label>
-      <input type="checkbox" value="MtF" name="user[sex]">Trans - Male to Female
-    </label>
-    <label>
-      <input type="checkbox" value="FtM" name="user[sex]">Trans - Female to Male
-    </label>
-    <label>
-      <input type="checkbox" value="TG" name="user[sex]">Transgender
-    </label>
-    <label>
-      <input type="checkbox" value="GF" name="user[sex]">Gender Fluid
-    </label>
-    <label>
-      <input type="checkbox" value="GQ" name="user[sex]">Genderqueer
-    </label>
-    <label>
-      <input type="checkbox" value="IS" name="user[sex]">Intersex
-    </label>
-    <label>
-      <input type="checkbox" value="B" name="user[sex]">Butch
-    </label>
-    <label>
-      <input type="checkbox" value="FEM" name="user[sex]">Femme
-    </label>
+    <label><input type="checkbox" value="M" name="user[sex]"> Male</label>
+    <label><input type="checkbox" value="F" name="user[sex]"> Female</label>
+    <label><input type="checkbox" value="CD/TV" name="user[sex]">Crossdresser/Transvestite</label>
+    <label><input type="checkbox" value="MtF" name="user[sex]">Trans - Male to Female</label>
+    <label><input type="checkbox" value="FtM" name="user[sex]">Trans - Female to Male</label>
+    <label><input type="checkbox" value="TG" name="user[sex]">Transgender</label>
+    <label><input type="checkbox" value="GF" name="user[sex]">Gender Fluid</label>
+    <label><input type="checkbox" value="GQ" name="user[sex]">Genderqueer</label>
+    <label><input type="checkbox" value="IS" name="user[sex]">Intersex</label>
+    <label><input type="checkbox" value="B" name="user[sex]">Butch</label>
+    <label><input type="checkbox" value="FEM" name="user[sex]">Femme</label>
   </p>
 </fieldset>
 <fieldset><legend>Search for user profiles between the ages of:</legend>
   <p>
-    …who are also <!-- TODO: Use a jQuery UI range slider https://jqueryui.com/resources/demos/slider/range.html -->
+    &hellip;who are also <!-- TODO: Use a jQuery UI range slider https://jqueryui.com/resources/demos/slider/range.html -->
     <label>at least <input type="number" size="2" min="18" max="92" placeholder="18" id="min_age" name="min_age"> years old</label>
     and
-    <label>at most <input type="number" size="2" min="18" max="92" placeholder="92" id="max_age" name="max_age"> years old…</label>
+    <label>at most <input type="number" size="2" min="18" max="92" placeholder="92" id="max_age" name="max_age"> years old&hellip;</label>
   </p>
 </fieldset>
 <fieldset><legend>Search for user profiles whose role is:</legend>
   <p>
-    …who identify their role as
-    <label><input type="checkbox" value="Dom" name="user[role]">Dominant</label>
-    <label><input type="checkbox" value="Domme" name="user[role]">Domme</label>
-    <label><input type="checkbox" value="Switch" name="user[role]">Switch</label>
-    <label><input type="checkbox" value="sub" name="user[role]">submissive</label>
-    <label><input type="checkbox" value="Master" name="user[role]">Master</label>
-    <label><input type="checkbox" value="Mistress" name="user[role]">Mistress</label>
-    <label><input type="checkbox" value="slave" name="user[role]">slave</label>
-    <label><input type="checkbox" value="pet" name="user[role]">pet</label>
-    <label><input type="checkbox" value="kajira" name="user[role]">kajira</label>
-    <label><input type="checkbox" value="kajirus" name="user[role]">kajirus</label>
-    <label><input type="checkbox" value="Top" name="user[role]">Top</label>
-    <label><input type="checkbox" value="bottom" name="user[role]">Bottom</label>
-    <label><input type="checkbox" value="Sadist" name="user[role]">Sadist</label>
-    <label><input type="checkbox" value="Masochist" name="user[role]">Masochist</label>
-    <label><input type="checkbox" value="Sadomasochist" name="user[role]">Sadomasochist</label>
-    <label><input type="checkbox" value="Ageplayer" name="user[role]">Ageplayer</label>
-    <label><input type="checkbox" value="Daddy" name="user[role]">Daddy</label>
-    <label><input type="checkbox" value="babygirl" name="user[role]">babygirl</label>
-    <label><input type="checkbox" value="brat" name="user[role]">brat</label>
-    <label><input type="checkbox" value="Primal" name="user[role]">Primal</label>
-    <label><input type="checkbox" value="Fetishist" name="user[role]">Fetishist</label>
-    <label><input type="checkbox" value="Kinkster" name="user[role]">Kinkster</label>
-    <label><input type="checkbox" value="Hedonist" name="user[role]">Hedonist</label>
-    <label><input type="checkbox" value="Vanilla" name="user[role]">Vanilla</label>
-    <label><input type="checkbox" value="Unsure" name="user[role]">Unsure</label>
-    <label><input type="checkbox" value="" name="user[role]">Not Applicable</label>
+    &hellip;who identify their role as
+    <label><input type="checkbox" value="Dom" name="user[role]" />Dominant</label>
+    <label><input type="checkbox" value="Domme" name="user[role]" />Domme</label>
+    <label><input type="checkbox" value="Switch" name="user[role]" />Switch</label>
+    <label><input type="checkbox" value="sub" name="user[role]" />submissive</label>
+    <label><input type="checkbox" value="Master" name="user[role]" />Master</label>
+    <label><input type="checkbox" value="Mistress" name="user[role]" />Mistress</label>
+    <label><input type="checkbox" value="slave" name="user[role]" />slave</label>
+    <label><input type="checkbox" value="pet" name="user[role]" />pet</label>
+    <label><input type="checkbox" value="kajira" name="user[role]" />kajira</label>
+    <label><input type="checkbox" value="kajirus" name="user[role]" />kajirus</label>
+    <label><input type="checkbox" value="Top" name="user[role]" />Top</label>
+    <label><input type="checkbox" value="bottom" name="user[role]" />Bottom</label>
+    <label><input type="checkbox" value="Sadist" name="user[role]" />Sadist</label>
+    <label><input type="checkbox" value="Masochist" name="user[role]" />Masochist</label>
+    <label><input type="checkbox" value="Sadomasochist" name="user[role]" />Sadomasochist</label>
+    <label><input type="checkbox" value="Ageplayer" name="user[role]" />Ageplayer</label>
+    <label><input type="checkbox" value="Daddy" name="user[role]" />Daddy</label>
+    <label><input type="checkbox" value="babygirl" name="user[role]" />babygirl</label>
+    <label><input type="checkbox" value="brat" name="user[role]" />brat</label>
+    <label><input type="checkbox" value="Primal" name="user[role]" />Primal</label>
+    <label><input type="checkbox" value="Fetishist" name="user[role]" />Fetishist</label>
+    <label><input type="checkbox" value="Kinkster" name="user[role]" />Kinkster</label>
+    <label><input type="checkbox" value="Hedonist" name="user[role]" />Hedonist</label>
+    <label><input type="checkbox" value="Vanilla" name="user[role]" />Vanilla</label>
+    <label><input type="checkbox" value="Unsure" name="user[role]" />Unsure</label>
+    <label><input type="checkbox" value="" name="user[role]" />Not Applicable</label>
+  </p>
+</fieldset>
+<fieldset><legend>Search for user profiles who are looking for:</legend>
+  <p>
+    &hellip;who are looking for
+    <label><input type="checkbox" value="A lifetime relationship" name="user[looking_for]" />A lifetime relationship</label>
+    <label><input type="checkbox" value="A relationship" name="user[looking_for]" />A relationship</label>
+    <label><input type="checkbox" value="A mentor/teacher" name="user[looking_for]" />A mentor/teacher</label>
+    <label><input type="checkbox" value="A play partner" name="user[looking_for]" />A play partner</label>
+    <label><input type="checkbox" value="Princess by day, slut by night" name="user[looking_for]" />Princess by day, slut by night</label>
+    <label><input type="checkbox" value="Friendship" name="user[looking_for]" />Friendship</label>
+    <label><input type="checkbox" value="A Master" name="user[looking_for]" />A Master</label>
+    <label><input type="checkbox" value="A Mistress" name="user[looking_for]" />A Mistress</label>
+    <label><input type="checkbox" value="A sub" name="user[looking_for]" />A sub</label>
+    <label><input type="checkbox" value="A slave" name="user[looking_for]" />A slave</label>
+    <label><input type="checkbox" value="Events" name="user[looking_for]" />Events</label>
+  </p>
+</fieldset>
+<fieldset><legend>Search for user profiles by their activity level:</legend>
+  <p>
+    &hellip;whose activity level is
+    <label><input type="checkbox" name="user[activity_level]" value="I Live It 24/7">I Live It 24/7</label>
+    <label><input type="checkbox" name="user[activity_level]" value="I Live The Lifestyle When I Can">I Live The Lifestyle When I Can</label>
+    <label><input type="checkbox" name="user[activity_level]" value="Just In The Bedroom">Just In The Bedroom</label>
+    <label><input type="checkbox" name="user[activity_level]" value="Once In A While To Spice Things Up">Once In A While To Spice Things Up</label>
+    <label><input type="checkbox" name="user[activity_level]" value="Curious And Want To Try">Curious And Want To Try</label>
+    <label><input type="checkbox" name="user[activity_level]" value="Just Curious Right Now">Just Curious Right Now</label>
+  </p>
+</fieldset>
+<fieldset><legend>Search for user profiles with a friend count of:</legend>
+  <p>
+    <label>
+      &hellip;who have at
+      <select name="friends[operator]">
+        <option value=">=">least</option>
+        <option value="<=">most</option>
+      </select>
+    </label>
+    <label><input type="number" min="1" placeholder="10" name="friends[count]" /> friends&hellip;</label>
+    (<label><input type="checkbox" checked="checked" value="1" name="friends[exclude_zero]" />exclude profiles with no friends</label>)
+  </p>
+</fieldset>
+<fieldset><legend>Search for user profiles with a photo count of:</legend>
+  <p>
+    <label>
+      &hellip;who have at
+      <select name="pictures[operator]">
+        <option value=">=">least</option>
+        <option value="<=">most</option>
+      </select>
+    </label>
+    <label><input type="number" min="1" placeholder="10" name="pictures[count]" /> pictures&hellip;</label>
+    (<label><input type="checkbox" value="1" name="pictures[exclude_zero]" />exclude profiles with no pictures</label>)
+  </p>
+</fieldset>
+<fieldset><legend>Search for user profiles with a video count of:</legend>
+  <p>
+    <label>
+      &hellip;who have at
+      <select name="videos[operator]">
+        <option value=">=">least</option>
+        <option value="<=">most</option>
+      </select>
+    </label>
+    <label><input type="number" min="1" placeholder="10" name="videos[count]" /> videos&hellip;</label>
+    (<label><input type="checkbox" value="1" name="videos[exclude_zero]" />exclude profiles with no videos</label>)
+  </p>
+</fieldset>
+<!-- TODO: "Relationship status" boxes -->
+<!--
+<fieldset><legend>Search for user profiles by vanilla relationships:</legend>
+  <p>
+    <label>Search users <select name="user[vanilla_relationships]">
+      <option value="">regardless of their vanilla relationships</option>
+      <option value="is not null">in vanilla relationship(s)</option>
+      <option value="is null">not in vanilla relationship(s)</option>
+    </select>.</label>
+  </p>
+</fieldset>
+<fieldset><legend>Search for user profiles by D/s relationships:</legend>
+</fieldset>
+-->
+<fieldset><legend>Search for user profiles by bio:</legend>
+  <p>
+    <label>&hellip;whose "About Me" section reads like "<input type="search" name="user[bio]" placeholder="profile text" />"</label>
+    (<label>as <select name="user[bio][operator]">
+      <option value="contains">substring</option>
+      <option value="starts with">prefix</option>
+      <option value="ends with">suffix</option>
+      <option value="matches">regular expression</option>
+      <option value="like">SQL-like wildcards</option>
+    </select></label>)
+  </p>
+</fieldset>
+<fieldset><legend>Search for user profiles by website:</legend>
+  <p>
+    <label>&hellip;whose "Websites" section reads like "<input type="search" name="user[websites]" placeholder="URL parts" />"</label>
+    (<label>as <select name="user[websites][operator]">
+      <option value="contains">substring</option>
+      <option value="starts with">prefix</option>
+      <option value="ends with">suffix</option>
+      <option value="matches">regular expression</option>
+      <option value="like">SQL-like wildcards</option>
+    </select></label>)
+  </p>
+</fieldset>
+<fieldset><legend>Search for user profiles by fetishes into:</legend>
+  <p>
+    <label>&hellip;whose "fetishes into" list includes "<input type="search" name="user[fetishes_into]" placeholder="fetish" />"</label>
+    (<label>as <select name="user[fetishes_into][operator]">
+      <option value="contains">substring</option>
+      <option value="starts with">prefix</option>
+      <option value="ends with">suffix</option>
+      <option value="matches">regular expression</option>
+      <option value="like">SQL-like wildcards</option>
+    </select></label>)
+  </p>
+</fieldset>
+<fieldset><legend>Search for user profiles by fetishes curious about:</legend>
+  <p>
+    <label>&hellip;whose "fetishes curious about" list includes "<input type="search" name="user[fetishes_curious_about]" placeholder="fetish" />"</label>
+    (<label>as <select name="user[fetishes_curious_about][operator]">
+      <option value="contains">substring</option>
+      <option value="starts with">prefix</option>
+      <option value="ends with">suffix</option>
+      <option value="matches">regular expression</option>
+      <option value="like">SQL-like wildcards</option>
+    </select></label>)
+  </p>
+</fieldset>
+<fieldset><legend>Search for user profiles by account type:</legend>
+  <p>
+    <label>Search <select name="user[type]">
+        <option value="">all accounts</option>
+        <option value="true">only paid accounts</option>
+        <option value="false">only free accounts</option>
+    </select>.</label>
   </p>
 </fieldset>
 <fieldset><legend>Search for user profiles located in:</legend>
   <p>
-    <label><input type="text" name="location" placeholder="city, state/province, or country" /></label>
+    <label><input type="search" name="location" placeholder="city, state/province, or country" /></label>
   </p>
 </fieldset>
 <!-- TODO: Other search fields, now that we have them. -->
