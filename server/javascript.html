@@ -1,0 +1,23 @@
+<script>
+jQuery(window).ready(function () {
+  jQuery('#search-form [name^="helper-"]').each(function () {
+    jQuery(this).on('click', function (clicked) {
+      var check = (jQuery(this).prop('checked')) ? true : false;
+      var set_name = jQuery(this).attr('name').split('-')[1];
+      var set_vals = jQuery(this).val().split(',');
+      jQuery('#search-form [name="' + set_name + '"]').each(function () {
+        if (-1 === jQuery.inArray(jQuery(this).val(), set_vals)) {
+          jQuery(this).prop('checked', ((check) ? false : true));
+        } else {
+          jQuery(this).prop('checked', ((check) ? true : false));
+        }
+      });
+      jQuery('#search-form [name="' + jQuery(this).attr('name') +'"]').each(function () {
+        if (jQuery(this).val() !== jQuery(clicked.target).val()) {
+          jQuery(this).prop('checked', false);
+        }
+      });
+    });
+  });
+});
+</script>
