@@ -1,0 +1,112 @@
+<script>
+function showSearchResults (results) {
+  var headers = [];
+  results[0].forEach(function (col) {
+    headers.push({'title': col});
+  });
+  var dataset = results.slice(1);
+  var table = jQuery('#search-results').dataTable({
+    'data': dataset,
+    'columns': headers,
+    'language' : {
+      'search' : 'Filter results:'
+    }
+  });
+  
+}
+</script>
+<!-- TODO: i18n!! -->
+<form id="search-form">
+<input type="hidden" name="action" value="query" />
+<fieldset><legend>Search for user profiles of the following gender/sex:</legend>
+  <p>
+    Show me profiles of people with a gender/sex of&hellip;
+    <label>
+      <input type="checkbox" value="M" name="user[sex]"> Male
+    </label>
+    <label>
+       <input type="checkbox" value="F" name="user[sex]"> Female
+    </label>
+    <label>
+      <input type="checkbox" value="CD/TV" name="user[sex]">Crossdresser/Transvestite
+    </label>
+    <label>
+      <input type="checkbox" value="MtF" name="user[sex]">Trans - Male to Female
+    </label>
+    <label>
+      <input type="checkbox" value="FtM" name="user[sex]">Trans - Female to Male
+    </label>
+    <label>
+      <input type="checkbox" value="TG" name="user[sex]">Transgender
+    </label>
+    <label>
+      <input type="checkbox" value="GF" name="user[sex]">Gender Fluid
+    </label>
+    <label>
+      <input type="checkbox" value="GQ" name="user[sex]">Genderqueer
+    </label>
+    <label>
+      <input type="checkbox" value="IS" name="user[sex]">Intersex
+    </label>
+    <label>
+      <input type="checkbox" value="B" name="user[sex]">Butch
+    </label>
+    <label>
+      <input type="checkbox" value="FEM" name="user[sex]">Femme
+    </label>
+  </p>
+</fieldset>
+<fieldset><legend>Search for user profiles between the ages of:</legend>
+  <p>
+    …who are also <!-- TODO: Use a jQuery UI range slider https://jqueryui.com/resources/demos/slider/range.html -->
+    <label>at least <input type="number" size="2" min="18" max="92" placeholder="18" id="min_age" name="min_age"> years old</label>
+    and
+    <label>at most <input type="number" size="2" min="18" max="92" placeholder="92" id="max_age" name="max_age"> years old…</label>
+  </p>
+</fieldset>
+<fieldset><legend>Search for user profiles whose role is:</legend>
+  <p>
+    …who identify their role as
+    <label><input type="checkbox" value="Dom" name="user[role]">Dominant</label>
+    <label><input type="checkbox" value="Domme" name="user[role]">Domme</label>
+    <label><input type="checkbox" value="Switch" name="user[role]">Switch</label>
+    <label><input type="checkbox" value="sub" name="user[role]">submissive</label>
+    <label><input type="checkbox" value="Master" name="user[role]">Master</label>
+    <label><input type="checkbox" value="Mistress" name="user[role]">Mistress</label>
+    <label><input type="checkbox" value="slave" name="user[role]">slave</label>
+    <label><input type="checkbox" value="pet" name="user[role]">pet</label>
+    <label><input type="checkbox" value="kajira" name="user[role]">kajira</label>
+    <label><input type="checkbox" value="kajirus" name="user[role]">kajirus</label>
+    <label><input type="checkbox" value="Top" name="user[role]">Top</label>
+    <label><input type="checkbox" value="bottom" name="user[role]">Bottom</label>
+    <label><input type="checkbox" value="Sadist" name="user[role]">Sadist</label>
+    <label><input type="checkbox" value="Masochist" name="user[role]">Masochist</label>
+    <label><input type="checkbox" value="Sadomasochist" name="user[role]">Sadomasochist</label>
+    <label><input type="checkbox" value="Ageplayer" name="user[role]">Ageplayer</label>
+    <label><input type="checkbox" value="Daddy" name="user[role]">Daddy</label>
+    <label><input type="checkbox" value="babygirl" name="user[role]">babygirl</label>
+    <label><input type="checkbox" value="brat" name="user[role]">brat</label>
+    <label><input type="checkbox" value="Primal" name="user[role]">Primal</label>
+    <label><input type="checkbox" value="Fetishist" name="user[role]">Fetishist</label>
+    <label><input type="checkbox" value="Kinkster" name="user[role]">Kinkster</label>
+    <label><input type="checkbox" value="Hedonist" name="user[role]">Hedonist</label>
+    <label><input type="checkbox" value="Vanilla" name="user[role]">Vanilla</label>
+    <label><input type="checkbox" value="Unsure" name="user[role]">Unsure</label>
+    <label><input type="checkbox" value="" name="user[role]">Not Applicable</label>
+  </p>
+</fieldset>
+<fieldset><legend>Search for user profiles located in:</legend>
+  <p>
+    <label><input type="text" name="location" placeholder="city, state/province, or country" /></label>
+  </p>
+</fieldset>
+<!-- TODO: Other search fields, now that we have them. -->
+<input
+  type="button" id="search-form-submit" value="Search"
+  onclick="google.script.run
+    .withSuccessHandler(showSearchResults)
+    .processSearchForm(this.parentNode)"
+  />
+</form>
+<table id="search-results" summary="Search results">
+</table>
