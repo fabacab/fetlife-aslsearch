@@ -138,7 +138,7 @@ function processSearchForm (form_object) {
  */
 function buildQuery (params) {
   // always add "where C is not null" to the query to avoid getting inactive user IDs
-  var query = 'select H, L, B, C, D, E, F, G, I, J, K, M, N, O, W, X where C is not null';
+  var query = 'select B, C, D, E, F, G, H, I, J, K, L, M, N, O, W, X where C is not null';
   for (var x in params) {
     if (params[x]) {
       switch (x) {
@@ -264,7 +264,7 @@ function buildQuery (params) {
       }
     }
   }
-  query += ' limit 10'; // 10 per volume, so with 100 volumes, up to 10*100 results per query
+  query += ' limit ' + params.limit;
   if (params.offset) {
     query += ' offset ' + params.offset;
   }

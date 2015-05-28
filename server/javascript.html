@@ -20,4 +20,110 @@ jQuery(window).ready(function () {
     });
   });
 });
+
+function resetSearchForm () {
+  var form = jQuery('#search-form');
+  form.find('[name="offset"]').val(0);
+  form.find('#search-form-submit').val('Search');
+  jQuery('#search-form header, #search-form section').each(function () {
+    jQuery(this).show();
+  });
+  jQuery('#search-results').DataTable().destroy();
+  jQuery('#search-results').html('');
+};
+
+function submitSearch () {
+  jQuery('#search-form header, #search-form section').each(function () {
+    jQuery(this).hide();
+  });
+  jQuery('#search-form-submit').val('Loading…');
+  jQuery('#search-form-submit').prop('disabled', true);
+  google.script.run
+    .withSuccessHandler(handleSearchSuccess)
+    .processSearchForm(document.getElementById('search-form'));
+}
+
+function handleSearchSuccess (results) {
+  jQuery('#search-form [name="offset"]').val(
+    parseInt(jQuery('#search-form [name="offset"]').val()) + 10
+  );
+
+  updateFormUI();
+
+  var columns = [];
+  results[0].forEach(function (col_name) {
+    var cell_funcs_map = {
+      'Nickname' : buildLinkToFetLife,
+      'Avatar URL': linkify
+    };
+    var c = {
+      'title': col_name,
+      'visible': (isVisibleColumn(col_name)) ? true : false,
+      'className': (isVisibleColumn(col_name)) ? null : getColClassName(col_name),
+      'createdCell': (undefined === cell_funcs_map[col_name]) ? null : cell_funcs_map[col_name]
+    };
+    columns.push(c);
+
+    function isVisibleColumn (col_name) {
+      return jQuery("#search-form [name=\"show[]\"][value=\"" + col_name.replace('"', '\\"', 'g') + '"]').prop('checked');
+    }
+    function getColClassName (col_name) {
+      switch (col_name) {
+        case 'Avatar URL':
+          return 'none never';
+        default:
+          return 'none';
+      }
+    }
+    function buildLinkToFetLife (td, cellData, rowData, row, col) {
+      jQuery(td).html('<a href="https://fetlife.com/users/' + rowData[0] + '" target="_blank"><img src="' + rowData[10] + '" alt="' + rowData[1] + '" /><span>'+ cellData +'</span></a>');
+    }
+    function linkify (td, cellData, rowData, row, col) {
+      jQuery(td).html('<a href="' + cellData + '" target="_blank">' + cellData + '</a>');
+    }
+  });
+
+  // Add column for actions
+  columns.push({
+    'title': 'Actions',
+    'orderable': false,
+    'searchable': false,
+    'data': function (row, type, set, meta) {
+      var html = '<ul class="search-result-actions">';
+      html += '<li><a href="https://fetlife.com/conversations/new?with=' + row[0] + '" target="_blank">Message ' + row[1] + '</a></li>';
+      var pat_fetlife_form_url = 'https://docs.google.com/spreadsheet/viewform?formkey=dGNVT1kzSzFnOXhHRjh1RnczZVVmMXc6MQ';
+      html += '<li><a href="' + pat_fetlife_form_url + '&entry_0=' + row[0] + '&entry_1=' + row[1] + '" target="_blank">Report ' + row[1] + ' for violating consent</a></li>';
+      html += '</ul>';
+      return html;
+    }
+  });
+
+  var dataset = results.slice(1);
+  var table = jQuery('#search-results').DataTable({
+    'destroy': true,
+    'data': dataset,
+    'columns': columns,
+    'responsive': true,
+    'dom': 'TC<"clear">lfrtip',
+    'pageLength': 25,
+    'language': {
+      'search': 'Filter batch results:'
+    },
+    'colVis': {
+      'restore': 'Restore default view',
+      'showAll': 'Show all'
+    }
+  });
+
+  function updateFormUI () {
+    var offset = parseInt(jQuery('#search-form [name="offset"]').val());
+    var limit = parseInt(jQuery('#search-form [name="limit"]').val());
+    var batch_number = offset / limit;
+    jQuery('#search-form-submit').val('Show batch number ' + (batch_number + 1));
+    jQuery('#search-form-submit').prop('disabled', false);
+    jQuery('#search-results caption')
+      .show()
+      .html('Search results for batch number ' + batch_number);
+  }
+}
 </script>

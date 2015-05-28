@@ -1,27 +1,11 @@
-<script>
-function showSearchResults (results) {
-  var headers = [];
-  results[0].forEach(function (col) {
-    headers.push({'title': col});
-  });
-  var dataset = results.slice(1);
-  var table = jQuery('#search-results').dataTable({
-    'destroy': true,
-    'data': dataset,
-    'columns': headers,
-    'responsive': true,
-    'dom': 'C<"clear">lfrtip',
-    'language' : {
-      'search' : 'Filter results:'
-    }
-  });
-  
-}
-</script>
 <!-- TODO: i18n!! -->
 <form id="search-form">
 <input type="hidden" name="action" value="query" />
-<h1>Search FetLife users</h1>
+<input type="hidden" name="limit" value="10" />
+<input type="hidden" name="offset" value="0" />
+<header>
+  <h1>Search FetLife users</h1>
+</header>
 <section id="search-asl">
   <h2>Search by Age/Sex/Location</h2>
   <p class="helptext">
@@ -235,7 +219,7 @@ function showSearchResults (results) {
     Find FetLife profiles by their account details, such as how many friends they have
     or how many pictures they've uploaded. You can also choose to search through only
     paid accounts (FetLife customers) only free accounts, or both. Leave any field you
-    don't care about blank to return all results that match that .
+    don't care about blank to return all results that match that field.
   </p>
   <fieldset class="min-or-max-fields"><legend>Friends</legend>
     <p>
@@ -277,12 +261,41 @@ function showSearchResults (results) {
     </p>
   </fieldset>
 </section>
-<input
-  type="button" id="search-form-submit" value="Search"
-  onclick="google.script.run
-    .withSuccessHandler(showSearchResults)
-    .processSearchForm(this.parentNode)"
-  />
+<section>
+  <h2>Results display format</h2>
+  <p class="helptext">
+    You can choose how you want results to be displayed by enabling or disabling
+    the appropriate option here. Choosing to hide a field here does not remove
+    the field from your search criteria.
+  </p>
+  <fieldset class="one-or-more-fields"><legend>Show in results</legend>
+    <ul class="all-opts">
+      <li><label><input type="checkbox" name="show[]" checked="checked" value="Nickname" />Nickname</label></li>
+      <li><label><input type="checkbox" name="show[]" checked="checked" value="Age" />Age</label></li>
+      <li><label><input type="checkbox" name="show[]" checked="checked" value="Gender" />Gender</label></li>
+      <li><label><input type="checkbox" name="show[]" checked="checked" value="Role" />Role</label></li>
+      <li><label><input type="checkbox" name="show[]" checked="checked" value="Locality" />Locality</label></li>
+      <li><label><input type="checkbox" name="show[]" checked="checked" value="Region" />Region</label></li>
+      <li><label><input type="checkbox" name="show[]" checked="checked" value="Country" />Country</label></li>
+      <li><label><input type="checkbox" name="show[]" value="Friend Count" />Friend Count</label></li>
+      <li><label><input type="checkbox" name="show[]" value="Paid Account?" />Paid Account?</label></li>
+      <li><label><input type="checkbox" name="show[]" value="Sexual Orientation" />Sexual Orientation</label></li>
+      <li><label><input type="checkbox" name="show[]" value='Interest Level ("Active")' />Interest Level ("Active")</label></li>
+      <li><label><input type="checkbox" name="show[]" value="Looking For" />Looking For</label></li>
+      <li><label><input type="checkbox" name="show[]" value="Number of Pictures" />Number of Pictures</label></li>
+      <li><label><input type="checkbox" name="show[]" value="Number of Videos" />Number of Videos</label></li>
+    </ul>
+  </fieldset>
+</section>
+<div id="search-form-controls">
+  <input
+    type="button" id="search-form-submit" value="Search"
+    onclick="submitSearch();"
+    />
+  <input type="reset" onclick="resetSearchForm();"/>
+</div>
 </form>
 <table id="search-results" summary="Search results">
+  <caption style="display: none;">Search results</caption>
+  <!-- This is dynamically populated by DataTables. -->
 </table>
