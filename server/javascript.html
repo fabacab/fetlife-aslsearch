@@ -1,3 +1,9 @@
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+<script src="//cdn.datatables.net/responsive/1.0.6/js/dataTables.responsive.js"></script>
+<script src="//datatables.net/release-datatables/extensions/ColVis/js/dataTables.colVis.js"></script>
+<script src="//datatables.net/release-datatables/extensions/TableTools/js/dataTables.tableTools.js"></script>
 <script>
 jQuery(window).ready(function () {
   jQuery('#search-form [name^="helper-"]').each(function () {
@@ -88,11 +94,12 @@ function handleSearchSuccess (results) {
     'title': 'Actions',
     'orderable': false,
     'searchable': false,
+    'className': 'all',
     'data': function (row, type, set, meta) {
       var html = '<ul class="search-result-actions">';
-      html += '<li><a href="https://fetlife.com/conversations/new?with=' + row[0] + '" target="_blank">Message ' + row[1] + '</a></li>';
+      html += '<li><a href="https://fetlife.com/conversations/new?with=' + row[0] + '" class="btn" target="_blank">Message ' + row[1] + '</a></li>';
       var pat_fetlife_form_url = 'https://docs.google.com/spreadsheet/viewform?formkey=dGNVT1kzSzFnOXhHRjh1RnczZVVmMXc6MQ';
-      html += '<li><a href="' + pat_fetlife_form_url + '&entry_0=' + row[0] + '&entry_1=' + row[1] + '" target="_blank">Report ' + row[1] + ' for violating consent</a></li>';
+      html += '<li><a href="' + pat_fetlife_form_url + '&entry_0=' + row[0] + '&entry_1=' + row[1] + '" class="btn" target="_blank">Report ' + row[1] + ' for violating consent</a></li>';
       html += '</ul>';
       return html;
     }

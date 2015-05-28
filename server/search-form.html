@@ -4,7 +4,7 @@
 <input type="hidden" name="limit" value="10" />
 <input type="hidden" name="offset" value="0" />
 <header>
-  <h1>Search FetLife users</h1>
+  <h1>FetLife ASL Search (Extended Edition)</h1>
 </header>
 <section id="search-asl">
   <h2>Search by Age/Sex/Location</h2>
@@ -25,7 +25,11 @@
     </p>
   </fieldset>
   <fieldset class="one-or-more-fields"><legend>Gender/sex</legend>
-    <!-- TODO: Add "helper" checkboxes to select common options or "all" options of a given "like-type" -->
+    <p class="helptext">
+      Check a demographic bucket to choose several boxes options at once.
+      Uncheck it to invert the bucket's selection.
+      Tweak your search criteria by checking or unchecking individual boxes.
+    </p>
     <ul class="helper-opts">
       <li><label><input type="checkbox" value="M" name="helper-user[sex]" />Only male</label></li>
       <li><label><input type="checkbox" value="F" name="helper-user[sex]" />Only female</label></li>
@@ -71,6 +75,11 @@
     </ul>
   </fieldset>
   <fieldset class="one-or-more-fields"><legend>Sexual role</legend>
+    <p class="helptext">
+      Check a demographic bucket to choose several boxes options at once.
+      Uncheck it to invert the bucket's selection.
+      Tweak your search criteria by checking or unchecking individual boxes.
+    </p>
     <ul class="helper-opts">
       <li><label><input type="checkbox" value="Dom,Domme,Switch,Master,Mistress,Top,Sadist,Daddy" name="helper-user[role]" />D-types</label></li>
       <li><label><input type="checkbox" value="Switch,sub,slave,pet,bottom,Masochist,babygirl" name="helper-user[role]" />S-types</label></li>
@@ -122,7 +131,7 @@
         <option value="matches">matches (regular expression)</option>
         <option value="like">like (SQL-wildcards)</option>
       </select>
-      <input type="search" name="nickname[search]" placeholder="type part of a username" />.
+      <input type="search" name="nickname[search]" placeholder="type part of a username" />
     </p>
   </fieldset>
   <fieldset class="text-fields"><legend>"About Me"</legend>
@@ -290,9 +299,10 @@
 <div id="search-form-controls">
   <input
     type="button" id="search-form-submit" value="Search"
+    class="btn btn-default"
     onclick="submitSearch();"
     />
-  <input type="reset" onclick="resetSearchForm();"/>
+  <input type="reset" class="btn" onclick="resetSearchForm();"/>
 </div>
 </form>
 <table id="search-results" summary="Search results">

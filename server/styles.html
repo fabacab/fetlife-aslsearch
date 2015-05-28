@@ -1,3 +1,55 @@
 <style>
-// TODO
+/*
+Match FetLife main styles,
+overriding some Bootstrap CSS and DataTables CSS defaults.
+*/
+body {
+  color: #DDD;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Verdana, sans-serif;
+  background: #000;
+  font-size: 14px;
+  line-height: 1.5em;
+  padding: 0 0 3em;
+}
+legend { color: inherit; }
+label { font-weight: normal; }
+button, input, select, textarea { color: #666; }
+input[type="checkbox"], input[type="radio"] {
+  margin-right: 3px;
+}
+table.dataTable tbody tr {
+  background-color: inherit;
+}
+td.child ul { width: 100%; }
+
+#PageWrapper {
+  margin: 0 auto;
+  max-width: 950px;
+}
+h2 {
+  font-size: 2.5em;
+  line-height: 36px;
+  color: #D00;
+}
+
+#search-form fieldset {
+  position: relative;
+}
+#search-form fieldset.text-fields input {
+  min-width: 50%;
+}
+#search-form fieldset.one-or-more-fields ul {
+  margin-left: 0;
+  padding-left: 0;
+}
+#search-form fieldset.one-or-more-fields li {
+  list-style: none;
+  display: inline-block;
+  margin-right: 10px;
+}
+#search-form .all-opts {
+  font-size: smaller;
+}
+
+#search-form section:not(#search-asl) { display: none; }
 </style>

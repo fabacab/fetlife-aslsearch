@@ -1,19 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-US">
 <head>
   <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
   <link rel="stylesheet" href="//cdn.datatables.net/responsive/1.0.6/css/dataTables.responsive.css" />
   <link rel="stylesheet" href="//datatables.net/release-datatables/extensions/ColVis/css/dataTables.colVis.css" />
   <link rel="stylesheet" href="//datatables.net/release-datatables/extensions/TableTools/css/dataTables.tableTools.css" />
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
-  <script src="//cdn.datatables.net/responsive/1.0.6/js/dataTables.responsive.js"></script>
-  <script src="//datatables.net/release-datatables/extensions/ColVis/js/dataTables.colVis.js"></script>
-  <script src="//datatables.net/release-datatables/extensions/TableTools/js/dataTables.tableTools.js"></script>
   <?!= include('styles'); ?>
 </head>
 <body>
-  <?!= include('search-form'); ?>
+  <div id="PageWrapper">
+    <noscript>
+      <header>
+        <h1>FetLife ASL Search (Extended) requires JavaScript</h1>
+        <p>
+          Please <a href="http://enable-javascript.com/" target="_blank">enable JavaScript in your browser</a>.
+          It seems that JavaScript is not running in your browser right now, but FetLife ASL Search (Extended) requires it.
+          Once you have enabled JavaScript, press your browser's "Reload" or "Refresh" buttons to try again. :)
+        </p>
+      </header>
+    </noscript>
+    <?!= include('search-form'); ?>
+  </div><!-- #PageWrapper -->
   <?!= include('javascript'); ?>
 </body>
 </html>
