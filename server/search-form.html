@@ -61,19 +61,18 @@
           data-placement="left"
           data-trigger="focus"
           title="Using bucketized options"
-          data-content="Check a demographic bucket to choose several boxes at once.
-                        Uncheck it to invert the bucket's selection.
+          data-content="Choose a demographic bucket to check several boxes at once.
                         Tweak your search criteria by checking or unchecking individual boxes."
           >Help</a>
-        <ul class="helper-opts list-inline">
-          <li><label><input type="checkbox" value="M" name="helper-user[sex]" />Only male</label></li>
-          <li><label><input type="checkbox" value="F" name="helper-user[sex]" />Only female</label></li>
-          <li><label><input type="checkbox" value="M,F" name="helper-user[sex]" />Only cisgender</label></li>
-          <li><label><input type="checkbox" value="M,FtM,B" name="helper-user[sex]" />Masculine-of-center</label></li>
-          <li><label><input type="checkbox" value="F,MtF,FEM" name="helper-user[sex]" />Feminine-of-center</label></li>
-          <li><label><input type="checkbox" value="CD/TV,MtF,FtM,TG" name="helper-user[sex]" />Trans*</label></li>
-          <li><label><input type="checkbox" value="CD/TV,GF,GQ,IS" name="helper-user[sex]" />Nonbinary</label></li>
-        </ul>
+        <div class="helper-opts btn-group btn-group-justified" role="group" aria-label="Gender/sex buckets">
+          <label class="btn btn-primary"><input type="checkbox" autocomplete="off" value="M" name="helper-user[sex]" />Only male</label>
+          <label class="btn btn-primary"><input type="checkbox" autocomplete="off" value="F" name="helper-user[sex]" />Only female</label>
+          <label class="btn btn-primary"><input type="checkbox" autocomplete="off" value="M,F" name="helper-user[sex]" />Cisgender</label>
+          <label class="btn btn-primary"><input type="checkbox" autocomplete="off" value="M,FtM,B" name="helper-user[sex]" />Masculine</label>
+          <label class="btn btn-primary"><input type="checkbox" autocomplete="off" value="F,MtF,FEM" name="helper-user[sex]" />Feminine</label>
+          <label class="btn btn-primary"><input type="checkbox" autocomplete="off" value="CD/TV,MtF,FtM,TG" name="helper-user[sex]" />Trans*</label>
+          <label class="btn btn-primary"><input type="checkbox" autocomplete="off" value="CD/TV,GF,GQ,IS" name="helper-user[sex]" />Nonbinary</label>
+        </div>
         <ul class="all-opts list-inline">
           <li><label><input type="checkbox" value="M" name="user[sex]"> Male</label></li>
           <li><label><input type="checkbox" value="F" name="user[sex]"> Female</label></li>
@@ -132,15 +131,14 @@
           data-placement="left"
           data-trigger="focus"
           title="Using bucketized options"
-          data-content="Check a demographic bucket to choose several boxes at once.
-                        Uncheck it to invert the bucket's selection.
+          data-content="Choose a demographic bucket to check several boxes at once.
                         Tweak your search criteria by checking or unchecking individual boxes."
           >Help</a>
-        <ul class="helper-opts list-inline">
-          <li><label><input type="checkbox" value="Dom,Domme,Switch,Master,Mistress,Top,Sadist,Daddy" name="helper-user[role]" />D-types</label></li>
-          <li><label><input type="checkbox" value="Switch,sub,slave,pet,bottom,Masochist,babygirl" name="helper-user[role]" />S-types</label></li>
-          <li><label><input type="checkbox" value="Sadomasochist,Fetishist,Kinkster,Hedonist,Vanilla" name="helper-user[role]" />Non-D/s only</label></li>
-        </ul>
+        <div class="helper-opts btn-group btn-group-justified" role="group" aria-label="Sexual role buckets">
+          <label class="btn btn-primary"><input type="checkbox" autocomplete="off" value="Dom,Domme,Switch,Master,Mistress,Top,Sadist,Daddy" name="helper-user[role]" />D-types</label>
+          <label class="btn btn-primary"><input type="checkbox" autocomplete="off" value="Switch,sub,slave,pet,kajira,kajirus,bottom,Masochist,babygirl" name="helper-user[role]" />S-types</label>
+          <label class="btn btn-primary"><input type="checkbox" autocomplete="off" value="Sadomasochist,Fetishist,Kinkster,Hedonist,Vanilla" name="helper-user[role]" />Non-D/s only</label>
+        </div>
         <ul class="all-opts list-inline">
           <li><label><input type="checkbox" value="Dom" name="user[role]" />Dominant</label></li>
           <li><label><input type="checkbox" value="Domme" name="user[role]" />Domme</label></li>

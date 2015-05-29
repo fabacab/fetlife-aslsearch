@@ -1,3 +1,9 @@
+<link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
+<link rel="stylesheet" href="//cdn.datatables.net/plug-ins/1.10.7/integration/bootstrap/3/dataTables.bootstrap.css" />
+<link rel="stylesheet" href="//cdn.datatables.net/responsive/1.0.6/css/dataTables.responsive.css" />
+<link rel="stylesheet" href="//datatables.net/release-datatables/extensions/ColVis/css/dataTables.colVis.css" />
+<link rel="stylesheet" href="//datatables.net/release-datatables/extensions/TableTools/css/dataTables.tableTools.css" />
 <style>
 /*
 Match FetLife main styles,
@@ -25,6 +31,7 @@ caption,
 label { font-weight: normal; }
 button, input, select, textarea { color: #666; }
 .panel-body { background-color: #000; }
+.btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) { border-top-right-radius: 4px; }
 
 input[type="checkbox"], input[type="radio"] {
   margin-right: 3px;
@@ -54,6 +61,11 @@ h2 {
 #search-form section, #search-form fieldset {
   position: relative;
 }
+#search-form .helper-opts.btn-group-justified {
+  max-width: 850px;
+  margin: 0 0 1em;
+}
+#search-form .helper-opts.btn-group input[type="checkbox"] {  display: none; }
 #search-form .help-text {
   position: absolute;
   top: 0;
@@ -69,4 +81,5 @@ h2 {
 #search-form .all-opts {
   font-size: smaller;
 }
+.search-result-actions { width: 100%; }
 </style>

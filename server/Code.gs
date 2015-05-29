@@ -11,10 +11,9 @@ function doGet (e) {
       output = doQuery(e);
       break;
     default:
-      output = HtmlService
-        .createTemplateFromFile('index')
-        .evaluate()
-        .setSandboxMode(HtmlService.SandboxMode.IFRAME);
+      var t = HtmlService.createTemplateFromFile('index');
+      t.GET = e;
+      output = t.evaluate().setSandboxMode(HtmlService.SandboxMode.IFRAME);
       break;
   }
   return output;
@@ -22,6 +21,11 @@ function doGet (e) {
 
 function doPost (e) {
   var profile_data = JSON.parse(e.parameter.post_data);
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  //
+  // TODO: VALIDATE PROFILE DATA!
+  //
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!
   var volume_number = lookupVolumeNumberByUserId(profile_data.user_id);
   var ss_id = getSpreadsheetIdByVolumeNumber(volume_number);
   var ss;
