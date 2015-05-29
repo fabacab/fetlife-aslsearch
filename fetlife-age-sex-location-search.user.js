@@ -5,7 +5,7 @@
  */
 // ==UserScript==
 // @name           FetLife ASL Search
-// @version        0.3.9
+// @version        0.3.11
 // @namespace      http://maybemaimed.com/playground/fetlife-aslsearch/
 // @updateURL      https://github.com/meitar/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js
 // @description    Allows you to search for FetLife profiles based on age, sex, location, and role.
@@ -32,9 +32,46 @@
 // @grant          GM_xmlhttpRequest
 // @grant          GM_addStyle
 // @grant          GM_log
+// @grant          GM_getValue
+// @grant          GM_setValue
+// @grant          GM_deleteValue
 // ==/UserScript==
 
-FL_ASL = {};
+FL_UI = {}; // FetLife User Interface module
+FL_UI.Text = {
+    'donation_appeal': '<p>FetLife ASL Search is provided as free software, but sadly grocery stores do not offer free food. If you like this script, please consider <a href="http://Cyberbusking.org/">making a donation</a> to support its continued development. &hearts; Thank you. :)</p>'
+};
+FL_UI.Dialog = {};
+FL_UI.Dialog.createLink = function (dialog_id, html_content, parent_node) {
+    var trigger_el = document.createElement('a');
+    trigger_el.setAttribute('class', 'opens-modal');
+    trigger_el.setAttribute('data-opens-modal', dialog_id);
+    trigger_el.innerHTML = html_content;
+    parent_node.appendChild(trigger_el);
+};
+FL_UI.Dialog.inject = function (id, title, html_content) {
+    // Inject dialog box HTML. FetLife currently uses Rails 3, so mimic that.
+    // See, for instance, Rails Behaviors: http://josh.github.com/rails-behaviors/
+    var dialog = document.createElement('div');
+    dialog.setAttribute('style', 'display: none; position: absolute; overflow: hidden; z-index: 1000; outline: 0px none;');
+    dialog.setAttribute('class', 'ui-dialog ui-widget ui-widget-content ui-corner-all');
+    dialog.setAttribute('tabindex', '-1');
+    dialog.setAttribute('role', 'dialog');
+    dialog.setAttribute('aria-labelledby', 'ui-dialog-title-' + id);
+    var html_string = '<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix" unselectable="on" style="-moz-user-select: none;">';
+    html_string += '<span class="ui-dialog-title" id="ui-dialog-title-' + id + '" unselectable="on" style="-moz-user-select: none;">' + title + '</span>';
+    html_string += '<a href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button" unselectable="on" style="-moz-user-select: none;">';
+    html_string += '<span class="ui-icon ui-icon-closethick" unselectable="on" style="-moz-user-select: none;">close</span>';
+    html_string += '</a>';
+    html_string += '</div>';
+    html_string += '<div data-modal-title="' + title + '" data-modal-height="280" data-modal-auto-open="false" class="modal ui-dialog-content ui-widget-content" id="' + id + '">';
+    html_string += html_content;
+    html_string += '</div>';
+    dialog.innerHTML = html_string;
+    document.body.appendChild(dialog);
+};
+
+FL_ASL = {}; // FetLife ASL Search module
 FL_ASL.CONFIG = {
     'debug': true, // switch to true to debug.
     'gasapp_url': 'https://script.google.com/macros/s/AKfycbz5XZeR_99CVvqjdO6jZrzU1F4fq-skVsVZup3SH4UeQ3dmf7M/exec',
@@ -103,31 +140,62 @@ function $x() {
   }
 
   return fix ? toArray(result) : result;
-}
+};
 
 // Initializations.
 var uw = (unsafeWindow) ? unsafeWindow : window ; // Help with Chrome compatibility?
 GM_addStyle('\
-#fetlife_asl_search_options { display: none; }\
-#fetlife_asl_search_options fieldset { clear: both; margin: 0; padding: 0; }\
-#fetlife_asl_search_options legend { display: none; }\
-#fetlife_asl_search_options label {\
+#fetlife_asl_search_ui_container,\
+#fetlife_asl_search_about,\
+#fetlife_asl_search_classic\
+{ display: none; }\
+#fetlife_asl_search_ui_container > div {\
+    clear: both;\
+    background-color: #111;\
+    position: relative;\
+    top: -2px;\
+}\
+#fetlife_asl_search_ui_container div a, #fetlife_asl_search_results div a {\
+    text-decoration: underline;\
+}\
+#fetlife_asl_search_ui_container div a:hover, #fetlife_asl_search_results div a:hover {\
+    background-color: blue;\
+    text-decoration: underline;\
+}\
+#fetlife_asl_search_ui_container a[data-opens-modal] { cursor: help; }\
+#fetlife_asl_search_ui_container ul.tabs li {\
+    display: inline-block;\
+    margin-right: 10px;\
+}\
+#fetlife_asl_search_ui_container ul.tabs li a { color: #888; }\
+#fetlife_asl_search_ui_container ul.tabs li.in_section a {\
+    background-color: #1b1b1b;\
+    color: #fff;\
+    position: relative;\
+    top: 2px;\
+    padding-top: 5px;\
+}\
+#fetlife_asl_search_classic fieldset { clear: both; margin: 0; padding: 0; }\
+#fetlife_asl_search_classic legend { display: none; }\
+#fetlife_asl_search_classic label {\
     display: inline-block;\
     white-space: nowrap;\
 }\
-#fetlife_asl_search_options input { width: auto; }\
+#fetlife_asl_search_classic input { width: auto; }\
 #fetlife_asl_search_results { clear: both; }\
 ');
-FL_ASL.users = {};
 FL_ASL.init = function () {
     FL_ASL.CONFIG.search_form = document.querySelector('form[action="/search"]').parentNode;
-    FL_ASL.getUserProfile(uw.FetLife.currentUser.id);
-    FL_ASL.main();
+    if (FL_ASL.getUserProfileHtml()) {
+        FL_ASL.main();
+    } else {
+        FL_ASL.loadUserProfileHtml(FL_ASL.main);
+    }
 };
 window.addEventListener('DOMContentLoaded', FL_ASL.init);
 
 FL_ASL.toggleAslSearch = function () {
-    var el = document.getElementById('fetlife_asl_search_options');
+    var el = document.getElementById('fetlife_asl_search_ui_container');
     if (el.style.display == 'block') {
         el.style.display = 'none';
     } else {
@@ -226,10 +294,10 @@ FL_ASL.getSearchParams = function () {
             r.loc[search_in[0]] = FL_ASL.CONFIG.search_form.querySelector('input[data-flasl' + search_in[0] + 'id]').getAttribute('data-flasl' + search_in[0] + 'id');
             break;
         default:
-            user_loc = FL_ASL.getLocationForUser(uw.FetLife.currentUser.id);
-            for (var xk in user_loc) {
-                if (null !== user_loc[xk] && (-1 !== search_in.indexOf(xk)) ) {
-                    r.loc[xk] = user_loc[xk];
+            user_loc_ids = FL_ASL.getUserLocationIds();
+            for (var xk in user_loc_ids) {
+                if (null !== user_loc_ids[xk] && (-1 !== search_in.indexOf(xk)) ) {
+                    r.loc[xk] = user_loc_ids[xk];
                 }
             }
         break;
@@ -243,13 +311,13 @@ FL_ASL.getSearchParams = function () {
     return r;
 };
 
-FL_ASL.getLocationForUser = function (id) {
+FL_ASL.getUserLocationIds = function () {
     var r = {
         'city_id': null,
         'area_id': null,
         'country': null
     };
-    var profile_html = FL_ASL.users[id].profile_html;
+    var profile_html = FL_ASL.getUserProfileHtml();
     var m = profile_html.match(/href="\/countries\/([0-9]+)/);
     if (m) {
         r.country = m[1];
@@ -266,19 +334,21 @@ FL_ASL.getLocationForUser = function (id) {
     return r;
 };
 
-FL_ASL.getUserProfile = function (id) {
-    if (FL_ASL.users[id]) {
-        return FL_ASL.users[id].profile_html;
-    } else {
-        FL_ASL.users[id] = {};
-        GM_xmlhttpRequest({
-            'method': 'GET',
-            'url': 'https://fetlife.com/users/' + id.toString(),
-            'onload': function (response) {
-                FL_ASL.users[id].profile_html = response.responseText;
-            }
-        });
-    }
+FL_ASL.getUserProfileHtml = function () {
+    return GM_getValue('currentUser.profile_html', false);
+};
+
+FL_ASL.loadUserProfileHtml = function (callback, id) {
+    var id = id || uw.FetLife.currentUser.id;
+    FL_ASL.log('Fetching profile for user ID ' + id.toString());
+    GM_xmlhttpRequest({
+        'method': 'GET',
+        'url': 'https://fetlife.com/users/' + id.toString(),
+        'onload': function (response) {
+            GM_setValue('currentUser.profile_html', response.responseText);
+            callback();
+        }
+    });
 };
 
 FL_ASL.getKinkstersInSet = function (loc_obj) {
@@ -401,12 +471,15 @@ FL_ASL.getKinkstersFromURL = function (url) {
                 new_prog.setAttribute('id', FL_ASL.CONFIG.progress_id);
                 p.appendChild(new_prog);
             }
+            var div = document.createElement('div');
+            div.innerHTML = FL_UI.Text.donation_appeal;
             btn = document.createElement('button');
             btn.setAttribute('id', 'btn_moar');
             btn.setAttribute('onclick', "var xme = document.getElementById('btn_moar'); xme.parentNode.removeChild(xme); return false;");
             btn.innerHTML = 'Show me MOAR&hellip;';
             btn.addEventListener('click', function(){FL_ASL.getKinkstersFromURL(next_url)});
-            document.getElementById('fetlife_asl_search_results').appendChild(btn);
+            div.appendChild(btn);
+            document.getElementById('fetlife_asl_search_results').appendChild(div);
         }
     });
 };
@@ -482,7 +555,14 @@ FL_ASL.displayResult = function (el) {
     document.getElementById('fetlife_asl_search_results').appendChild(el);
 };
 
-FL_ASL.attachSearchForm = function () {
+FL_ASL.getActivateSearchButton = function () {
+    var el = document.getElementById('fetlife_asl_search');
+    if (!el) {
+        el = FL_ASL.createActivateSearchButton();
+    }
+    return el;
+};
+FL_ASL.createActivateSearchButton = function () {
     var label = document.createElement('label');
     label.innerHTML = 'A/S/L?';
     var input = document.createElement('input');
@@ -493,9 +573,117 @@ FL_ASL.attachSearchForm = function () {
     input.setAttribute('value', '1');
     input.addEventListener('click', FL_ASL.toggleAslSearch);
     label.appendChild(input);
+    return label;
+};
+FL_ASL.createTabList = function () {
+    var ul = document.createElement('ul');
+    ul.setAttribute('class', 'tabs');
+    html_string = '<li data-fl-asl-section-id="fetlife_asl_search_about"><a href="#">About FetLife ASL Search ' + GM_info.script.version + '</a></li>';
+    html_string += '<li class="in_section" data-fl-asl-section-id="fetlife_asl_search_extended"><a href="#">Extended A/S/L search</a></li>';
+    html_string += '<li data-fl-asl-section-id="fetlife_asl_search_classic"><a href="#">Classic (slow) search</a></li>';
+    ul.innerHTML = html_string;
+    ul.addEventListener('click', function (e) {
+        var id_to_show = jQuery(e.target.parentNode).data('fl-asl-section-id');
+        jQuery('#fetlife_asl_search_ui_container ul.tabs li').each(function (e) {
+            if (id_to_show === jQuery(this).data('fl-asl-section-id')) {
+                jQuery(this).addClass('in_section');
+                jQuery('#' + id_to_show).slideDown();
+            } else {
+                jQuery(this).removeClass('in_section');
+                jQuery('#' + jQuery(this).data('fl-asl-section-id')).slideUp();
+            }
+        });
+    });
+    return ul;
+};
+
+FL_ASL.createSearchTab = function (id, html_string) {
     var div = document.createElement('div');
-    div.setAttribute('id', 'fetlife_asl_search_options');
-    div.setAttribute('style', 'display: none;');
+    div.setAttribute('id', id);
+    div.innerHTML = html_string + FL_UI.Text.donation_appeal;
+    return div;
+};
+
+FL_ASL.importHtmlString = function (html_string, selector) {
+    var external_dom = new DOMParser().parseFromString(html_string, 'text/html');
+    var doc_part = external_dom.querySelector(selector);
+    return document.importNode(doc_part, true);
+};
+
+FL_ASL.updateUserLocation = function () {
+    GM_deleteValue('currentUser.profile_html');
+    FL_ASL.loadUserProfileHtml(FL_ASL.drawUserLocationSearchLabels);
+};
+
+FL_ASL.drawUserLocationSearchLabels = function () {
+    var user_loc = FL_ASL.ProfileScraper.getLocation(
+        FL_ASL.importHtmlString(FL_ASL.getUserProfileHtml(), '#profile')
+    );
+    jQuery('#fl_asl_search_loc_fieldset label span').each(function () {
+        switch (this.previousElementSibling.value) {
+            case 'country':
+                this.textContent = user_loc.country;
+                break;
+            case 'area_id':
+                this.textContent = user_loc.region;
+                break;
+            case 'city_id':
+                this.textContent = user_loc.locality;
+                break;
+        }
+    });
+};
+
+FL_ASL.attachSearchForm = function () {
+    var html_string;
+    var user_loc = FL_ASL.ProfileScraper.getLocation(
+        FL_ASL.importHtmlString(FL_ASL.getUserProfileHtml(), '#profile')
+    );
+    var label = FL_ASL.getActivateSearchButton();
+
+    var container = document.createElement('div');
+    container.setAttribute('id', 'fetlife_asl_search_ui_container');
+    container.setAttribute('style', 'display: none;');
+
+    container.appendChild(FL_ASL.createTabList());
+
+    // "About FetLife ASL Search" tab
+    html_string = '<p>The FetLife Age/Sex/Location Search user script allows you to search for profiles on <a href="https://fetlife.com/">FetLife</a> by age, sex, location, or orientation. This user script implements what is, as of this writing, the <a href="https://fetlife.com/improvements/78">most popular suggestion in the FetLife suggestion box</a>:</p>';
+    html_string += '<blockquote><p>Search for people by Location/Sex/Orientation/Age</p><p>Increase the detail of the kinkster search by allowing us to narrow the definition of the search by the traditional fields.</p></blockquote>';
+    html_string += '<p>With the FetLife Age/Sex/Location Search user script installed, a few clicks will save hours of time. Now you can find profiles that match your specified criteria in a matter of seconds. The script even lets you send a message to the profiles you found right from the search results list.</p>';
+    html_string += '<p>Stay up to date with the <a href="https://github.com/meitar/fetlife-aslsearch/">latest FetLife ASL Search improvements</a>. New versions add new features and improve search performance.</p>';
+    container.appendChild(FL_ASL.createSearchTab('fetlife_asl_search_about', html_string));
+
+    // Extended search tab
+    html_string = '<div style="text-align: right;"><button id="fetlife_asl_search_extended_enlarge">Enlarge</button></div>'
+    html_string += '<iframe id="fetlife_asl_search_extended_iframe" src="https://script.google.com/macros/s/AKfycbxjpuCSz9uam23hztGYyiE6IbHX22EGzhq7fN4jQGo1jiRp520/exec?embedded=true"';
+    html_string += ' style="width: 100%; min-height: 400px;">';
+    html_string += 'Your browser does not support the <code>&lt;iframe&gt;</code> element, which is required for FetLife A/S/L Extended search.';
+    html_string += '</iframe>';
+    var newdiv = container.appendChild(FL_ASL.createSearchTab('fetlife_asl_search_extended', html_string));
+    jQuery(newdiv).find('#fetlife_asl_search_extended_enlarge').on('click', function () {
+        var iframe = jQuery('#fetlife_asl_search_extended_iframe');
+        jQuery(this).after('<button>&times; Close FetLife ASL Search</button>').next('button').on('click', function () {
+            iframe.css({
+                'position': 'static',
+                'height': '400px',
+                'width': '950px'
+            });
+            jQuery(this).remove();
+        }).css({'position':'fixed', 'z-index':'9999', 'top': 0, 'left': 0});
+        iframe.css({
+            'position': "fixed",
+            'bottom':   "0",
+            'left':     "0",
+            'z-index':  "8888",
+            'margin':   "0",
+            'height':   "100%",
+            'border':   "none"
+        });
+        iframe.width(jQuery(window).width());
+    });
+
+    // Main ASL search option interface
     html_string = '<fieldset><legend>Search for user profiles of the following gender/sex:</legend><p>';
     html_string += 'Show me profiles of people with a gender/sex of&hellip;';
     html_string += '<label><input type="checkbox" name="user[sex]" value="M" checked="checked" /> Male</label>';
@@ -543,7 +731,7 @@ FL_ASL.attachSearchForm = function () {
     html_string += '<label><input type="checkbox" name="user[role]" value="Unsure" />Unsure</label>';
     html_string += '<label><input type="checkbox" name="user[role]" value="" />Not Applicable</label>';
     html_string += '</p></fieldset>';
-    html_string += '<fieldset><legend>Search for user profiles located in:</legend><p>';
+    html_string += '<fieldset id="fl_asl_search_loc_fieldset"><legend>Search for user profiles located in:</legend><p>';
     html_string += '&hellip;from ';
     // If we're on a "groups" or "events" or "user" or "fetish" or "search" page,
     var which_thing = window.location.toString().match(/(group|event|user|fetish)e?s\/(\d+)/) || window.location.toString().match(/(search)\/kinksters\/?\?(?:page=\d+&)?q=(\S+)/);
@@ -565,19 +753,48 @@ FL_ASL.attachSearchForm = function () {
         html_string += '<label id="fl_asl_loc_filter_label" style="display: none;"> located in <input type="text" id="fl_asl_loc_filter" name="fl_asl_loc_filter" /></label>';
         html_string += ', or ';
     }
-    html_string += ' my <label><input type="radio" name="fl_asl_loc" value="city_id" />city</label>';
-    html_string += '<label><input type="radio" name="fl_asl_loc" value="area_id" checked="checked" />state/province</label>';
-    html_string += '<label><input type="radio" name="fl_asl_loc" value="country" />country</label>';
-    html_string += '.</p></fieldset>';
+    html_string += ' my <label><input type="radio" name="fl_asl_loc" value="city_id" />city (<span>' + user_loc.locality + '</span>)</label>';
+    html_string += '<label><input type="radio" name="fl_asl_loc" value="area_id" checked="checked" />state/province (<span>' + user_loc.region + '</span>)</label>';
+    html_string += '<label><input type="radio" name="fl_asl_loc" value="country" />country (<span>' + user_loc.country + '</span>)</label>';
+    html_string += '. <abbr title="If you changed the location on your profile, click the &ldquo;Update your location&rdquo; button to set FetLife ASL Search to your new location. You can also choose a search set other than your profile location when you load FetLife ASL Search on certain pages that imply their own search set, such as a user profile (for searching a friends list) a group page (for searching group members) an event (for searching RSVPs), or a fetish (for searching kinksters with that fetish). You can then further filter the results from the friend list, event RSVPs, etc. based on the name of a city, state/province, or country."></abbr></p></fieldset>';
     html_string += '<fieldset><legend>Result set options:</legend><p>';
     html_string += '<label>Return at least <input id="fl_asl_min_matches" name="fl_asl_min_matches" value="" placeholder="1" size="2" /> matches per search.</label> (Set this lower if no results seem to ever appear.)';
     html_string += '</p></fieldset>';
     html_string += '<fieldset><legend>Search speed options:</legend><p>';
-    html_string += '<label>Online search speed: Wait <input id="fl_asl_search_sleep_interval" name="fl_asl_search_sleep_interval" value="" placeholder="3" size="2" /> seconds per page.</label> (FetLife has begun banning accounts that search with this script too quickly. The higher you set this, the slower your search will be, but the less likely FetLife will notice that you are using this script.)';
+    html_string += '<label>Online search speed: Aggressive (faster) <input id="fl_asl_search_sleep_interval" name="fl_asl_search_sleep_interval" type="range" min="0" max="10" step="0.5" value="' + FL_ASL.CONFIG.search_sleep_interval + '" /> Stealthy (slower)</label>';
+    html_string += '<br />(Wait <output name="fl_asl_search_sleep_interval" for="fl_asl_search_sleep_interval">' +  FL_ASL.CONFIG.search_sleep_interval + '</output> seconds between searches.) <abbr title="FetLife has begun banning accounts that search with this script too quickly. An aggressive search is faster, but riskier. A stealthier search is slower, but safer."></span>';
     html_string += '</p></fieldset>';
-    div.innerHTML = html_string;
+    var div = FL_ASL.createSearchTab('fetlife_asl_search_classic', html_string);
+    div.querySelector('input[name="fl_asl_search_sleep_interval"]').addEventListener('input', function (e) {
+        div.querySelector('output[name="fl_asl_search_sleep_interval"]').value = this.value;
+    });
+    // Help buttons
+    FL_UI.Dialog.createLink(
+        'fl_asl_loc-help',
+        '(Update location.)',
+        div.querySelector('#fl_asl_search_loc_fieldset abbr')
+    );
+    html_string = '<p><a id="btn_fetlife_asl_update_location" class="btnsqr close" data-closes-modal="fl_asl_loc-help">Update your location</a></p>';
+    html_string += '<p>' + div.querySelector('#fl_asl_search_loc_fieldset abbr').getAttribute('title') + '</p>';
+    FL_UI.Dialog.inject(
+        'fl_asl_loc-help',
+        'Change location',
+        html_string
+    );
+    document.getElementById('btn_fetlife_asl_update_location').addEventListener('click', FL_ASL.updateUserLocation);
+    FL_UI.Dialog.createLink(
+        'fl_asl_search_sleep_interval-help',
+        '(Help with online search speed.)',
+        div.querySelector('output[name="fl_asl_search_sleep_interval"] + abbr')
+    );
+    FL_UI.Dialog.inject(
+        'fl_asl_search_sleep_interval-help',
+        'About &ldquo;Online search speed&rdquo;',
+        div.querySelector('output[name="fl_asl_search_sleep_interval"] + abbr').getAttribute('title')
+    );
+    container.appendChild(div);
     FL_ASL.CONFIG.search_form.appendChild(label);
-    FL_ASL.CONFIG.search_form.appendChild(div);
+    FL_ASL.CONFIG.search_form.appendChild(container);
     var radio_els = document.querySelectorAll('input[name="fl_asl_loc"]');
     for (var i = 0; i < radio_els.length; i++) {
         radio_els[i].addEventListener('click', FL_ASL.toggleLocationFilter);
@@ -677,9 +894,14 @@ FL_ASL.ProfileScraper.getFriendCount = function (body) {
 FL_ASL.ProfileScraper.isPaidAccount = function () {
     return (document.querySelector('.fl-badge')) ? true : false;
 };
-FL_ASL.ProfileScraper.getLocation = function () {
-    var x = $x('//h2[@class="bottom"]/following-sibling::p//a');
-    var ret = {};
+FL_ASL.ProfileScraper.getLocation = function (dom) {
+    var dom = dom || document;
+    var x = $x('//h2[@class="bottom"]/following-sibling::p//a', dom);
+    var ret = {
+        'locality': '',
+        'region': '',
+        'country': ''
+    };
     if (3 === x.length) {
         ret['country'] = x[2].textContent;
         ret['region'] = x[1].textContent;
