@@ -143,7 +143,8 @@ function $x() {
 var uw = (unsafeWindow) ? unsafeWindow : window ; // Help with Chrome compatibility?
 GM_addStyle('\
 #fetlife_asl_search_ui_container,\
-#fetlife_asl_search_about\
+#fetlife_asl_search_about,\
+#fetlife_asl_search_classic\
 { display: none; }\
 #fetlife_asl_search_ui_container > div {\
     clear: both;\
@@ -575,7 +576,8 @@ FL_ASL.createTabList = function () {
     var ul = document.createElement('ul');
     ul.setAttribute('class', 'tabs');
     html_string = '<li data-fl-asl-section-id="fetlife_asl_search_about"><a href="#">About FetLife ASL Search ' + GM_info.script.version + '</a></li>';
-    html_string += '<li class="in_section" data-fl-asl-section-id="fetlife_asl_search_classic"><a href="#">Online search</a></li>';
+    html_string += '<li class="in_section" data-fl-asl-section-id="fetlife_asl_search_extended"><a href="#">Extended A/S/L search</a></li>';
+    html_string += '<li data-fl-asl-section-id="fetlife_asl_search_classic"><a href="#">Classic (slow) search</a></li>';
     ul.innerHTML = html_string;
     ul.addEventListener('click', function (e) {
         var id_to_show = jQuery(e.target.parentNode).data('fl-asl-section-id');
@@ -648,6 +650,35 @@ FL_ASL.attachSearchForm = function () {
     html_string += '<p>With the FetLife Age/Sex/Location Search user script installed, a few clicks will save hours of time. Now you can find profiles that match your specified criteria in a matter of seconds. The script even lets you send a message to the profiles you found right from the search results list.</p>';
     html_string += '<p>Stay up to date with the <a href="https://github.com/meitar/fetlife-aslsearch/">latest FetLife ASL Search improvements</a>. New versions add new features and improve search performance.</p>';
     container.appendChild(FL_ASL.createSearchTab('fetlife_asl_search_about', html_string));
+
+    // Extended search tab
+    html_string = '<div style="text-align: right;"><button id="fetlife_asl_search_extended_enlarge">Enlarge</button></div>'
+    html_string += '<iframe id="fetlife_asl_search_extended_iframe" src="https://script.google.com/macros/s/AKfycbxjpuCSz9uam23hztGYyiE6IbHX22EGzhq7fN4jQGo1jiRp520/exec?embedded=true"';
+    html_string += ' style="width: 100%; min-height: 400px;">';
+    html_string += 'Your browser does not support the <code>&lt;iframe&gt;</code> element, which is required for FetLife A/S/L Extended search.';
+    html_string += '</iframe>';
+    var newdiv = container.appendChild(FL_ASL.createSearchTab('fetlife_asl_search_extended', html_string));
+    jQuery(newdiv).find('#fetlife_asl_search_extended_enlarge').on('click', function () {
+        var iframe = jQuery('#fetlife_asl_search_extended_iframe');
+        jQuery(this).after('<button>&times; Close FetLife ASL Search</button>').next('button').on('click', function () {
+            iframe.css({
+                'position': 'static',
+                'height': '400px',
+                'width': '950px'
+            });
+            jQuery(this).remove();
+        }).css({'position':'fixed', 'z-index':'9999', 'top': 0, 'left': 0});
+        iframe.css({
+            'position': "fixed",
+            'bottom':   "0",
+            'left':     "0",
+            'z-index':  "8888",
+            'margin':   "0",
+            'height':   "100%",
+            'border':   "none"
+        });
+        iframe.width(jQuery(window).width());
+    });
 
     // Main ASL search option interface
     html_string = '<fieldset><legend>Search for user profiles of the following gender/sex:</legend><p>';
