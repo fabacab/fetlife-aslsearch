@@ -655,7 +655,7 @@ FL_ASL.attachSearchForm = function () {
     container.appendChild(FL_ASL.createSearchTab('fetlife_asl_search_about', html_string));
 
     // Extended search tab
-    html_string = '<div style="text-align: right;"><button id="fetlife_asl_search_extended_enlarge">Enlarge</button></div>'
+    html_string = '<div><button id="fetlife_asl_search_extended_enlarge">Enlarge</button></div>'
     html_string += '<iframe id="fetlife_asl_search_extended_iframe" src="https://script.google.com/macros/s/AKfycbxjpuCSz9uam23hztGYyiE6IbHX22EGzhq7fN4jQGo1jiRp520/exec?embedded=true"';
     html_string += ' style="width: 100%; min-height: 400px;">';
     html_string += 'Your browser does not support the <code>&lt;iframe&gt;</code> element, which is required for FetLife A/S/L Extended search.';

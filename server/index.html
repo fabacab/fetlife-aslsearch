@@ -4,18 +4,23 @@
   <?!= include('styles'); ?>
 </head>
 <body>
-  <div id="PageWrapper">
+  <div id="PageWrapper" <?if (GET.parameter.embedded) { ?>class="embedded"<? } ?>>
+    <? if (!GET.parameter.embedded) { ?>
+    <header>
+      <h1>FetLife ASL Search (Extended Edition)</h1>
+    </header>
+    <? } ?>
     <noscript>
       <header>
-        <h1>FetLife ASL Search (Extended) requires JavaScript</h1>
+        <h1>JavaScript required</h1>
         <p>
-          Please <a href="http://enable-javascript.com/" target="_blank">enable JavaScript in your browser</a>.
           It seems that JavaScript is not running in your browser right now, but FetLife ASL Search (Extended) requires it.
+          Please <a href="http://enable-javascript.com/" target="_blank">enable JavaScript in your browser</a>.
           Once you have enabled JavaScript, press your browser's "Reload" or "Refresh" buttons to try again. :)
         </p>
       </header>
     </noscript>
-    <?!= include('search-form'); ?>
+    <?!= include('search-form', GET); ?>
   </div><!-- #PageWrapper -->
   <?!= include('javascript'); ?>
 </body>
