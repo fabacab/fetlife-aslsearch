@@ -1,11 +1,18 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+<script src="//cdn.datatables.net/plug-ins/1.10.7/integration/bootstrap/3/dataTables.bootstrap.js"></script>
 <script src="//cdn.datatables.net/responsive/1.0.6/js/dataTables.responsive.js"></script>
 <script src="//datatables.net/release-datatables/extensions/ColVis/js/dataTables.colVis.js"></script>
 <script src="//datatables.net/release-datatables/extensions/TableTools/js/dataTables.tableTools.js"></script>
 <script>
-jQuery(window).ready(function () {
+jQuery(document).ready(function () {
+  jQuery('[data-toggle="popover"]').popover();
+  jQuery('#search-form-submit').on('click', function () {
+    jQuery(this).button('loading');
+    submitSearch();
+  });
+
   jQuery('#search-form [name^="helper-"]').each(function () {
     jQuery(this).on('click', function (clicked) {
       var check = (jQuery(this).prop('checked')) ? true : false;
@@ -30,20 +37,24 @@ jQuery(window).ready(function () {
 function resetSearchForm () {
   var form = jQuery('#search-form');
   form.find('[name="offset"]').val(0);
-  form.find('#search-form-submit').val('Search');
+  form.find('#search-form-submit').text('Search');
   jQuery('#search-form header, #search-form section').each(function () {
-    jQuery(this).show();
+    jQuery(this).slideDown();
   });
-  jQuery('#search-results').DataTable().destroy();
-  jQuery('#search-results').html('');
+  var tbl = jQuery('#search-results');
+  tbl.slideUp({
+    'complete': function () {
+      tbl.DataTable().destroy();
+      tbl.html('');
+      tbl.slideDown();
+    }
+  });
 };
 
 function submitSearch () {
   jQuery('#search-form header, #search-form section').each(function () {
-    jQuery(this).hide();
+    jQuery(this).slideUp();
   });
-  jQuery('#search-form-submit').val('Loading…');
-  jQuery('#search-form-submit').prop('disabled', true);
   google.script.run
     .withSuccessHandler(handleSearchSuccess)
     .processSearchForm(document.getElementById('search-form'));
@@ -82,7 +93,11 @@ function handleSearchSuccess (results) {
       }
     }
     function buildLinkToFetLife (td, cellData, rowData, row, col) {
-      jQuery(td).html('<a href="https://fetlife.com/users/' + rowData[0] + '" target="_blank"><img src="' + rowData[10] + '" alt="' + rowData[1] + '" /><span>'+ cellData +'</span></a>');
+      var html = '';
+      html += '<a href="https://fetlife.com/users/' + rowData[0] + '" target="_blank">';
+      html += '<img src="' + rowData[10] + '" alt="" class="img-rounded" /><div class="text-center">' + cellData + '</div>';
+      html += '</a>';
+      jQuery(td).html(html);
     }
     function linkify (td, cellData, rowData, row, col) {
       jQuery(td).html('<a href="' + cellData + '" target="_blank">' + cellData + '</a>');
@@ -97,9 +112,9 @@ function handleSearchSuccess (results) {
     'className': 'all',
     'data': function (row, type, set, meta) {
       var html = '<ul class="search-result-actions">';
-      html += '<li><a href="https://fetlife.com/conversations/new?with=' + row[0] + '" class="btn" target="_blank">Message ' + row[1] + '</a></li>';
+      html += '<li><a href="https://fetlife.com/conversations/new?with=' + row[0] + '" class="btn btn-default btn-xs" target="_blank">Message ' + row[1] + '</a></li>';
       var pat_fetlife_form_url = 'https://docs.google.com/spreadsheet/viewform?formkey=dGNVT1kzSzFnOXhHRjh1RnczZVVmMXc6MQ';
-      html += '<li><a href="' + pat_fetlife_form_url + '&entry_0=' + row[0] + '&entry_1=' + row[1] + '" class="btn" target="_blank">Report ' + row[1] + ' for violating consent</a></li>';
+      html += '<li><a href="' + pat_fetlife_form_url + '&entry_0=' + row[0] + '&entry_1=' + row[1] + '" class="btn btn-default btn-xs" target="_blank">Report ' + row[1] + ' for violating consent</a></li>';
       html += '</ul>';
       return html;
     }
@@ -112,7 +127,6 @@ function handleSearchSuccess (results) {
     'columns': columns,
     'responsive': true,
     'dom': 'TC<"clear">lfrtip',
-    'pageLength': 25,
     'language': {
       'search': 'Filter batch results:'
     },
@@ -126,8 +140,8 @@ function handleSearchSuccess (results) {
     var offset = parseInt(jQuery('#search-form [name="offset"]').val());
     var limit = parseInt(jQuery('#search-form [name="limit"]').val());
     var batch_number = offset / limit;
-    jQuery('#search-form-submit').val('Show batch number ' + (batch_number + 1));
-    jQuery('#search-form-submit').prop('disabled', false);
+    jQuery('#search-form-submit').data('complete-text', 'Show batch number ' + (batch_number + 1));
+    jQuery('#search-form-submit').button('complete');
     jQuery('#search-results caption')
       .show()
       .html('Search results for batch number ' + batch_number);

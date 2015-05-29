@@ -6,306 +6,425 @@
 <header>
   <h1>FetLife ASL Search (Extended Edition)</h1>
 </header>
-<section id="search-asl">
-  <h2>Search by Age/Sex/Location</h2>
-  <p class="helptext">
-    Find FetLife profiles by their basic profile information, including
-    age, gender, location, sexual orientation, or sexual role.
-    To return results for <em>all</em> options of a given demographic,
-    leave that section blank. For example, to find <em>only</em> "Femme" users,
-    ensure only the "Femme" checkbox is selected. To find "Femme" users
-    <em>and</em> all other genders, deselect all gender/sex checkboxes.
-  </p>
-  <fieldset class="ranged-fields"><legend>Age</legend>
-    <p>
-      <!-- TODO: Use a jQuery UI range slider https://jqueryui.com/resources/demos/slider/range.html -->
-      <label>At least <input type="number" size="2" min="18" max="92" placeholder="18" id="min_age" name="min_age"> years old</label>
-      and
-      <label>at most <input type="number" size="2" min="18" max="92" placeholder="92" id="max_age" name="max_age"> years old.</label>
-    </p>
-  </fieldset>
-  <fieldset class="one-or-more-fields"><legend>Gender/sex</legend>
-    <p class="helptext">
-      Check a demographic bucket to choose several boxes options at once.
-      Uncheck it to invert the bucket's selection.
-      Tweak your search criteria by checking or unchecking individual boxes.
-    </p>
-    <ul class="helper-opts">
-      <li><label><input type="checkbox" value="M" name="helper-user[sex]" />Only male</label></li>
-      <li><label><input type="checkbox" value="F" name="helper-user[sex]" />Only female</label></li>
-      <li><label><input type="checkbox" value="M,F" name="helper-user[sex]" />Only cisgender</label></li>
-      <li><label><input type="checkbox" value="M,FtM,B" name="helper-user[sex]" />Masculine-of-center</label></li>
-      <li><label><input type="checkbox" value="F,MtF,FEM" name="helper-user[sex]" />Feminine-of-center</label></li>
-      <li><label><input type="checkbox" value="CD/TV,MtF,FtM,TG" name="helper-user[sex]" />Trans*</label></li>
-      <li><label><input type="checkbox" value="CD/TV,GF,GQ,IS" name="helper-user[sex]" />Nonbinary</label></li>
-    </ul>
-    <ul class="all-opts">
-      <li><label><input type="checkbox" value="M" name="user[sex]"> Male</label></li>
-      <li><label><input type="checkbox" value="F" name="user[sex]"> Female</label></li>
-      <li><label><input type="checkbox" value="CD/TV" name="user[sex]">Crossdresser/Transvestite</label></li>
-      <li><label><input type="checkbox" value="MtF" name="user[sex]">Trans - Male to Female</label></li>
-      <li><label><input type="checkbox" value="FtM" name="user[sex]">Trans - Female to Male</label></li>
-      <li><label><input type="checkbox" value="TG" name="user[sex]">Transgender</label></li>
-      <li><label><input type="checkbox" value="GF" name="user[sex]">Gender Fluid</label></li>
-      <li><label><input type="checkbox" value="GQ" name="user[sex]">Genderqueer</label></li>
-      <li><label><input type="checkbox" value="IS" name="user[sex]">Intersex</label></li>
-      <li><label><input type="checkbox" value="B" name="user[sex]">Butch</label></li>
-      <li><label><input type="checkbox" value="FEM" name="user[sex]">Femme</label></li>
-    </li>
-  </fieldset>
-  <fieldset class="text-fields"><legend>Located in</legend>
-    <p>
-      <label><input type="search" name="location" placeholder="city, state/province, or country" /> (case-sensitive)</label>
-    </p>
-  </fieldset>
-  <fieldset class="one-or-more-fields"><legend>Sexual orientation</legend>
-    <ul>
-      <li><label><input type="checkbox" value="Straight" name="user[sexual_orientation]">Straight</label></li>
-      <li><label><input type="checkbox" value="Heteroflexible" name="user[sexual_orientation]">Heteroflexible</label></li>
-      <li><label><input type="checkbox" value="Bisexual" name="user[sexual_orientation]">Bisexual</label></li>
-      <li><label><input type="checkbox" value="Homoflexible" name="user[sexual_orientation]">Homoflexible</label></li>
-      <li><label><input type="checkbox" value="Gay" name="user[sexual_orientation]">Gay</label></li>
-      <li><label><input type="checkbox" value="Lesbian" name="user[sexual_orientation]">Lesbian</label></li>
-      <li><label><input type="checkbox" value="Queer" name="user[sexual_orientation]">Queer</label></li>
-      <li><label><input type="checkbox" value="Pansexual" name="user[sexual_orientation]">Pansexual</label></li>
-      <li><label><input type="checkbox" value="Fluctuating/Evolving" name="user[sexual_orientation]">Fluctuating/Evolving</label></li>
-      <li><label><input type="checkbox" value="Asexual" name="user[sexual_orientation]">Asexual</label></li>
-      <li><label><input type="checkbox" value="Unsure" name="user[sexual_orientation]">Unsure</label></li>
-      <li><label><input type="checkbox" value="Not Applicable" name="user[sexual_orientation]">Not Applicable</label></li>
-    </ul>
-  </fieldset>
-  <fieldset class="one-or-more-fields"><legend>Sexual role</legend>
-    <p class="helptext">
-      Check a demographic bucket to choose several boxes options at once.
-      Uncheck it to invert the bucket's selection.
-      Tweak your search criteria by checking or unchecking individual boxes.
-    </p>
-    <ul class="helper-opts">
-      <li><label><input type="checkbox" value="Dom,Domme,Switch,Master,Mistress,Top,Sadist,Daddy" name="helper-user[role]" />D-types</label></li>
-      <li><label><input type="checkbox" value="Switch,sub,slave,pet,bottom,Masochist,babygirl" name="helper-user[role]" />S-types</label></li>
-      <li><label><input type="checkbox" value="Sadomasochist,Fetishist,Kinkster,Hedonist,Vanilla" name="helper-user[role]" />Non-D/s only</label></li>
-    </ul>
-    <ul class="all-opts">
-      <li><label><input type="checkbox" value="Dom" name="user[role]" />Dominant</label></li>
-      <li><label><input type="checkbox" value="Domme" name="user[role]" />Domme</label></li>
-      <li><label><input type="checkbox" value="Switch" name="user[role]" />Switch</label></li>
-      <li><label><input type="checkbox" value="sub" name="user[role]" />submissive</label></li>
-      <li><label><input type="checkbox" value="Master" name="user[role]" />Master</label></li>
-      <li><label><input type="checkbox" value="Mistress" name="user[role]" />Mistress</label></li>
-      <li><label><input type="checkbox" value="slave" name="user[role]" />slave</label></li>
-      <li><label><input type="checkbox" value="pet" name="user[role]" />pet</label></li>
-      <li><label><input type="checkbox" value="kajira" name="user[role]" />kajira</label></li>
-      <li><label><input type="checkbox" value="kajirus" name="user[role]" />kajirus</label></li>
-      <li><label><input type="checkbox" value="Top" name="user[role]" />Top</label></li>
-      <li><label><input type="checkbox" value="bottom" name="user[role]" />Bottom</label></li>
-      <li><label><input type="checkbox" value="Sadist" name="user[role]" />Sadist</label></li>
-      <li><label><input type="checkbox" value="Masochist" name="user[role]" />Masochist</label></li>
-      <li><label><input type="checkbox" value="Sadomasochist" name="user[role]" />Sadomasochist</label></li>
-      <li><label><input type="checkbox" value="Ageplayer" name="user[role]" />Ageplayer</label></li>
-      <li><label><input type="checkbox" value="Daddy" name="user[role]" />Daddy</label></li>
-      <li><label><input type="checkbox" value="babygirl" name="user[role]" />babygirl</label></li>
-      <li><label><input type="checkbox" value="brat" name="user[role]" />brat</label></li>
-      <li><label><input type="checkbox" value="Primal" name="user[role]" />Primal</label></li>
-      <li><label><input type="checkbox" value="Fetishist" name="user[role]" />Fetishist</label></li>
-      <li><label><input type="checkbox" value="Kinkster" name="user[role]" />Kinkster</label></li>
-      <li><label><input type="checkbox" value="Hedonist" name="user[role]" />Hedonist</label></li>
-      <li><label><input type="checkbox" value="Vanilla" name="user[role]" />Vanilla</label></li>
-      <li><label><input type="checkbox" value="Unsure" name="user[role]" />Unsure</label></li>
-      <li><label><input type="checkbox" value="" name="user[role]" />Not Applicable</label></li>
-    </ul>
-  </fieldset>
+<div id="search-form-accordion" class="panel-group" role="tablist" aria-multiselectable="true">
+<section class="panel panel-danger">
+  <div class="panel-heading" id="search-form-heading-one">
+    <h2 class="panel-title">
+      <a href="#search-form-panel-one" data-toggle="collapse" data-parent="#search-form-accordion">
+        Search by Age/Sex/Location
+      </a>
+    </h2>
+    <a
+      tabindex="0"
+      class="btn btn-danger btn-sm help-text"
+      role="button"
+      data-toggle="popover"
+      data-placement="left"
+      data-trigger="focus"
+      title="Using basic A/S/L search"
+      data-content="Find FetLife profiles by their basic profile information, including
+                    age, gender, location, sexual orientation, or sexual role.
+                    To return results for all options of a given demographic,
+                    leave that section blank. For example, to find only &ldquo;Femme&rdquo; users,
+                    ensure only the &ldquo;Femme&rdquo; checkbox is selected. To find &ldquo;Femme&rdquo; users
+                    and all other genders, deselect all gender/sex checkboxes."
+      >Help</a>
+  </div>
+  <div id="search-form-panel-one" class="panel-collapse collapse" role="tabpanel" aria-labelledby="search-form-heading-one">
+    <div class="panel-body">
+      <fieldset class="ranged-fields"><legend>Age</legend>
+        <a
+          tabindex="0"
+          class="btn btn-info btn-xs help-text"
+          role="button"
+          data-toggle="popover"
+          data-placement="left"
+          data-trigger="focus"
+          title="Choosing an age range"
+          data-content="Choose a minimum and a maximum age within which you want to search.
+                        Ages are inclusive, so setting a minimum of 20 will find profiles
+                        listed as being aged 20 and over."
+          >Help</a>
+        <p>
+          <!-- TODO: Use a jQuery UI range slider https://jqueryui.com/resources/demos/slider/range.html -->
+          <label>At least <input type="number" size="2" min="18" max="92" placeholder="minimum age" id="min_age" name="min_age"> years old</label>
+          and
+          <label>at most <input type="number" size="2" min="18" max="92" placeholder="maximum age" id="max_age" name="max_age"> years old.</label>
+        </p>
+      </fieldset>
+      <fieldset class="one-or-more-fields"><legend>Gender/sex</legend>
+        <a
+          tabindex="0"
+          class="btn btn-info btn-xs help-text"
+          role="button"
+          data-toggle="popover"
+          data-placement="left"
+          data-trigger="focus"
+          title="Using bucketized options"
+          data-content="Check a demographic bucket to choose several boxes at once.
+                        Uncheck it to invert the bucket's selection.
+                        Tweak your search criteria by checking or unchecking individual boxes."
+          >Help</a>
+        <ul class="helper-opts list-inline">
+          <li><label><input type="checkbox" value="M" name="helper-user[sex]" />Only male</label></li>
+          <li><label><input type="checkbox" value="F" name="helper-user[sex]" />Only female</label></li>
+          <li><label><input type="checkbox" value="M,F" name="helper-user[sex]" />Only cisgender</label></li>
+          <li><label><input type="checkbox" value="M,FtM,B" name="helper-user[sex]" />Masculine-of-center</label></li>
+          <li><label><input type="checkbox" value="F,MtF,FEM" name="helper-user[sex]" />Feminine-of-center</label></li>
+          <li><label><input type="checkbox" value="CD/TV,MtF,FtM,TG" name="helper-user[sex]" />Trans*</label></li>
+          <li><label><input type="checkbox" value="CD/TV,GF,GQ,IS" name="helper-user[sex]" />Nonbinary</label></li>
+        </ul>
+        <ul class="all-opts list-inline">
+          <li><label><input type="checkbox" value="M" name="user[sex]"> Male</label></li>
+          <li><label><input type="checkbox" value="F" name="user[sex]"> Female</label></li>
+          <li><label><input type="checkbox" value="CD/TV" name="user[sex]">Crossdresser/Transvestite</label></li>
+          <li><label><input type="checkbox" value="MtF" name="user[sex]">Trans - Male to Female</label></li>
+          <li><label><input type="checkbox" value="FtM" name="user[sex]">Trans - Female to Male</label></li>
+          <li><label><input type="checkbox" value="TG" name="user[sex]">Transgender</label></li>
+          <li><label><input type="checkbox" value="GF" name="user[sex]">Gender Fluid</label></li>
+          <li><label><input type="checkbox" value="GQ" name="user[sex]">Genderqueer</label></li>
+          <li><label><input type="checkbox" value="IS" name="user[sex]">Intersex</label></li>
+          <li><label><input type="checkbox" value="B" name="user[sex]">Butch</label></li>
+          <li><label><input type="checkbox" value="FEM" name="user[sex]">Femme</label></li>
+        </li>
+      </fieldset>
+      <fieldset class="text-fields"><legend>Located in</legend>
+        <a
+          tabindex="0"
+          class="btn btn-info btn-xs help-text"
+          role="button"
+          data-toggle="popover"
+          data-placement="left"
+          data-trigger="focus"
+          title="Narrowing searches by location"
+          data-content="Type the name of a city, state/province, or country to filter your search results to profiles
+                        listed as belonging to people in that geographic region. The value here is case-sensitive and
+                        is limited to one location field. So, for example, to find profiles listed as being in
+                        &ldquo;Baltimore, Maryland, United States&rdquo;, type only the city name,
+                        properly capitalized: Baltimore"
+          >Help</a>
+        <p>
+          <label><input type="search" name="location" placeholder="city, state/province, or country" /> (case-sensitive)</label>
+        </p>
+      </fieldset>
+      <fieldset class="one-or-more-fields"><legend>Sexual orientation</legend>
+        <ul class="list-inline">
+          <li><label><input type="checkbox" value="Straight" name="user[sexual_orientation]">Straight</label></li>
+          <li><label><input type="checkbox" value="Heteroflexible" name="user[sexual_orientation]">Heteroflexible</label></li>
+          <li><label><input type="checkbox" value="Bisexual" name="user[sexual_orientation]">Bisexual</label></li>
+          <li><label><input type="checkbox" value="Homoflexible" name="user[sexual_orientation]">Homoflexible</label></li>
+          <li><label><input type="checkbox" value="Gay" name="user[sexual_orientation]">Gay</label></li>
+          <li><label><input type="checkbox" value="Lesbian" name="user[sexual_orientation]">Lesbian</label></li>
+          <li><label><input type="checkbox" value="Queer" name="user[sexual_orientation]">Queer</label></li>
+          <li><label><input type="checkbox" value="Pansexual" name="user[sexual_orientation]">Pansexual</label></li>
+          <li><label><input type="checkbox" value="Fluctuating/Evolving" name="user[sexual_orientation]">Fluctuating/Evolving</label></li>
+          <li><label><input type="checkbox" value="Asexual" name="user[sexual_orientation]">Asexual</label></li>
+          <li><label><input type="checkbox" value="Unsure" name="user[sexual_orientation]">Unsure</label></li>
+          <li><label><input type="checkbox" value="Not Applicable" name="user[sexual_orientation]">Not Applicable</label></li>
+        </ul>
+      </fieldset>
+      <fieldset class="one-or-more-fields"><legend>Sexual role</legend>
+        <a
+          tabindex="0"
+          class="btn btn-info btn-xs help-text"
+          role="button"
+          data-toggle="popover"
+          data-placement="left"
+          data-trigger="focus"
+          title="Using bucketized options"
+          data-content="Check a demographic bucket to choose several boxes at once.
+                        Uncheck it to invert the bucket's selection.
+                        Tweak your search criteria by checking or unchecking individual boxes."
+          >Help</a>
+        <ul class="helper-opts list-inline">
+          <li><label><input type="checkbox" value="Dom,Domme,Switch,Master,Mistress,Top,Sadist,Daddy" name="helper-user[role]" />D-types</label></li>
+          <li><label><input type="checkbox" value="Switch,sub,slave,pet,bottom,Masochist,babygirl" name="helper-user[role]" />S-types</label></li>
+          <li><label><input type="checkbox" value="Sadomasochist,Fetishist,Kinkster,Hedonist,Vanilla" name="helper-user[role]" />Non-D/s only</label></li>
+        </ul>
+        <ul class="all-opts list-inline">
+          <li><label><input type="checkbox" value="Dom" name="user[role]" />Dominant</label></li>
+          <li><label><input type="checkbox" value="Domme" name="user[role]" />Domme</label></li>
+          <li><label><input type="checkbox" value="Switch" name="user[role]" />Switch</label></li>
+          <li><label><input type="checkbox" value="sub" name="user[role]" />submissive</label></li>
+          <li><label><input type="checkbox" value="Master" name="user[role]" />Master</label></li>
+          <li><label><input type="checkbox" value="Mistress" name="user[role]" />Mistress</label></li>
+          <li><label><input type="checkbox" value="slave" name="user[role]" />slave</label></li>
+          <li><label><input type="checkbox" value="pet" name="user[role]" />pet</label></li>
+          <li><label><input type="checkbox" value="kajira" name="user[role]" />kajira</label></li>
+          <li><label><input type="checkbox" value="kajirus" name="user[role]" />kajirus</label></li>
+          <li><label><input type="checkbox" value="Top" name="user[role]" />Top</label></li>
+          <li><label><input type="checkbox" value="bottom" name="user[role]" />Bottom</label></li>
+          <li><label><input type="checkbox" value="Sadist" name="user[role]" />Sadist</label></li>
+          <li><label><input type="checkbox" value="Masochist" name="user[role]" />Masochist</label></li>
+          <li><label><input type="checkbox" value="Sadomasochist" name="user[role]" />Sadomasochist</label></li>
+          <li><label><input type="checkbox" value="Ageplayer" name="user[role]" />Ageplayer</label></li>
+          <li><label><input type="checkbox" value="Daddy" name="user[role]" />Daddy</label></li>
+          <li><label><input type="checkbox" value="babygirl" name="user[role]" />babygirl</label></li>
+          <li><label><input type="checkbox" value="brat" name="user[role]" />brat</label></li>
+          <li><label><input type="checkbox" value="Primal" name="user[role]" />Primal</label></li>
+          <li><label><input type="checkbox" value="Fetishist" name="user[role]" />Fetishist</label></li>
+          <li><label><input type="checkbox" value="Kinkster" name="user[role]" />Kinkster</label></li>
+          <li><label><input type="checkbox" value="Hedonist" name="user[role]" />Hedonist</label></li>
+          <li><label><input type="checkbox" value="Vanilla" name="user[role]" />Vanilla</label></li>
+          <li><label><input type="checkbox" value="Unsure" name="user[role]" />Unsure</label></li>
+          <li><label><input type="checkbox" value="" name="user[role]" />Not Applicable</label></li>
+        </ul>
+      </fieldset>
+    </div><!-- .panel-body -->
+  </div><!-- #search-form-panel-one -->
 </section>
-<section id="search-extended-profile">
-  <h2>Search by additional profile fields</h2>
-  <p class="helptext">
-    Find FetLife profiles by additional profile information.
-    To return results for <em>all</em> options within a specific field,
-    leave that field blank.
-  </p>
-  <fieldset class="text-fields"><legend>Nickname</legend>
-    <p>
-      <select name="nickname[operator]">
-        <option value="contains">contains</option>
-        <option value="starts with">starts with</option>
-        <option value="ends with">ends with</option>
-        <option value="matches">matches (regular expression)</option>
-        <option value="like">like (SQL-wildcards)</option>
-      </select>
-      <input type="search" name="nickname[search]" placeholder="type part of a username" />
-    </p>
-  </fieldset>
-  <fieldset class="text-fields"><legend>"About Me"</legend>
-    <p>
-      <select name="user[bio][operator]">
-        <option value="contains">contains</option>
-        <option value="starts with">starts with</option>
-        <option value="ends with">ends with</option>
-        <option value="matches">matches (regular expression)</option>
-        <option value="like">like (SQL-wildcards)</option>
-      </select>
-      <input type="search" name="user[bio]" placeholder="profile text" />
-    </p>
-  </fieldset>
-  <fieldset class="text-fields"><legend>Website</legend>
-    <p>
-      <select name="user[websites][operator]">
-        <option value="contains">contains</option>
-        <option value="starts with">starts with</option>
-        <option value="ends with">ends with</option>
-        <option value="matches">matches (regular expression)</option>
-        <option value="like">like (SQL-wildcards)</option>
-      </select>
-      <input type="search" name="user[websites]" placeholder="URL parts" />
-    </p>
-  </fieldset>
-  <fieldset class="text-fields"><legend>Fetishes into</legend>
-    <p>
-      <select name="user[fetishes_into][operator]">
-        <option value="contains">contains</option>
-        <option value="starts with">starts with</option>
-        <option value="ends with">ends with</option>
-        <option value="matches">matches (regular expression)</option>
-        <option value="like">like (SQL-wildcards)</option>
-      </select>
-      <input type="search" name="user[fetishes_into]" placeholder="fetish" />
-    </p>
-  </fieldset>
-  <fieldset class="text-fields"><legend>Fetishes curious about</legend>
-    <p>
-      <select name="user[fetishes_curious_about][operator]">
-        <option value="contains">contains</option>
-        <option value="starts with">starts with</option>
-        <option value="ends with">ends with</option>
-        <option value="matches">matches (regular expression)</option>
-        <option value="like">like (SQL-wildcards)</option>
-      </select>
-      <input type="search" name="user[fetishes_curious_about]" placeholder="fetish" />
-    </p>
-  </fieldset>
-  <fieldset class="one-or-more-fields"><legend>Looking for</legend>
-    <ul>
-      <li><label><input type="checkbox" value="A lifetime relationship" name="user[looking_for]" />A lifetime relationship</label></li>
-      <li><label><input type="checkbox" value="A relationship" name="user[looking_for]" />A relationship</label></li>
-      <li><label><input type="checkbox" value="A mentor/teacher" name="user[looking_for]" />A mentor/teacher</label></li>
-      <li><label><input type="checkbox" value="A play partner" name="user[looking_for]" />A play partner</label></li>
-      <li><label><input type="checkbox" value="Princess by day, slut by night" name="user[looking_for]" />Princess by day, slut by night</label></li>
-      <li><label><input type="checkbox" value="Friendship" name="user[looking_for]" />Friendship</label></li>
-      <li><label><input type="checkbox" value="A Master" name="user[looking_for]" />A Master</label></li>
-      <li><label><input type="checkbox" value="A Mistress" name="user[looking_for]" />A Mistress</label></li>
-      <li><label><input type="checkbox" value="A sub" name="user[looking_for]" />A sub</label></li>
-      <li><label><input type="checkbox" value="A slave" name="user[looking_for]" />A slave</label></li>
-      <li><label><input type="checkbox" value="Events" name="user[looking_for]" />Events</label></li>
-    </ul>
-  </fieldset>
-  <fieldset class="one-or-more-fields"><legend>Activity level</legend>
-    <ul>
-      <li><label><input type="checkbox" name="user[activity_level]" value="I Live It 24/7">I Live It 24/7</label></li>
-      <li><label><input type="checkbox" name="user[activity_level]" value="I Live The Lifestyle When I Can">I Live The Lifestyle When I Can</label></li>
-      <li><label><input type="checkbox" name="user[activity_level]" value="Just In The Bedroom">Just In The Bedroom</label></li>
-      <li><label><input type="checkbox" name="user[activity_level]" value="Once In A While To Spice Things Up">Once In A While To Spice Things Up</label></li>
-      <li><label><input type="checkbox" name="user[activity_level]" value="Curious And Want To Try">Curious And Want To Try</label></li>
-      <li><label><input type="checkbox" name="user[activity_level]" value="Just Curious Right Now">Just Curious Right Now</label></li>
-    </ul>
-  </fieldset>
-  <!-- TODO: "Relationship status" boxes -->
-  <!--
-  <fieldset><legend>Search for user profiles by vanilla relationships:</legend>
-    <p>
-      <label>Search users <select name="user[vanilla_relationships]">
-        <option value="">regardless of their vanilla relationships</option>
-        <option value="is not null">in vanilla relationship(s)</option>
-        <option value="is null">not in vanilla relationship(s)</option>
-      </select>.</label>
-    </p>
-  </fieldset>
-  <fieldset><legend>Search for user profiles by D/s relationships:</legend>
-  </fieldset>
-  -->
+<section class="panel panel-danger">
+  <div class="panel-heading" id="search-form-heading-two">
+    <h2 class="panel-title">
+      <a href="#search-form-panel-two" data-toggle="collapse" data-parent="#search-form-accordion">
+        Search by additional profile fields
+      </a>
+    </h2>
+    <a
+      tabindex="0"
+      class="btn btn-danger btn-sm help-text"
+      role="button"
+      data-toggle="popover"
+      data-placement="left"
+      data-trigger="focus"
+      title="Using extended A/S/L search options"
+      data-content="Find FetLife profiles by additional profile information.
+                    To return results for all options within a specific field,
+                    leave that field blank. These text fields can be searched
+                    by substring, prefix, suffix, regular expression, or SQL-like
+                    wildcard matching. These offer extremely powerful field matching
+                    capabilities. For example, to find users whose nickname
+                    contains the word &ldquo;sexy&rdquo; and ends with a number,
+                    use a regular expression like: .*sexy.*[0-9]+$"
+      >Help</a>
+  </div>
+  <div id="search-form-panel-two" class="panel-collapse collapse" role="tabpanel" aria-labelledby="search-form-heading-two">
+    <div class="panel-body">
+      <fieldset class="text-fields"><legend>Nickname</legend>
+        <p>
+          <select name="nickname[operator]">
+            <option value="contains">contains</option>
+            <option value="starts with">starts with</option>
+            <option value="ends with">ends with</option>
+            <option value="matches">matches (regular expression)</option>
+            <option value="like">like (SQL-wildcards)</option>
+          </select>
+          <input type="search" name="nickname[search]" placeholder="type part of a username" />
+        </p>
+      </fieldset>
+      <fieldset class="text-fields"><legend>"About Me"</legend>
+        <p>
+          <select name="user[bio][operator]">
+            <option value="contains">contains</option>
+            <option value="starts with">starts with</option>
+            <option value="ends with">ends with</option>
+            <option value="matches">matches (regular expression)</option>
+            <option value="like">like (SQL-wildcards)</option>
+          </select>
+          <input type="search" name="user[bio]" placeholder="profile text" />
+        </p>
+      </fieldset>
+      <fieldset class="text-fields"><legend>Website</legend>
+        <p>
+          <select name="user[websites][operator]">
+            <option value="contains">contains</option>
+            <option value="starts with">starts with</option>
+            <option value="ends with">ends with</option>
+            <option value="matches">matches (regular expression)</option>
+            <option value="like">like (SQL-wildcards)</option>
+          </select>
+          <input type="search" name="user[websites]" placeholder="URL parts" />
+        </p>
+      </fieldset>
+      <fieldset class="text-fields"><legend>Fetishes into</legend>
+        <p>
+          <select name="user[fetishes_into][operator]">
+            <option value="contains">contains</option>
+            <option value="starts with">starts with</option>
+            <option value="ends with">ends with</option>
+            <option value="matches">matches (regular expression)</option>
+            <option value="like">like (SQL-wildcards)</option>
+          </select>
+          <input type="search" name="user[fetishes_into]" placeholder="fetish" />
+        </p>
+      </fieldset>
+      <fieldset class="text-fields"><legend>Fetishes curious about</legend>
+        <p>
+          <select name="user[fetishes_curious_about][operator]">
+            <option value="contains">contains</option>
+            <option value="starts with">starts with</option>
+            <option value="ends with">ends with</option>
+            <option value="matches">matches (regular expression)</option>
+            <option value="like">like (SQL-wildcards)</option>
+          </select>
+          <input type="search" name="user[fetishes_curious_about]" placeholder="fetish" />
+        </p>
+      </fieldset>
+      <fieldset class="one-or-more-fields"><legend>Looking for</legend>
+        <ul class="list-inline">
+          <li><label><input type="checkbox" value="A lifetime relationship" name="user[looking_for]" />A lifetime relationship</label></li>
+          <li><label><input type="checkbox" value="A relationship" name="user[looking_for]" />A relationship</label></li>
+          <li><label><input type="checkbox" value="A mentor/teacher" name="user[looking_for]" />A mentor/teacher</label></li>
+          <li><label><input type="checkbox" value="A play partner" name="user[looking_for]" />A play partner</label></li>
+          <li><label><input type="checkbox" value="Princess by day, slut by night" name="user[looking_for]" />Princess by day, slut by night</label></li>
+          <li><label><input type="checkbox" value="Friendship" name="user[looking_for]" />Friendship</label></li>
+          <li><label><input type="checkbox" value="A Master" name="user[looking_for]" />A Master</label></li>
+          <li><label><input type="checkbox" value="A Mistress" name="user[looking_for]" />A Mistress</label></li>
+          <li><label><input type="checkbox" value="A sub" name="user[looking_for]" />A sub</label></li>
+          <li><label><input type="checkbox" value="A slave" name="user[looking_for]" />A slave</label></li>
+          <li><label><input type="checkbox" value="Events" name="user[looking_for]" />Events</label></li>
+        </ul>
+      </fieldset>
+      <fieldset class="one-or-more-fields"><legend>Activity level</legend>
+        <ul class="list-inline">
+          <li><label><input type="checkbox" name="user[activity_level]" value="I Live It 24/7">I Live It 24/7</label></li>
+          <li><label><input type="checkbox" name="user[activity_level]" value="I Live The Lifestyle When I Can">I Live The Lifestyle When I Can</label></li>
+          <li><label><input type="checkbox" name="user[activity_level]" value="Just In The Bedroom">Just In The Bedroom</label></li>
+          <li><label><input type="checkbox" name="user[activity_level]" value="Once In A While To Spice Things Up">Once In A While To Spice Things Up</label></li>
+          <li><label><input type="checkbox" name="user[activity_level]" value="Curious And Want To Try">Curious And Want To Try</label></li>
+          <li><label><input type="checkbox" name="user[activity_level]" value="Just Curious Right Now">Just Curious Right Now</label></li>
+        </ul>
+      </fieldset>
+      <!-- TODO: "Relationship status" boxes -->
+      <!--
+      <fieldset><legend>Search for user profiles by vanilla relationships:</legend>
+        <p>
+          <label>Search users <select name="user[vanilla_relationships]">
+            <option value="">regardless of their vanilla relationships</option>
+            <option value="is not null">in vanilla relationship(s)</option>
+            <option value="is null">not in vanilla relationship(s)</option>
+          </select>.</label>
+        </p>
+      </fieldset>
+      <fieldset><legend>Search for user profiles by D/s relationships:</legend>
+      </fieldset>
+      -->
+    </div>
+  </div>
 </section>
-<section>
-  <h2>Search by account details</h2>
-  <p class="helptext">
-    Find FetLife profiles by their account details, such as how many friends they have
-    or how many pictures they've uploaded. You can also choose to search through only
-    paid accounts (FetLife customers) only free accounts, or both. Leave any field you
-    don't care about blank to return all results that match that field.
-  </p>
-  <fieldset class="min-or-max-fields"><legend>Friends</legend>
-    <p>
-      <select name="friends[operator]">
-        <option value=">=">at least</option>
-        <option value="<=">at most</option>
-      </select>
-      <label><input type="number" min="1" placeholder="10" name="friends[count]" /> friends</label>
-      (and <label><input type="checkbox" checked="checked" value="1" name="friends[exclude_zero]" />exclude profiles with no friends</label>)
-    </p>
-  </fieldset>
-  <fieldset class="min-or-max-fields"><legend>Photos</legend>
-    <p>
-      <select name="pictures[operator]">
-        <option value=">=">at least</option>
-        <option value="<=">at most</option>
-      </select>
-      <label><input type="number" min="1" placeholder="10" name="pictures[count]" /> pictures</label>
-      (and <label><input type="checkbox" value="1" name="pictures[exclude_zero]" />exclude profiles with no pictures</label>)
-    </p>
-  </fieldset>
-  <fieldset class="min-or-max-fields"><legend>Videos</legend>
-    <p>
-    <select name="videos[operator]">
-      <option value=">=">at least</option>
-      <option value="<=">at most</option>
-    </select>
-      <label><input type="number" min="1" placeholder="10" name="videos[count]" /> videos</label>
-      (and <label><input type="checkbox" value="1" name="videos[exclude_zero]" />exclude profiles with no videos</label>)
-    </p>
-  </fieldset>
-  <fieldset class="single-select-fields"><legend>Account type</legend>
-    <p>
-      <label>Search <select name="user[type]">
-          <option value="">all accounts</option>
-          <option value="true">only paid accounts</option>
-          <option value="false">only free accounts</option>
-      </select>.</label>
-    </p>
-  </fieldset>
+<section class="panel panel-danger">
+  <div class="panel-heading" id="search-form-heading-three">
+    <h2 class="panel-title">
+      <a href="#search-form-panel-three" data-toggle="collapse" data-parent="#search-form-accordion">
+        Search by account details
+      </a>
+    </h2>
+    <a
+      tabindex="0"
+      class="btn btn-danger btn-sm help-text"
+      role="button"
+      data-toggle="popover"
+      data-placement="left"
+      data-trigger="focus"
+      title="Using extended A/S/L search options"
+      data-content="Find FetLife profiles by their account details, such as how many friends they have
+                    or how many pictures they've uploaded. You can also choose to search through only
+                    paid accounts (FetLife customers) only free accounts, or both. Leave any field you
+                    don't care about blank to return all results that match that field."
+      >Help</a>
+  </div>
+  <div id="search-form-panel-three" class="panel-collapse collapse" role="tabpanel" aria-labelledby="search-form-heading-three">
+    <div class="panel-body">
+      <fieldset class="min-or-max-fields"><legend>Friends</legend>
+        <p>
+          <select name="friends[operator]">
+            <option value=">=">at least</option>
+            <option value="<=">at most</option>
+          </select>
+          <label><input type="number" min="1" placeholder="10" name="friends[count]" /> friends</label>
+          (and <label><input type="checkbox" value="1" name="friends[exclude_zero]" />exclude profiles with no friends</label>)
+        </p>
+      </fieldset>
+      <fieldset class="min-or-max-fields"><legend>Photos</legend>
+        <p>
+          <select name="pictures[operator]">
+            <option value=">=">at least</option>
+            <option value="<=">at most</option>
+          </select>
+          <label><input type="number" min="1" placeholder="10" name="pictures[count]" /> pictures</label>
+          (and <label><input type="checkbox" value="1" name="pictures[exclude_zero]" />exclude profiles with no pictures</label>)
+        </p>
+      </fieldset>
+      <fieldset class="min-or-max-fields"><legend>Videos</legend>
+        <p>
+        <select name="videos[operator]">
+          <option value=">=">at least</option>
+          <option value="<=">at most</option>
+        </select>
+          <label><input type="number" min="1" placeholder="10" name="videos[count]" /> videos</label>
+          (and <label><input type="checkbox" value="1" name="videos[exclude_zero]" />exclude profiles with no videos</label>)
+        </p>
+      </fieldset>
+      <fieldset class="single-select-fields"><legend>Account type</legend>
+        <p>
+          <label>Search <select name="user[type]">
+              <option value="">all accounts</option>
+              <option value="true">only paid accounts</option>
+              <option value="false">only free accounts</option>
+          </select>.</label>
+        </p>
+      </fieldset>
+    </div>
+  </div>
 </section>
-<section>
-  <h2>Results display format</h2>
-  <p class="helptext">
-    You can choose how you want results to be displayed by enabling or disabling
-    the appropriate option here. Choosing to hide a field here does not remove
-    the field from your search criteria.
-  </p>
-  <fieldset class="one-or-more-fields"><legend>Show in results</legend>
-    <ul class="all-opts">
-      <li><label><input type="checkbox" name="show[]" checked="checked" value="Nickname" />Nickname</label></li>
-      <li><label><input type="checkbox" name="show[]" checked="checked" value="Age" />Age</label></li>
-      <li><label><input type="checkbox" name="show[]" checked="checked" value="Gender" />Gender</label></li>
-      <li><label><input type="checkbox" name="show[]" checked="checked" value="Role" />Role</label></li>
-      <li><label><input type="checkbox" name="show[]" checked="checked" value="Locality" />Locality</label></li>
-      <li><label><input type="checkbox" name="show[]" checked="checked" value="Region" />Region</label></li>
-      <li><label><input type="checkbox" name="show[]" checked="checked" value="Country" />Country</label></li>
-      <li><label><input type="checkbox" name="show[]" value="Friend Count" />Friend Count</label></li>
-      <li><label><input type="checkbox" name="show[]" value="Paid Account?" />Paid Account?</label></li>
-      <li><label><input type="checkbox" name="show[]" value="Sexual Orientation" />Sexual Orientation</label></li>
-      <li><label><input type="checkbox" name="show[]" value='Interest Level ("Active")' />Interest Level ("Active")</label></li>
-      <li><label><input type="checkbox" name="show[]" value="Looking For" />Looking For</label></li>
-      <li><label><input type="checkbox" name="show[]" value="Number of Pictures" />Number of Pictures</label></li>
-      <li><label><input type="checkbox" name="show[]" value="Number of Videos" />Number of Videos</label></li>
-    </ul>
-  </fieldset>
+<section class="panel panel-danger">
+  <div class="panel-heading" id="search-form-heading-four">
+    <h2 class="panel-title">
+      <a href="#search-form-panel-four" data-toggle="collapse" data-parent="#search-form-accordion">
+        Results display format
+      </a>
+    </h2>
+    <a
+      tabindex="0"
+      class="btn btn-danger btn-sm help-text"
+      role="button"
+      data-toggle="popover"
+      data-placement="left"
+      data-trigger="focus"
+      title="Choosing a default results view"
+      data-content="You can choose how you want results to be displayed by enabling or disabling
+                    the appropriate option here. Choosing to hide a field here does not remove
+                    the field from your search criteria. Even if you hide a field from the default
+                    view, you can still see it by clicking on the green plus (+) in the results table."
+      >Help</a>
+  </div>
+  <div id="search-form-panel-four" class="panel-collapse collapse" role="tabpanel" aria-labelledby="search-form-heading-four">
+    <div class="panel-body">
+      <fieldset class="one-or-more-fields"><legend>Show in results</legend>
+        <ul class="list-inline">
+          <li><label><input type="checkbox" name="show[]" checked="checked" value="Nickname" />Nickname</label></li>
+          <li><label><input type="checkbox" name="show[]" checked="checked" value="Age" />Age</label></li>
+          <li><label><input type="checkbox" name="show[]" checked="checked" value="Gender" />Gender</label></li>
+          <li><label><input type="checkbox" name="show[]" checked="checked" value="Role" />Role</label></li>
+          <li><label><input type="checkbox" name="show[]" checked="checked" value="Locality" />Locality</label></li>
+          <li><label><input type="checkbox" name="show[]" checked="checked" value="Region" />Region</label></li>
+          <li><label><input type="checkbox" name="show[]" value="Country" />Country</label></li>
+          <li><label><input type="checkbox" name="show[]" value="Friend Count" />Friend Count</label></li>
+          <li><label><input type="checkbox" name="show[]" value="Paid Account?" />Paid Account?</label></li>
+          <li><label><input type="checkbox" name="show[]" value="Sexual Orientation" />Sexual Orientation</label></li>
+          <li><label><input type="checkbox" name="show[]" value='Interest Level ("Active")' />Interest Level ("Active")</label></li>
+          <li><label><input type="checkbox" name="show[]" value="Looking For" />Looking For</label></li>
+          <li><label><input type="checkbox" name="show[]" value="Number of Pictures" />Number of Pictures</label></li>
+          <li><label><input type="checkbox" name="show[]" value="Number of Videos" />Number of Videos</label></li>
+        </ul>
+      </fieldset>
+    </div>
+  </div>
 </section>
+</div><!-- .panel-group -->
 <div id="search-form-controls">
-  <input
-    type="button" id="search-form-submit" value="Search"
-    class="btn btn-default"
-    onclick="submitSearch();"
-    />
-  <input type="reset" class="btn" onclick="resetSearchForm();"/>
-</div>
+  <button
+    id="search-form-submit"
+    class="btn btn-success"
+    type="button"
+    data-loading-text="Loading&hellip;"
+    data-complete-text="Show next batch"
+    autocomplete="off"
+    >Search</button>
+  <input type="reset" class="btn btn-warning" onclick="resetSearchForm();"/>
+</div><!-- #search-form-controls -->
 </form>
-<table id="search-results" summary="Search results">
-  <caption style="display: none;">Search results</caption>
+<table id="search-results" class="table table-condensed" summary="Search results">
+  <caption class="text-center" style="display: none;">Search results</caption>
   <!-- This is dynamically populated by DataTables. -->
 </table>

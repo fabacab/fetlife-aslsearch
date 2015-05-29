@@ -11,16 +11,32 @@ body {
   line-height: 1.5em;
   padding: 0 0 3em;
 }
-legend { color: inherit; }
+.dataTables_wrapper .dataTables_paginate .paginate_button { padding: 0; }
+legend,
+caption,
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_processing,
+.dataTables_wrapper .dataTables_paginate
+{
+  color: inherit;
+}
 label { font-weight: normal; }
 button, input, select, textarea { color: #666; }
+.panel-body { background-color: #000; }
+
 input[type="checkbox"], input[type="radio"] {
   margin-right: 3px;
 }
+
 table.dataTable tbody tr {
   background-color: inherit;
 }
 td.child ul { width: 100%; }
+.popover-title, .popover-content {
+  color: #000;
+}
 
 #PageWrapper {
   margin: 0 auto;
@@ -32,24 +48,25 @@ h2 {
   color: #D00;
 }
 
-#search-form fieldset {
+#search-form {
+  margin: 1em 0;
+}
+#search-form section, #search-form fieldset {
   position: relative;
+}
+#search-form .help-text {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+#search-form .panel-heading .help-text {
+  top: 1em;
+  right: 1em;
 }
 #search-form fieldset.text-fields input {
   min-width: 50%;
 }
-#search-form fieldset.one-or-more-fields ul {
-  margin-left: 0;
-  padding-left: 0;
-}
-#search-form fieldset.one-or-more-fields li {
-  list-style: none;
-  display: inline-block;
-  margin-right: 10px;
-}
 #search-form .all-opts {
   font-size: smaller;
 }
-
-#search-form section:not(#search-asl) { display: none; }
 </style>
