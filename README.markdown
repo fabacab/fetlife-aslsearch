@@ -113,7 +113,6 @@ That said, since this script is public domain, it's entirely use-at-your-own-ris
     * **Feature: Integration with third-party services.**
         * Integration with UserSherlock.com, and TinEye.com let you easily find FetLife users on other social networks like Twitter or Instagram based on their FetLife profile information.
         * Integration with Predator Alert Tool for FetLife (PAT-FetLife) lets you report users for sexually predatory behavior to the rest of the FetLife user community. This means you can now name names of rapists in a way that FetLife's carebears will not be able to censor.
-        * Integration with CreepShield.com through PAT-FetLife automatically performs facial recognition scans against the United State's national Sex Offenders Registry on the profile pictures of FetLife users to help keep you even safer from predators.
     * Feature: Immunity from FetLife's anti-crawling technology.
         * Using "Extended A/S/L search" is completely invisible to FetLife, so there is no need of a "stealth" option. Stealth is built-in!
         * If you insist on using the old search mode, now called "Classic (slow) search," the "stealth" option is still available to you and is recommended to avoid an account ban.
