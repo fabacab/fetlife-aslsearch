@@ -73,7 +73,7 @@ FL_UI.Dialog.inject = function (id, title, html_content) {
 
 FL_ASL = {}; // FetLife ASL Search module
 FL_ASL.CONFIG = {
-    'debug': true, // switch to true to debug.
+    'debug': false, // switch to true to debug.
     'gasapp_url': 'https://script.google.com/macros/s/AKfycbxjpuCSz9uam23hztGYyiE6IbHX22EGzhq7fN4jQGo1jiRp520/exec?embedded=true',
     'gasapp_url_development': 'https://script.google.com/macros/s/AKfycbxl668Zzz6FW9iLMqtyP_vZYkvqOJK3ZKX308fMcCc/dev?embedded=true',
     'progress_id': 'fetlife_asl_search_progress',
@@ -873,7 +873,7 @@ FL_ASL.GAS.ajaxPost = function (data)  {
 // ****************************************************
 FL_ASL.ProfileScraper = {};
 FL_ASL.ProfileScraper.getNickname = function () {
-    return document.title.split(' - ')[0];
+    return jQuery('h2').first().text().split(' ')[0];
 };
 FL_ASL.ProfileScraper.getAge = function () {
     var x = $x('//h2/*[@class[contains(., "quiet")]]');
@@ -1096,18 +1096,64 @@ FL_ASL.scrapeProfile = function (user_id) {
     };
     FL_ASL.GAS.ajaxPost(profile_data);
 }
+FL_ASL.scrapeUserInList = function (node) {
+    // Deal with location inconsistencies.
+    var loc_parts = jQuery(node).find('.small').first().text().split(', ');
+    var locality = ''; var region = ''; var country = '';
+    if (2 === loc_parts.length) {
+        locality = loc_parts[0];
+        region   = loc_parts[1];
+    } else if (1 === loc_parts.length) {
+        country = loc_parts[0];
+    }
+
+    var profile_data = {
+        'user_id': jQuery(node).find('a').first().attr('href').match(/\d+$/)[0],
+        'nickname': jQuery(node).find('img').first().attr('alt'),
+        'age': jQuery(node).find('.quiet').first().text().match(/^\d+/)[0],
+        'gender': jQuery(node).find('.quiet').first().text().match(/([^0-9]+) /)[1],
+        'role': jQuery(node).find('.quiet').first().text().match(/ (.*)$/)[1],
+        'location_locality': locality,
+        'location_region': region,
+        'location_country': country,
+        'avatar_url': jQuery(node).find('img').first().attr('src')
+    };
+    for (var k in profile_data) {
+        if ('' === profile_data[k]) {
+            delete profile_data[k];
+        }
+    }
+    FL_ASL.GAS.ajaxPost(profile_data);
+};
+FL_ASL.scrapeAnchoredAvatar = function (node) {
+    var profile_data = {
+        'user_id': jQuery(node).attr('href').match(/\d+$/)[0],
+        'nickname': jQuery(node).find('img').first().attr('alt'),
+        'avatar_url': jQuery(node).find('img').first().attr('src')
+    };
+    FL_ASL.GAS.ajaxPost(profile_data);
+};
 
 // This is the main() function, executed on page load.
 FL_ASL.main = function () {
     // Insert ASL search button interface at FetLife "Search" bar.
     FL_ASL.attachSearchForm();
-    // If we're on a profile page,
+
     var m;
     if (m = window.location.pathname.match(/users\/(\d+)/)) {
         FL_ASL.log('Scraping profile ' + m[1]);
         FL_ASL.scrapeProfile(m[1]);
     }
-    // TODO: Also scrape the "user_in_list" boxes of various other pages.
+    if (document.querySelectorAll('.user_in_list').length) {
+        jQuery('.user_in_list').each(function () {
+            FL_ASL.scrapeUserInList(this);
+        });
+    }
+    if (document.querySelectorAll('a.avatar').length) {
+        jQuery('a.avatar').each(function () {
+            FL_ASL.scrapeAnchoredAvatar(this);
+        });
+    }
 };
 
 // The following is required for Chrome compatibility, as we need "text/html" parsing.
