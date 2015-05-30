@@ -4,7 +4,7 @@
  * @author maymay <bitetheappleback@gmail.com>
  */
 // ==UserScript==
-// @name           FetLife ASL Search
+// @name           FetLife ASL Search (Extened Edition)
 // @version        0.4
 // @namespace      http://maybemaimed.com/playground/fetlife-aslsearch/
 // @updateURL      https://github.com/meitar/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js
@@ -1222,7 +1222,7 @@ FAADE.init = function () {
         FAADE.clearCookies();
         return;
     }
-    FL_ASL.getUserProfile(uw.FetLife.currentUser.id); // run early
+    FL_ASL.getUserProfileHtml(uw.FetLife.currentUser.id); // run early
     FAADE.injectDialog();
     FAADE.abuser_database = FAADE.getValue('abuser_database', false);
     if (FAADE.abuserDatabaseExpired()) {
