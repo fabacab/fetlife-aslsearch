@@ -1340,7 +1340,7 @@ FAADE.broadcastNewProximalReports = function (doc) {
         }
         FAADE.log('Total of ' + num_reports + ' new reports since last check.');
 
-        var user_loc = FAADE.getLocationFromProfileHtml(FL_ASL.users[uw.FetLife.currentUser.id].profile_html);
+        var user_loc = FAADE.getLocationFromProfileHtml(FL_ASL.getUserProfileHtml());
         FAADE.log('Current user location seems to be ' + user_loc.join(', ') + '.');
 
         // Loop over all new records one by one
@@ -1502,7 +1502,7 @@ FAADE.main = function () {
     // TODO: Refactor this, it's kludgy.
     setTimeout(function() {
         FAADE.log('Running time-delayed function.');
-        if (FL_ASL.users[uw.FetLife.currentUser.id].profile_html) {
+        if (FL_ASL.getUserProfileHtml()) {
             FAADE.log('We have the current user\'s FetLife profile HTML. Running broadcast checks.');
             FAADE.broadcastNewProximalReports(doc);
         }
