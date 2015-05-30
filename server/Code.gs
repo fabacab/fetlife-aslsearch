@@ -20,12 +20,7 @@ function doGet (e) {
 }
 
 function doPost (e) {
-  var profile_data = JSON.parse(e.parameter.post_data);
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  //
-  // TODO: VALIDATE PROFILE DATA!
-  //
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  var profile_data = validateScraperInput(JSON.parse(e.parameter.post_data));
   var volume_number = lookupVolumeNumberByUserId(profile_data.user_id);
   var ss_id = getSpreadsheetIdByVolumeNumber(volume_number);
   var ss;
@@ -40,6 +35,46 @@ function doPost (e) {
   result.coords.vol = volume_number;
   return ContentService.createTextOutput(JSON.stringify(result))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * Checks the data we received from the scraper to make sure it is as valid as can be.
+ *
+ * @param {object} obj Scraped input data.
+ * @return {object} Filtered input with unsanitized or invalid inputs removed.
+ */
+function validateScraperInput (obj) {
+  var safe_obj = {};
+  for (var k in obj) {
+    switch (k) {
+      case 'user_id':
+      case 'age':
+      case 'friend_count':
+      case 'num_pics':
+      case 'num_vids':
+        safe_obj[k] = parseInt(obj[k]);
+        break;
+      case 'paid_account':
+        if ('boolean' === typeof(obj[k])) {
+          safe_obj[k] = obj[k];
+        } else {
+          debugLog('WARNING: Expected boolean value in ' + obj[k]);
+        }
+        break;
+      case 'avatar_url':
+        if (obj[k].match(/^https:\/\/flpics[0-9]*\.[a-z]+\.ssl\.fastly\.net/)) {
+          safe_obj[k] = obj[k];
+        }
+        break;
+      default:
+        // TODO: Stricter?
+        if (-1 !== CONFIG.Fields.headings.indexOf(k)) {
+          safe_obj[k] = obj[k];
+        }
+        break;
+    }
+  }
+  return safe_obj;
 }
 
 /**

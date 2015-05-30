@@ -74,8 +74,8 @@ FL_UI.Dialog.inject = function (id, title, html_content) {
 FL_ASL = {}; // FetLife ASL Search module
 FL_ASL.CONFIG = {
     'debug': true, // switch to true to debug.
-    'gasapp_url': 'https://script.google.com/macros/s/AKfycbz5XZeR_99CVvqjdO6jZrzU1F4fq-skVsVZup3SH4UeQ3dmf7M/exec',
-    'gasapp_url_development': 'https://script.google.com/macros/s/AKfycbzmr_X2Qdgk9pa_YXq8oaksRI4YA-hdmNRCmVO5OfM/dev',
+    'gasapp_url': 'https://script.google.com/macros/s/AKfycbxjpuCSz9uam23hztGYyiE6IbHX22EGzhq7fN4jQGo1jiRp520/exec?embedded=true',
+    'gasapp_url_development': 'https://script.google.com/macros/s/AKfycbxl668Zzz6FW9iLMqtyP_vZYkvqOJK3ZKX308fMcCc/dev?embedded=true',
     'progress_id': 'fetlife_asl_search_progress',
     'min_matches': 1, // show at least this many matches before offering to search again
     'search_sleep_interval': 3 // default wait time in seconds between auto-searches
@@ -183,6 +183,13 @@ GM_addStyle('\
 }\
 #fetlife_asl_search_classic input { width: auto; }\
 #fetlife_asl_search_results { clear: both; }\
+#fetlife_asl_search_extended_wrapper { position: relative; }\
+#fetlife_asl_search_extended_cover {\
+    background: #000;\
+    width: 950px; height: 53px;\
+    position: absolute; top: 23px; left: 0;\
+    font-size: xx-large;\
+}\
 ');
 FL_ASL.init = function () {
     FL_ASL.CONFIG.search_form = document.querySelector('form[action="/search"]').parentNode;
@@ -655,19 +662,31 @@ FL_ASL.attachSearchForm = function () {
     container.appendChild(FL_ASL.createSearchTab('fetlife_asl_search_about', html_string));
 
     // Extended search tab
-    html_string = '<div><button id="fetlife_asl_search_extended_enlarge">Enlarge</button></div>'
-    html_string += '<iframe id="fetlife_asl_search_extended_iframe" src="https://script.google.com/macros/s/AKfycbxjpuCSz9uam23hztGYyiE6IbHX22EGzhq7fN4jQGo1jiRp520/exec?embedded=true"';
+    html_string = '<div id="fetlife_asl_search_extended_wrapper">';
+    html_string += '<div><button id="fetlife_asl_search_extended_enlarge">Enlarge</button></div>'
+    html_string += '<iframe id="fetlife_asl_search_extended_iframe" src="' + FL_ASL.CONFIG.gasapp_url + '"';
     html_string += ' style="width: 100%; min-height: 400px;">';
     html_string += 'Your browser does not support the <code>&lt;iframe&gt;</code> element, which is required for FetLife A/S/L Extended search.';
     html_string += '</iframe>';
+    if (!FL_ASL.CONFIG.debug) {
+        html_string += '<div id="fetlife_asl_search_extended_cover">FetLife A/S/L Search (Extended Edition)</div>';
+    }
+    html_string += '</div><!-- #fetlife_asl_search_extended_wrapper -->';
     var newdiv = container.appendChild(FL_ASL.createSearchTab('fetlife_asl_search_extended', html_string));
     jQuery(newdiv).find('#fetlife_asl_search_extended_enlarge').on('click', function () {
         var iframe = jQuery('#fetlife_asl_search_extended_iframe');
+        var cover = jQuery('#fetlife_asl_search_extended_cover');
         jQuery(this).after('<button>&times; Close FetLife ASL Search</button>').next('button').on('click', function () {
             iframe.css({
                 'position': 'static',
                 'height': '400px',
                 'width': '950px'
+            });
+            cover.css({
+                'position': 'absolute',
+                'width': '950px',
+                'top': '23px',
+                'text-align': 'left'
             });
             jQuery(this).remove();
         }).css({'position':'fixed', 'z-index':'9999', 'top': 0, 'left': 0});
@@ -681,6 +700,13 @@ FL_ASL.attachSearchForm = function () {
             'border':   "none"
         });
         iframe.width(jQuery(window).width());
+        cover.css({
+            'position': 'fixed',
+            'top': '0',
+            'z-index': '8890',
+            'width': '100%',
+            'text-align': 'center'
+        });
     });
 
     // Main ASL search option interface
@@ -824,7 +850,6 @@ FL_ASL.attachSearchForm = function () {
 FL_ASL.GAS = {};
 FL_ASL.GAS.ajaxPost = function (data)  {
     FL_ASL.log('POSTing profile data for ' + data.nickname + ' (' + data.user_id + ')');
-//    console.log(data);
     var url = (FL_ASL.CONFIG.debug)
         ? FL_ASL.CONFIG.gasapp_url_development
         : FL_ASL.CONFIG.gasapp_url;
@@ -836,7 +861,7 @@ FL_ASL.GAS.ajaxPost = function (data)  {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         'onload': function (response) {
-//            console.log(response);
+            FL_ASL.log('POST response received: ' + response.responseText);
         }
     });
 };
@@ -1047,7 +1072,9 @@ FL_ASL.scrapeProfile = function (user_id) {
         'role': FL_ASL.ProfileScraper.getRole(),
         'friend_count': FL_ASL.ProfileScraper.getFriendCount(),
         'paid_account': FL_ASL.ProfileScraper.isPaidAccount(),
-        'location': FL_ASL.ProfileScraper.getLocation(),
+        'location_locality': FL_ASL.ProfileScraper.getLocation().locality,
+        'location_region': FL_ASL.ProfileScraper.getLocation().region,
+        'location_country': FL_ASL.ProfileScraper.getLocation().country,
         'avatar_url': FL_ASL.ProfileScraper.getAvatar(),
         'sexual_orientation': FL_ASL.ProfileScraper.getSexualOrientation(),
         'interest_level': FL_ASL.ProfileScraper.getInterestLevel(),
@@ -1059,15 +1086,14 @@ FL_ASL.scrapeProfile = function (user_id) {
         'last_activity': FL_ASL.ProfileScraper.getLastActivity(),
         'fetishes_into': FL_ASL.ProfileScraper.getFetishesInto(),
         'fetishes_curious_about': FL_ASL.ProfileScraper.getFetishesCuriousAbout(),
-        'latest_pics': FL_ASL.ProfileScraper.getPicturesCount(),
-        'latest_vids': FL_ASL.ProfileScraper.getVideosCount(),
+        'num_pics': FL_ASL.ProfileScraper.getPicturesCount(),
+        'num_vids': FL_ASL.ProfileScraper.getVideosCount(),
         'latest_posts': FL_ASL.ProfileScraper.getLatestPosts(),
         'groups_lead': FL_ASL.ProfileScraper.getGroupsLead(),
         'groups_member_of': FL_ASL.ProfileScraper.getGroupsMemberOf(),
         'events_going_to': FL_ASL.ProfileScraper.getEventsGoingTo(),
         'events_maybe_going_to': FL_ASL.ProfileScraper.getEventsMaybeGoingTo()
     };
-//    console.log();
     FL_ASL.GAS.ajaxPost(profile_data);
 }
 
