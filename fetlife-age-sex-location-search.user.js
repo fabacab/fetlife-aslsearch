@@ -187,7 +187,7 @@ GM_addStyle('\
 #fetlife_asl_search_extended_wrapper { position: relative; }\
 #fetlife_asl_search_extended_cover {\
     background: #000;\
-    width: 950px; height: 53px;\
+    width: 100%; height: 53px;\
     position: absolute; top: 23px; left: 0;\
     font-size: xx-large;\
 }\
