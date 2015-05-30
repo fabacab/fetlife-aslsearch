@@ -10,7 +10,25 @@ jQuery(document).ready(function () {
   jQuery('[data-toggle="popover"]').popover();
   jQuery('#search-form-submit').on('click', function () {
     jQuery(this).button('loading');
-    submitSearch();
+    jQuery('#donation-appeal').slideDown();
+    jQuery('#search-progress').fadeIn()
+      .find('.progress-bar')
+      .removeClass('progress-bar-success');
+    setProgressBar(1);
+    var interval_id = window.setInterval(setProgressBar, 500);
+    jQuery('#search-form header, #search-form section').each(function () {
+      jQuery(this).slideUp();
+    });
+    google.script.run
+      .withSuccessHandler(handleSearchSuccess)
+      .withUserObject(interval_id)
+      .processSearchForm(document.getElementById('search-form'));
+  });
+
+  jQuery('#search-form select[name="user[type]"]').on('change', function () {
+    if ('true' === jQuery(this).val()) {
+      jQuery('#warning-about-paid-users').fadeIn(400, function () { jQuery(this).addClass('in'); });
+    }
   });
 
   // Helper options for demographic buckets
@@ -43,6 +61,15 @@ jQuery(document).ready(function () {
       });
     });
   });
+
+  jQuery('#donation-appeal > .close, #donation-appeal .btn-close').on('click', function() {
+    jQuery(this).closest('#donation-appeal').slideUp({
+      'complete': function () {
+        jQuery(this).find('h2').text('Want moar? Support FetLife ASL Search!')
+        jQuery(this).find('#search-progress').slideDown();
+      }
+    });
+  });
 });
 
 function resetSearchForm () {
@@ -62,16 +89,23 @@ function resetSearchForm () {
   });
 };
 
-function submitSearch () {
-  jQuery('#search-form header, #search-form section').each(function () {
-    jQuery(this).slideUp();
-  });
-  google.script.run
-    .withSuccessHandler(handleSearchSuccess)
-    .processSearchForm(document.getElementById('search-form'));
+function setProgressBar (n) {
+  var bar = jQuery('#search-progress .progress-bar');
+  var n = n || parseInt(bar.attr('aria-valuenow'));
+  var x = n + 1;
+  bar.width(x + '%');
+  bar.attr('aria-valuenow', x);
+  bar.find('.sr-only').text(x + '% Complete');
 }
 
-function handleSearchSuccess (results) {
+function handleSearchSuccess (results, interval_id) {
+  window.clearInterval(interval_id);
+  setProgressBar(100);
+  jQuery('#search-progress .progress-bar')
+    .addClass('progress-bar-success')
+    .parent()
+    .delay(2000)
+    .fadeOut();
   jQuery('#search-form [name="offset"]').val(
     parseInt(jQuery('#search-form [name="offset"]').val()) + 10
   );
