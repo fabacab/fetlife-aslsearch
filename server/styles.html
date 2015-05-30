@@ -1,0 +1,89 @@
+<link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
+<link rel="stylesheet" href="//cdn.datatables.net/plug-ins/1.10.7/integration/bootstrap/3/dataTables.bootstrap.css" />
+<link rel="stylesheet" href="//cdn.datatables.net/responsive/1.0.6/css/dataTables.responsive.css" />
+<link rel="stylesheet" href="//datatables.net/release-datatables/extensions/ColVis/css/dataTables.colVis.css" />
+<link rel="stylesheet" href="//datatables.net/release-datatables/extensions/TableTools/css/dataTables.tableTools.css" />
+<style>
+/*
+Match FetLife main styles,
+overriding some Bootstrap CSS and DataTables CSS defaults.
+*/
+body {
+  color: #DDD;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Verdana, sans-serif;
+  background: #000;
+  font-size: 14px;
+  line-height: 1.5em;
+  padding: 0 1em 3em;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button { padding: 0; }
+legend,
+caption,
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_processing,
+.dataTables_wrapper .dataTables_paginate
+{
+  color: inherit;
+}
+label { font-weight: normal; }
+button, input, select, textarea { color: #666; }
+.panel-body { background-color: #000; }
+.btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) { border-top-right-radius: 4px; }
+
+input[type="checkbox"], input[type="radio"] {
+  margin-right: 3px;
+}
+
+table.dataTable tbody tr {
+  background-color: inherit;
+}
+td.child ul { width: 100%; }
+.popover-title, .popover-content {
+  color: #000;
+}
+
+h2 {
+  font-size: 2.5em;
+  line-height: 36px;
+  color: #D00;
+}
+
+#search-form {
+  margin: 1em 0;
+}
+#search-form section, #search-form fieldset {
+  position: relative;
+}
+#search-form .helper-opts.btn-group-justified {
+  max-width: 850px;
+  margin: 0 0 1em;
+}
+#search-form .helper-opts.btn-group input[type="checkbox"] {  display: none; }
+#search-form .help-text {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+#search-form .panel-heading .help-text {
+  top: 1em;
+  right: 1em;
+}
+#search-form fieldset.text-fields input {
+  min-width: 50%;
+}
+#search-form .all-opts {
+  font-size: smaller;
+}
+#search-form .alert,
+#donation-appeal { display: none; }
+#donation-appeal .close {
+  position: relative;
+  top: 10px;
+  right: 20px;
+}
+#donation-appeal .jumbotron { background: #333; }
+.search-result-actions { width: 100%; }
+</style>

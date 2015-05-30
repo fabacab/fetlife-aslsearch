@@ -1,0 +1,199 @@
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+<script src="//cdn.datatables.net/plug-ins/1.10.7/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+<script src="//cdn.datatables.net/responsive/1.0.6/js/dataTables.responsive.js"></script>
+<script src="//datatables.net/release-datatables/extensions/ColVis/js/dataTables.colVis.js"></script>
+<script src="//datatables.net/release-datatables/extensions/TableTools/js/dataTables.tableTools.js"></script>
+<script>
+jQuery(document).ready(function () {
+  jQuery('[data-toggle="popover"]').popover();
+  jQuery('#search-form-submit').on('click', function () {
+    jQuery(this).button('loading');
+    jQuery('#donation-appeal').slideDown();
+    jQuery('#search-progress').fadeIn()
+      .find('.progress-bar')
+      .removeClass('progress-bar-success');
+    setProgressBar(1);
+    var interval_id = window.setInterval(setProgressBar, 500);
+    jQuery('#search-form header, #search-form section').each(function () {
+      jQuery(this).slideUp();
+    });
+    google.script.run
+      .withSuccessHandler(handleSearchSuccess)
+      .withUserObject(interval_id)
+      .processSearchForm(document.getElementById('search-form'));
+  });
+
+  jQuery('#search-form select[name="user[type]"]').on('change', function () {
+    if ('true' === jQuery(this).val()) {
+      jQuery('#warning-about-paid-users').fadeIn(400, function () { jQuery(this).addClass('in'); });
+    }
+  });
+
+  // Helper options for demographic buckets
+  jQuery('#search-form .helper-opts .btn').each(function () {
+    jQuery(this).on('click', function (clicked) {
+      var btn_el = this;
+      var checkbox = jQuery(this).find('[name^="helper-"]');
+      if (checkbox.prop('checked')) { jQuery(this).addClass('active'); }
+      jQuery(this).parent().find('.btn').each(function () {
+        if (btn_el === this) { return; }
+        if (jQuery(this).find('input').first().prop('checked')) {
+          jQuery(this).addClass('active');
+        } else {
+          jQuery(this).removeClass('active');
+        }
+      });
+      var field_set_name = checkbox.attr('name').split('-')[1];
+      var field_set_vals = checkbox.val().split(',');
+      jQuery('#search-form [name="' + field_set_name + '"]').each(function () {
+        if (-1 !== jQuery.inArray(jQuery(this).val(), field_set_vals)) {
+          jQuery(this).prop('checked', ((checkbox.prop('checked')) ? true : false));
+        } else {
+          jQuery(this).prop('checked', ((checkbox.prop('checked')) ? false : true));
+        }
+      });
+      jQuery('#search-form [name="' + checkbox.attr('name') +'"]').each(function () {
+        if (jQuery(this).val() !== jQuery(clicked.target).val()) {
+          jQuery(this).prop('checked', false);
+        }
+      });
+    });
+  });
+
+  jQuery('#donation-appeal > .close, #donation-appeal .btn-close').on('click', function() {
+    jQuery(this).closest('#donation-appeal').slideUp({
+      'complete': function () {
+        jQuery(this).find('h2').text('Want moar? Support FetLife ASL Search!')
+        jQuery(this).find('#search-progress').slideDown();
+      }
+    });
+  });
+});
+
+function resetSearchForm () {
+  var form = jQuery('#search-form');
+  form.find('[name="offset"]').val(0);
+  form.find('#search-form-submit').text('Search');
+  jQuery('#search-form header, #search-form section').each(function () {
+    jQuery(this).slideDown();
+  });
+  var tbl = jQuery('#search-results');
+  tbl.slideUp({
+    'complete': function () {
+      tbl.DataTable().destroy();
+      tbl.html('');
+      tbl.slideDown();
+    }
+  });
+};
+
+function setProgressBar (n) {
+  var bar = jQuery('#search-progress .progress-bar');
+  var n = n || parseInt(bar.attr('aria-valuenow'));
+  var x = n + 1;
+  bar.width(x + '%');
+  bar.attr('aria-valuenow', x);
+  bar.find('.sr-only').text(x + '% Complete');
+}
+
+function handleSearchSuccess (results, interval_id) {
+  window.clearInterval(interval_id);
+  setProgressBar(100);
+  jQuery('#search-progress .progress-bar')
+    .addClass('progress-bar-success')
+    .parent()
+    .delay(2000)
+    .fadeOut();
+  jQuery('#search-form [name="offset"]').val(
+    parseInt(jQuery('#search-form [name="offset"]').val()) + 10
+  );
+
+  updateFormUI();
+
+  var columns = [];
+  results[0].forEach(function (col_name) {
+    var cell_funcs_map = {
+      'Nickname' : buildLinkToFetLife,
+      'Avatar URL': linkify
+    };
+    var c = {
+      'title': col_name,
+      'visible': (isVisibleColumn(col_name)) ? true : false,
+      'className': (isVisibleColumn(col_name)) ? null : getColClassName(col_name),
+      'createdCell': (undefined === cell_funcs_map[col_name]) ? null : cell_funcs_map[col_name]
+    };
+    columns.push(c);
+
+    function isVisibleColumn (col_name) {
+      return jQuery("#search-form [name=\"show[]\"][value=\"" + col_name.replace('"', '\\"', 'g') + '"]').prop('checked');
+    }
+    function getColClassName (col_name) {
+      switch (col_name) {
+        case 'Avatar URL':
+          return 'none never';
+        default:
+          return 'none';
+      }
+    }
+    function buildLinkToFetLife (td, cellData, rowData, row, col) {
+      var html = '';
+      html += '<a href="https://fetlife.com/users/' + rowData[0] + '" target="_blank">';
+      html += '<img src="' + rowData[10] + '" alt="" class="img-rounded" /><div class="text-center">' + cellData + '</div>';
+      html += '</a>';
+      jQuery(td).html(html);
+    }
+    function linkify (td, cellData, rowData, row, col) {
+      jQuery(td).html('<a href="' + cellData + '" target="_blank">' + cellData + '</a>');
+    }
+  });
+
+  // Add column for actions
+  columns.push({
+    'title': 'Actions',
+    'orderable': false,
+    'searchable': false,
+    'className': 'all',
+    'data': function (row, type, set, meta) {
+      var html = '<div class="search-result-actions btn-group btn-group-vertical">';
+      html += '<a href="https://fetlife.com/conversations/new?with=' + row[0] + '" class="btn btn-success btn-xs" target="_blank">Message ' + row[1] + ' via FetLife</a>';
+      html += '<a href="http://www.usersherlock.com/usersearch/' + row[1] + '" class="btn btn-info btn-xs" target="_blank">Find ' + row[1] + ' on other social networks</a>';
+      if (row[10]) {
+        html += '<form action="https://www.tineye.com/search" method="POST" target="_blank"><input type="hidden" name="url" value="' + row[10] + '" /><button type="submit" class="btn btn-info btn-xs" style="width:100%">Find ' + row[1] + '\'s profile pic on other sites</button></form>'
+      }
+      var pat_fetlife_form_url = 'https://docs.google.com/spreadsheet/viewform?formkey=dGNVT1kzSzFnOXhHRjh1RnczZVVmMXc6MQ';
+      html += '<a href="' + pat_fetlife_form_url + '&entry_0=' + row[0] + '&entry_1=' + row[1] + '" class="btn btn-danger btn-xs" target="_blank">Report ' + row[1] + ' for predatory behavior</a>';
+      html += '</div>';
+      return html;
+    }
+  });
+
+  var dataset = results.slice(1);
+  var table = jQuery('#search-results').DataTable({
+    'destroy': true,
+    'data': dataset,
+    'columns': columns,
+    'responsive': true,
+    'dom': 'TC<"clear">lfrtip',
+    'language': {
+      'search': 'Filter batch results:'
+    },
+    'colVis': {
+      'restore': 'Restore default view',
+      'showAll': 'Show all'
+    }
+  });
+
+  function updateFormUI () {
+    var offset = parseInt(jQuery('#search-form [name="offset"]').val());
+    var limit = parseInt(jQuery('#search-form [name="limit"]').val());
+    var batch_number = offset / limit;
+    jQuery('#search-form-submit').data('complete-text', 'Show batch number ' + (batch_number + 1));
+    jQuery('#search-form-submit').button('complete');
+    jQuery('#search-results caption')
+      .show()
+      .html('Search results for batch number ' + batch_number);
+  }
+}
+</script>
