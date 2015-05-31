@@ -93,6 +93,8 @@ That said, since this script is public domain, it's entirely use-at-your-own-ris
 
 ## Change log
 
+* Version 0.4.2
+    * Bugfix: Fix nickname detection on Google Chrome.
 * Version 0.4.1
     * Google Chrome fixes.
         * "Extended A/S/L Search" in Google Chrome now loads when you click "Open Extended A/S/L Search" link to workaround Chrome's strict settings.
