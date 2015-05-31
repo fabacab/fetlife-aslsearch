@@ -93,6 +93,10 @@ That said, since this script is public domain, it's entirely use-at-your-own-ris
 
 ## Change log
 
+* Version 0.4.1
+    * Google Chrome fixes.
+        * "Extended A/S/L Search" in Google Chrome now loads when you click "Open Extended A/S/L Search" link to workaround Chrome's strict settings.
+        * Bugfix: Fix search results display table in Google Chrome.
 * **EXTENDED EDITION (version 0.4)**
     * The "Extended Edition" adds a huge number of features and improves the speed, safety, and ease-of-use of A/S/L-based searches.
     * **Feature: Massively extended search criteria.**

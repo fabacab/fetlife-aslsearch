@@ -127,7 +127,7 @@ function handleSearchSuccess (results, interval_id) {
     columns.push(c);
 
     function isVisibleColumn (col_name) {
-      return jQuery("#search-form [name=\"show[]\"][value=\"" + col_name.replace('"', '\\"', 'g') + '"]').prop('checked');
+      return jQuery("#search-form [name=\"show[]\"][value=\"" + col_name.replace('"Active"', '\\"Active\\"') + '"]').prop('checked');
     }
     function getColClassName (col_name) {
       switch (col_name) {
@@ -182,6 +182,13 @@ function handleSearchSuccess (results, interval_id) {
     'colVis': {
       'restore': 'Restore default view',
       'showAll': 'Show all'
+    },
+    'tableTools': {
+      // TODO: This "sSwfPath" option won't load?
+      'sSwfPath': '//datatables.net/release-datatables/extensions/TableTools/swf/copy_csv_xls_pdf.swf',
+      'aButtons': [
+        'print'
+      ]
     }
   });
 

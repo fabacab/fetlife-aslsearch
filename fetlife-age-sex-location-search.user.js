@@ -5,7 +5,7 @@
  */
 // ==UserScript==
 // @name           FetLife ASL Search (Extened Edition)
-// @version        0.4
+// @version        0.4.1
 // @namespace      http://maybemaimed.com/playground/fetlife-aslsearch/
 // @updateURL      https://github.com/meitar/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js
 // @description    Allows you to search for FetLife profiles based on age, sex, location, and role.
@@ -674,41 +674,53 @@ FL_ASL.attachSearchForm = function () {
     }
     html_string += '</div><!-- #fetlife_asl_search_extended_wrapper -->';
     var newdiv = container.appendChild(FL_ASL.createSearchTab('fetlife_asl_search_extended', html_string));
-    jQuery(newdiv).find('#fetlife_asl_search_extended_enlarge').on('click', function () {
-        var iframe = jQuery('#fetlife_asl_search_extended_iframe');
-        var cover = jQuery('#fetlife_asl_search_extended_cover');
-        jQuery(this).after('<button>&times; Close FetLife ASL Search</button>').next('button').on('click', function () {
+    // Google Chrome is far stricter about iframes, so just offer a pop-out instead, for now.
+    if (window.navigator.vendor.match(/Google/)) {
+        jQuery(newdiv).find('#fetlife_asl_search_extended_enlarge').remove();
+        jQuery(newdiv).find('#fetlife_asl_search_extended_cover').remove();
+        jQuery(newdiv).find('#fetlife_asl_search_extended_wrapper').html('<h2><a href="#">Open Extended A/S/L Search</a></h2>').on('click', function () {
+            GM_openInTab(FL_ASL.CONFIG.gasapp_url.split('?')[0]);
+            jQuery('[data-fl-asl-section-id="fetlife_asl_search_about"]').click();
+        });
+        jQuery(newdiv).find('#fetlife_asl_search_extended_iframe').remove();
+    } else {
+        jQuery(newdiv).find('#fetlife_asl_search_extended_enlarge').on('click', function () {
+            var iframe = jQuery('#fetlife_asl_search_extended_iframe');
+            var cover = jQuery('#fetlife_asl_search_extended_cover');
+            jQuery(this).after('<button>&times; Close FetLife ASL Search</button>').next('button').on('click', function () {
+                iframe.css({
+                    'position': 'static',
+                    'height': '400px',
+                    'width': '950px'
+                });
+                cover.css({
+                    'position': 'absolute',
+                    'width': '950px',
+                    'top': '23px',
+                    'text-align': 'left'
+                });
+                jQuery(this).remove();
+            }).css({'position':'fixed', 'z-index':'9999', 'top': 0, 'left': 0});
             iframe.css({
-                'position': 'static',
-                'height': '400px',
-                'width': '950px'
+                'position': "fixed",
+                'bottom':   "0",
+                'left':     "0",
+                'z-index':  "8888",
+                'margin':   "0",
+                'height':   "100%",
+                'border':   "none"
             });
+            iframe.width(jQuery(window).width());
             cover.css({
-                'position': 'absolute',
-                'width': '950px',
-                'top': '23px',
-                'text-align': 'left'
+                'position': 'fixed',
+                'top': '0',
+                'z-index': '8890',
+                'width': '100%',
+                'text-align': 'center'
             });
-            jQuery(this).remove();
-        }).css({'position':'fixed', 'z-index':'9999', 'top': 0, 'left': 0});
-        iframe.css({
-            'position': "fixed",
-            'bottom':   "0",
-            'left':     "0",
-            'z-index':  "8888",
-            'margin':   "0",
-            'height':   "100%",
-            'border':   "none"
         });
-        iframe.width(jQuery(window).width());
-        cover.css({
-            'position': 'fixed',
-            'top': '0',
-            'z-index': '8890',
-            'width': '100%',
-            'text-align': 'center'
-        });
-    });
+    }
+
 
     // Main ASL search option interface
     html_string = '<fieldset><legend>Search for user profiles of the following gender/sex:</legend><p>';
