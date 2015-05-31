@@ -197,10 +197,10 @@ function buildQuery (params) {
           query += ' and V ' + params['user[fetishes_curious_about][operator]'] + ' "' + params[x] + '"';
           break;
         case 'min_age':
-          query += ' and D <= ' + params[x];
+          query += ' and D >= ' + params[x];
           break;
         case 'max_age':
-          query += ' and D >= ' + params[x];
+          query += ' and D <= ' + params[x];
           break;
         case 'friends[count]':
           query += ' and G ' + params['friends[operator]'] + ' ' + params[x];

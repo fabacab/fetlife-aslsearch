@@ -169,7 +169,10 @@ function getVolumes () {
     if (0 === key.indexOf(CONFIG.db_spreadsheet_property_prefix)) {
       var parts = key.split('_');
       var volume_number = parts[parts.length - 1];
-      vols[volume_number] = x[key];
+      // TODO: Why is there sometimes a "NaN" volume?
+      if ('NaN' !== volume_number) {
+        vols[volume_number] = x[key];
+      }
     }
   }
   return vols;
@@ -247,7 +250,11 @@ function querySpreadsheet (ss_id, query, format) {
   resp = cache.get(cache_key);
   if (resp === null) {
     debugLog('Cache miss, refetching data from spreadsheet at ' + url);
-    resp = UrlFetchApp.fetch(url).getContentText();
+    try {
+      resp = UrlFetchApp.fetch(url).getContentText();
+    } catch (ex) {
+      debugLog('Caught exception: ' + ex);
+    }
     try {
       // TODO: Find a way to cache even when value too large?
       cache.put(cache_key, resp, getCacheExpiration());
