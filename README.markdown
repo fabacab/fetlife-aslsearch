@@ -85,7 +85,7 @@ FetLife A/S/L Search (Extended Edition) also includes a "Classic (slow) search" 
 
 FetLife A/S/L Search (Exteded Edition) is completely legal and safe to use.
 
-Still, in a trigger-happy legal environment where people eagerly sue over spilled milk, it's hard to say. IANAL, but the way this script works is actually pretty simple: it just cooperates with other copies of itself! No part of this tool involves malicious hacking, cracking, or theft. The code for the script itself is public domain (it's not even copyrighted), the information it uses is all fair-use, and the tool as a whole is what the sometimes trigger-ahppy people in suits call a "transformative work." (Look it up.)
+Still, in a trigger-happy legal environment where people eagerly sue over spilled milk, it's hard to say. IANAL, but the way this script works is actually pretty simple: it just cooperates with other copies of itself! No part of this tool involves malicious hacking, cracking, or theft. The code for the script itself is public domain (it's not even copyrighted), the information it uses is all fair-use, and the tool as a whole is what the sometimes trigger-happy people in suits call a "transformative work." (Look it up.)
 
 [FetLife has historically been very quick to mis-use the law for illegal purposes](https://web.archive.org/web/20150530060828/https://mikandi.com/blog/news/mikandi-news/fetlife-meatlist/), and there's no telling whether they'll do the same again. But even so, the chances of *you* getting in trouble is slim to none. Hell, [I've been targeted by FetLife's lawyers for *years*](https://fetlife.maybemaimed.com/reverse-the-spin.html) for a bunch of other stuff and I'm still just fine. :P
 
