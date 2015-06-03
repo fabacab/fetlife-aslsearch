@@ -442,7 +442,7 @@ FL_ASL.getKinkstersFromURL = function (url) {
             var doc = parser.parseFromString(response.responseText, 'text/html');
             var els = doc.querySelectorAll('.user_in_list');
             //make sure we're not on the last results page.
-            var has_last_page = doc.querySelectorAll('span.next_page.disabled').length;
+            var end_of_results = doc.querySelectorAll('span.next_page.disabled').length;
 
             result_count = 0;
             for (var i = 0; i < els.length; i++) {
