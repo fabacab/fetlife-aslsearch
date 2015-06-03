@@ -93,6 +93,8 @@ That said, since this script is public domain, it's entirely use-at-your-own-ris
 
 ## Change log
 
+* Version 0.4.2.1
+    * Bugfix: Stop automatic searching when end of results are reached in Classic mode.
 * Version 0.4.2
     * Bugfix: Fix nickname detection on Google Chrome.
 * Version 0.4.1
