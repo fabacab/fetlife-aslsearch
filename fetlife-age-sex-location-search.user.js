@@ -441,6 +441,8 @@ FL_ASL.getKinkstersFromURL = function (url) {
             var parser = new DOMParser();
             var doc = parser.parseFromString(response.responseText, 'text/html');
             var els = doc.querySelectorAll('.user_in_list');
+            //make sure we're not on the last results page.
+            var end_of_results = doc.querySelectorAll('span.next_page.disabled').length;
 
             result_count = 0;
             for (var i = 0; i < els.length; i++) {
@@ -454,40 +456,49 @@ FL_ASL.getKinkstersFromURL = function (url) {
                 }
             }
 
-            // Set up next request.
-            my_page = (url.match(/\d+$/)) ? parseInt(url.match(/\d+$/)[0]) : 1 ;
-            next_page = my_page + 1;
-            if (next_page > 2) {
-                next_url = url.replace(/\d+$/, next_page.toString());
-            } else {
-                // Already have a query string? If so, append (&) rather than create (?).
-                next_url = (url.match(/\?q=/)) ? url + '&page=' : url + '?page=';
-                next_url += next_page.toString();
-            }
+            //only create and make request if there is another page.
+            if (end_of_results < 1) {
+              // Set up next request.
+              my_page = (url.match(/\d+$/)) ? parseInt(url.match(/\d+$/)[0]) : 1 ;
+              next_page = my_page + 1;
+              if (next_page > 2) {
+                  next_url = url.replace(/\d+$/, next_page.toString());
+              } else {
+                  // Already have a query string? If so, append (&) rather than create (?).
+                  next_url = (url.match(/\?q=/)) ? url + '&page=' : url + '?page=';
+                  next_url += next_page.toString();
+              }
 
-            // Automatically search on next page if no or too few results were found.
-            if (0 === result_count || FL_ASL.CONFIG.min_matches >= FL_ASL.total_result_count) {
-                setTimeout(FL_ASL.getKinkstersFromURL, FL_ASL.CONFIG.search_sleep_interval * 1000, next_url);
-                return false;
+              // Automatically search on next page if no or too few results were found.
+              if (0 === result_count || FL_ASL.CONFIG.min_matches >= FL_ASL.total_result_count) {
+                  setTimeout(FL_ASL.getKinkstersFromURL, FL_ASL.CONFIG.search_sleep_interval * 1000, next_url);
+                  return false;
+              } else {
+                  // Reset total_result_count for this load.
+                  FL_ASL.total_result_count = 0;
+                  // Reset UI search feedback.
+                  p = prog.parentNode
+                  p.removeChild(prog);
+                  new_prog = document.createElement('p');
+                  new_prog.setAttribute('id', FL_ASL.CONFIG.progress_id);
+                  p.appendChild(new_prog);
+              }
+              var div = document.createElement('div');
+              div.innerHTML = FL_UI.Text.donation_appeal;
+              btn = document.createElement('button');
+              btn.setAttribute('id', 'btn_moar');
+              btn.setAttribute('onclick', "var xme = document.getElementById('btn_moar'); xme.parentNode.removeChild(xme); return false;");
+              btn.innerHTML = 'Show me MOAR&hellip;';
+              btn.addEventListener('click', function(){FL_ASL.getKinkstersFromURL(next_url)});
+              div.appendChild(btn);
+              document.getElementById('fetlife_asl_search_results').appendChild(div);
             } else {
-                // Reset total_result_count for this load.
-                FL_ASL.total_result_count = 0;
-                // Reset UI search feedback.
                 p = prog.parentNode
                 p.removeChild(prog);
-                new_prog = document.createElement('p');
-                new_prog.setAttribute('id', FL_ASL.CONFIG.progress_id);
-                p.appendChild(new_prog);
+                alert("last page of results reached!");
+                return false;
             }
-            var div = document.createElement('div');
-            div.innerHTML = FL_UI.Text.donation_appeal;
-            btn = document.createElement('button');
-            btn.setAttribute('id', 'btn_moar');
-            btn.setAttribute('onclick', "var xme = document.getElementById('btn_moar'); xme.parentNode.removeChild(xme); return false;");
-            btn.innerHTML = 'Show me MOAR&hellip;';
-            btn.addEventListener('click', function(){FL_ASL.getKinkstersFromURL(next_url)});
-            div.appendChild(btn);
-            document.getElementById('fetlife_asl_search_results').appendChild(div);
+
         }
     });
 };
