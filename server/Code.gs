@@ -25,9 +25,13 @@ function doPost (e) {
   if (!(profiles instanceof Array)) {
     profiles = [profiles];
   }
-  for (profile in profiles) {
+  for (var profile in profiles) {
     var profile_data = validateScraperInput(profiles[profile]);
     var volume_number = lookupVolumeNumberByUserId(profile_data.user_id);
+    if (isNaN(volume_number)) {
+      debugLog('Volume number for user ID ' + profile_data.user_id + ' is NaN, skipping.');
+      continue;
+    }
     var ss_id = getSpreadsheetIdByVolumeNumber(volume_number);
     var ss;
     try {
