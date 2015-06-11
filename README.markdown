@@ -93,6 +93,8 @@ That said, since this script is public domain, it's entirely use-at-your-own-ris
 
 ## Change log
 
+* Version 0.4.4
+    * Feature: Support all new sexual role options in both Extended and Classic search modes.
 * Version 0.4.3
     * Bugfix: Correct an issue that sometimes resulted in an infinite "Loading" progress bar.
     * Bugfix: Correct an issue where search results intermittently failed to return correct user information.
