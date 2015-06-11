@@ -554,7 +554,7 @@ FL_ASL.getAge = function (el) {
 
 FL_ASL.getRole = function (el) {
     var x = el.querySelector('.quiet').innerHTML;
-    var role = x.match(/ ?(\S+)?$/);
+    var role = x.match(/ (.*)$/);
     return role[1];
 };
 FL_ASL.getLocationString = function (el) {
@@ -753,32 +753,72 @@ FL_ASL.attachSearchForm = function () {
     html_string += '<fieldset><legend>Search for user profiles whose role is:</legend><p>';
     html_string += '&hellip;who identify their role as ';
     // Note that these values are what show up, not necessarily what's sent to the FetLife backend.
-    html_string += '<label><input type="checkbox" name="user[role]" value="Dom" />Dominant</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="Domme" />Domme</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="Switch" />Switch</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="sub" checked="checked" />submissive</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="Master" />Master</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="Mistress" />Mistress</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="slave" checked="checked" />slave</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="pet" checked="checked" />pet</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="kajira" />kajira</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="kajirus" />kajirus</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="Top" />Top</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="bottom" checked="checked" />Bottom</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="Sadist" />Sadist</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="Masochist" checked="checked" />Masochist</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="Sadomasochist" />Sadomasochist</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="Ageplayer" />Ageplayer</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="Daddy" />Daddy</label>';	
-    html_string += '<label><input type="checkbox" name="user[role]" value="babygirl" />babygirl</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="brat" />brat</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="Primal" />Primal</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="Fetishist" />Fetishist</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="Kinkster" />Kinkster</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="Hedonist" />Hedonist</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="Vanilla" />Vanilla</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="Unsure" />Unsure</label>';
-    html_string += '<label><input type="checkbox" name="user[role]" value="" />Not Applicable</label>';
+    html_string += '<label><input type="checkbox" value="Dom" name="user[role]" />Dominant</label>';
+    html_string += '<label><input type="checkbox" value="Domme" name="user[role]" />Domme</label>';
+    html_string += '<label><input type="checkbox" value="Switch" name="user[role]" />Switch</label>';
+    html_string += '<label><input type="checkbox" value="sub" name="user[role]" />submissive</label>';
+    html_string += '<label><input type="checkbox" value="Master" name="user[role]" />Master</label>';
+    html_string += '<label><input type="checkbox" value="Mistress" name="user[role]" />Mistress</label>';
+    html_string += '<label><input type="checkbox" value="slave" name="user[role]" />slave</label>';
+    html_string += '<label><input type="checkbox" value="kajira" name="user[role]" />kajira</label>';
+    html_string += '<label><input type="checkbox" value="kajirus" name="user[role]" />kajirus</label>';
+    html_string += '<label><input type="checkbox" value="Top" name="user[role]" />Top</label>';
+    html_string += '<label><input type="checkbox" value="bottom" name="user[role]" />Bottom</label>';
+    html_string += '<label><input type="checkbox" value="Sadist" name="user[role]" />Sadist</label>';
+    html_string += '<label><input type="checkbox" value="Masochist" name="user[role]" />Masochist</label>';
+    html_string += '<label><input type="checkbox" value="Sadomasochist" name="user[role]" />Sadomasochist</label>';
+    html_string += '<label><input type="checkbox" value="Kinkster" name="user[role]" />Kinkster</label>';
+    html_string += '<label><input type="checkbox" value="Fetishist" name="user[role]" />Fetishist</label>';
+    html_string += '<label><input type="checkbox" value="Swinger" name="user[role]" />Swinger</label>';
+    html_string += '<label><input type="checkbox" value="Hedonist" name="user[role]" />Hedonist</label>';
+    html_string += '<label><input type="checkbox" value="Exhibitionist" name="user[role]" />Exhibitionist</label>';
+    html_string += '<label><input type="checkbox" value="Voyeur" name="user[role]" />Voyeur</label>';
+    html_string += '<label><input type="checkbox" value="Sensualist" name="user[role]" />Sensualist</label>';
+    html_string += '<label><input type="checkbox" value="Princess" name="user[role]" />Princess</label>';
+    html_string += '<label><input type="checkbox" value="Slut" name="user[role]" />Slut</label>';
+    html_string += '<label><input type="checkbox" value="Doll" name="user[role]" />Doll</label>';
+    html_string += '<label><input type="checkbox" value="sissy" name="user[role]" />sissy</label>';
+    html_string += '<label><input type="checkbox" value="Rigger" name="user[role]" />Rigger</label>';
+    html_string += '<label><input type="checkbox" value="Rope Top" name="user[role]" />Rope Top</label>';
+    html_string += '<label><input type="checkbox" value="Rope Bottom" name="user[role]" />Rope Bottom</label>';
+    html_string += '<label><input type="checkbox" value="Rope Bunny" name="user[role]" />Rope Bunny</label>';
+    html_string += '<label><input type="checkbox" value="Spanko" name="user[role]" />Spanko</label>';
+    html_string += '<label><input type="checkbox" value="Spanker" name="user[role]" />Spanker</label>';
+    html_string += '<label><input type="checkbox" value="Spankee" name="user[role]" />Spankee</label>';
+    html_string += '<label><input type="checkbox" value="Furry" name="user[role]" />Furry</label>';
+    html_string += '<label><input type="checkbox" value="Leather Man" name="user[role]" />Leather Man</label>';
+    html_string += '<label><input type="checkbox" value="Leather Woman" name="user[role]" />Leather Woman</label>';
+    html_string += '<label><input type="checkbox" value="Leather Daddy" name="user[role]" />Leather Daddy</label>';
+    html_string += '<label><input type="checkbox" value="Leather Top" name="user[role]" />Leather Top</label>';
+    html_string += '<label><input type="checkbox" value="Leather bottom" name="user[role]" />Leather bottom</label>';
+    html_string += '<label><input type="checkbox" value="Leather boy" name="user[role]" />Leather boy</label>';
+    html_string += '<label><input type="checkbox" value="Leather girl" name="user[role]" />Leather girl</label>';
+    html_string += '<label><input type="checkbox" value="Leather Boi" name="user[role]" />Leather Boi</label>';
+    html_string += '<label><input type="checkbox" value="Bootblack" name="user[role]" />Bootblack</label>';
+    html_string += '<label><input type="checkbox" value="Primal" name="user[role]" />Primal</label>';
+    html_string += '<label><input type="checkbox" value="Primal Predator" name="user[role]" />Primal Predator</label>';
+    html_string += '<label><input type="checkbox" value="Primal Prey" name="user[role]" />Primal Prey</label>';
+    html_string += '<label><input type="checkbox" value="Bull" name="user[role]" />Bull</label>';
+    html_string += '<label><input type="checkbox" value="cuckold" name="user[role]" />cuckold</label>';
+    html_string += '<label><input type="checkbox" value="cuckquean" name="user[role]" />cuckquean</label>';
+    html_string += '<label><input type="checkbox" value="Ageplayer" name="user[role]" />Ageplayer</label>';
+    html_string += '<label><input type="checkbox" value="Daddy" name="user[role]" />Daddy</label>';
+    html_string += '<label><input type="checkbox" value="Mommy" name="user[role]" />Mommy</label>';
+    html_string += '<label><input type="checkbox" value="Big" name="user[role]" />Big</label>';
+    html_string += '<label><input type="checkbox" value="Middle" name="user[role]" />Middle</label>';
+    html_string += '<label><input type="checkbox" value="little" name="user[role]" />little</label>';
+    html_string += '<label><input type="checkbox" value="brat" name="user[role]" />brat</label>';
+    html_string += '<label><input type="checkbox" value="babygirl" name="user[role]" />babygirl</label>';
+    html_string += '<label><input type="checkbox" value="babyboy" name="user[role]" />babyboy</label>';
+    html_string += '<label><input type="checkbox" value="pet" name="user[role]" />pet</label>';
+    html_string += '<label><input type="checkbox" value="kitten" name="user[role]" />kitten</label>';
+    html_string += '<label><input type="checkbox" value="pup" name="user[role]" />pup</label>';
+    html_string += '<label><input type="checkbox" value="pony" name="user[role]" />pony</label>';
+    html_string += '<label><input type="checkbox" value="Evolving" name="user[role]" />Evolving</label>';
+    html_string += '<label><input type="checkbox" value="Exploring" name="user[role]" />Exploring</label>';
+    html_string += '<label><input type="checkbox" value="Vanilla" name="user[role]" />Vanilla</label>';
+    html_string += '<label><input type="checkbox" value="Undecided" name="user[role]" />Undecided</label>';
+    html_string += '<label><input type="checkbox" value="" name="user[role]" />Not Applicable</label>';
     html_string += '</p></fieldset>';
     html_string += '<fieldset id="fl_asl_search_loc_fieldset"><legend>Search for user profiles located in:</legend><p>';
     html_string += '&hellip;from ';
@@ -1134,7 +1174,7 @@ FL_ASL.scrapeUserInList = function (node) {
         'user_id': jQuery(node).find('a').first().attr('href').match(/\d+$/)[0],
         'nickname': jQuery(node).find('img').first().attr('alt'),
         'age': jQuery(node).find('.quiet').first().text().match(/^\d+/)[0],
-        'gender': jQuery(node).find('.quiet').first().text().match(/([^0-9]+) /)[1],
+        'gender': jQuery(node).find('.quiet').first().text().match(/[^\d ]+/)[0],
         'role': jQuery(node).find('.quiet').first().text().match(/ (.*)$/)[1],
         'location_locality': locality,
         'location_region': region,
