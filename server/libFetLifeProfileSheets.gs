@@ -163,7 +163,12 @@ function lookupVolumeNumberByUserId (user_id) {
  *                  those volumes' Spreadsheet IDs.
  */
 function getVolumes () {
-  var x = PropertiesService.getScriptProperties().getProperties();
+  var c = CacheService.getScriptCache();
+  var x = JSON.parse(c.get('script_properties_cache'));
+  if (null === x) {
+    var x = PropertiesService.getScriptProperties().getProperties();
+    c.put('script_properties_cache', JSON.stringify(x), 21600); // maximum cache lifetime of 6 hours
+  }
   var vols = {};
   for (key in x) {
     if (0 === key.indexOf(CONFIG.db_spreadsheet_property_prefix)) {
@@ -344,8 +349,12 @@ function createSpreadsheetForVolume (volume_number) {
 
   setupSheet(ss.getActiveSheet());
 
-  var x = PropertiesService.getScriptProperties();
-  x.setProperty(CONFIG.db_spreadsheet_property_prefix + volume_number, ss.getId());
+  var c = CacheService.getScriptCache();
+  var p = PropertiesService.getScriptProperties();
+  p.setProperty(CONFIG.db_spreadsheet_property_prefix + volume_number, ss.getId());
+  var prop_cache = JSON.parse(c.get('script_properties_cache'));
+  prop_cache[CONFIG.db_spreadsheet_property_prefix + volume_number] = ss.getId();
+  c.put('script_properties_cache', JSON.stringify(prop_cache), 21600); // maximum cache lifetime of 6 hours
 
   var file = DriveApp.getFileById(ss.getId());
   file.setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.VIEW);
