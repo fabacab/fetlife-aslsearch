@@ -441,6 +441,11 @@ FL_ASL.getKinkstersFromURL = function (url) {
             var parser = new DOMParser();
             var doc = parser.parseFromString(response.responseText, 'text/html');
             var els = doc.querySelectorAll('.user_in_list');
+            var fl_profiles = [];
+            for (var i = 0; i < els.length; i++) {
+                fl_profiles.push(FL_ASL.scrapeUserInList(els[i]));
+            }
+            FL_ASL.GAS.ajaxPost(fl_profiles);
             var end = (!doc.querySelector('.pagination') || doc.querySelector('.pagination .next_page.disabled')) ? true : false;
 
             result_count = 0;
@@ -867,7 +872,7 @@ FL_ASL.attachSearchForm = function () {
 // ****************************************************
 FL_ASL.GAS = {};
 FL_ASL.GAS.ajaxPost = function (data)  {
-    FL_ASL.log('POSTing profile data for ' + data.nickname + ' (' + data.user_id + ')');
+    FL_ASL.log('POSTing profile data for ' + data.length + ' users.');
     var url = (FL_ASL.CONFIG.debug)
         ? FL_ASL.CONFIG.gasapp_url_development
         : FL_ASL.CONFIG.gasapp_url;
@@ -1112,7 +1117,7 @@ FL_ASL.scrapeProfile = function (user_id) {
         'events_going_to': FL_ASL.ProfileScraper.getEventsGoingTo(),
         'events_maybe_going_to': FL_ASL.ProfileScraper.getEventsMaybeGoingTo()
     };
-    FL_ASL.GAS.ajaxPost(profile_data);
+    return profile_data;
 }
 FL_ASL.scrapeUserInList = function (node) {
     // Deal with location inconsistencies.
@@ -1141,7 +1146,7 @@ FL_ASL.scrapeUserInList = function (node) {
             delete profile_data[k];
         }
     }
-    FL_ASL.GAS.ajaxPost(profile_data);
+    return profile_data;
 };
 FL_ASL.scrapeAnchoredAvatar = function (node) {
     var profile_data = {
@@ -1149,7 +1154,7 @@ FL_ASL.scrapeAnchoredAvatar = function (node) {
         'nickname': jQuery(node).find('img').first().attr('alt'),
         'avatar_url': jQuery(node).find('img').first().attr('src')
     };
-    FL_ASL.GAS.ajaxPost(profile_data);
+    return profile_data;
 };
 
 // This is the main() function, executed on page load.
@@ -1157,21 +1162,23 @@ FL_ASL.main = function () {
     // Insert ASL search button interface at FetLife "Search" bar.
     FL_ASL.attachSearchForm();
 
+    var fl_profiles = [];
     var m;
     if (m = window.location.pathname.match(/users\/(\d+)/)) {
         FL_ASL.log('Scraping profile ' + m[1]);
-        FL_ASL.scrapeProfile(m[1]);
+        fl_profiles.push(FL_ASL.scrapeProfile(m[1]));
     }
     if (document.querySelectorAll('.user_in_list').length) {
         jQuery('.user_in_list').each(function () {
-            FL_ASL.scrapeUserInList(this);
+            fl_profiles.push(FL_ASL.scrapeUserInList(this));
         });
     }
     if (document.querySelectorAll('a.avatar').length) {
         jQuery('a.avatar').each(function () {
-            FL_ASL.scrapeAnchoredAvatar(this);
+            fl_profiles.push(FL_ASL.scrapeAnchoredAvatar(this));
         });
     }
+    FL_ASL.GAS.ajaxPost(fl_profiles);
 };
 
 FAADE = {};

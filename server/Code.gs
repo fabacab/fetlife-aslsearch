@@ -20,20 +20,28 @@ function doGet (e) {
 }
 
 function doPost (e) {
-  var profile_data = validateScraperInput(JSON.parse(e.parameter.post_data));
-  var volume_number = lookupVolumeNumberByUserId(profile_data.user_id);
-  var ss_id = getSpreadsheetIdByVolumeNumber(volume_number);
-  var ss;
-  try {
-      ss = SpreadsheetApp.openById(ss_id);
-  } catch (ex) {
-    debugLog('No spreadsheet with ID ' + ss_id + ', creating a new one');
-    ss = createSpreadsheetForVolume(volume_number);
+  var response = [];
+  var profiles = JSON.parse(e.parameter.post_data);
+  if (!(profiles instanceof Array)) {
+    profiles = [profiles];
   }
-  sheet = ss.getSheetByName(CONFIG.db_sheet_name);
-  var result = saveProfileData(sheet, profile_data);
-  result.coords.vol = volume_number;
-  return ContentService.createTextOutput(JSON.stringify(result))
+  for (profile in profiles) {
+    var profile_data = validateScraperInput(profiles[profile]);
+    var volume_number = lookupVolumeNumberByUserId(profile_data.user_id);
+    var ss_id = getSpreadsheetIdByVolumeNumber(volume_number);
+    var ss;
+    try {
+      ss = SpreadsheetApp.openById(ss_id);
+    } catch (ex) {
+      debugLog('No spreadsheet with ID ' + ss_id + ', creating a new one');
+      ss = createSpreadsheetForVolume(volume_number);
+    }
+    sheet = ss.getSheetByName(CONFIG.db_sheet_name);
+    var result = saveProfileData(sheet, profile_data);
+    result.coords.vol = volume_number;
+    response.push(result);
+  }
+  return ContentService.createTextOutput(JSON.stringify(response))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
