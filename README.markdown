@@ -93,6 +93,10 @@ That said, since this script is public domain, it's entirely use-at-your-own-ris
 
 ## Change log
 
+* Version 0.4.3
+    * Bugfix: Correct an issue that sometimes resulted in an infinite "Loading" progress bar.
+    * Bugfix: Correct an issue where search results intermittently failed to return correct user information.
+    * Additional improvements to load capacity and network utilization now offers better performance, especially on slow Internet connections.
 * Version 0.4.2.1
     * Bugfix: Stop automatic searching when end of results are reached in Classic mode.
 * Version 0.4.2
