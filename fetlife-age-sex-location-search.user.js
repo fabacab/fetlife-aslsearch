@@ -5,7 +5,7 @@
  */
 // ==UserScript==
 // @name           FetLife ASL Search (Extened Edition)
-// @version        0.4.4
+// @version        0.4.4.1
 // @namespace      http://maybemaimed.com/playground/fetlife-aslsearch/
 // @updateURL      https://github.com/meitar/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js
 // @description    Allows you to search for FetLife profiles based on age, sex, location, and role.
@@ -685,7 +685,10 @@ FL_ASL.attachSearchForm = function () {
     html_string += '</div><!-- #fetlife_asl_search_extended_wrapper -->';
     var newdiv = container.appendChild(FL_ASL.createSearchTab('fetlife_asl_search_extended', html_string));
     // Google Chrome is far stricter about iframes, so just offer a pop-out instead, for now.
-    if (window.navigator.vendor.match(/Google/)) {
+    // And apparently, both Chrome and Firefox on Windows disallow this, too. So don't show
+    // the framed content to any Google Chrome users, or any user not on a Mac.
+    // This means only Firefox on Mac will show framed content. Ah well. C'est la vie.
+    if (window.navigator.vendor.match(/Google/) || !window.navigator.platform.match(/^Mac/)) {
         jQuery(newdiv).find('#fetlife_asl_search_extended_enlarge').remove();
         jQuery(newdiv).find('#fetlife_asl_search_extended_cover').remove();
         jQuery(newdiv).find('#fetlife_asl_search_extended_wrapper').html('<h2><a href="#">Open Extended A/S/L Search</a></h2>').on('click', function () {
