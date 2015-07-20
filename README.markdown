@@ -93,6 +93,8 @@ That said, since this script is public domain, it's entirely use-at-your-own-ris
 
 ## Change log
 
+* Version 0.4.4.2
+    * Merge latest Predator Alert Tool for FetLife integration. This may also fix some errors happening for Chrome users.
 * Version 0.4.4.1
     * [Bugfix](https://github.com/meitar/fetlife-aslsearch/issues/9): Fix the link to "Extended Edition" search options for browsers running in Windows.
 * Version 0.4.4
