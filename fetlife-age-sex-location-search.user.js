@@ -5,25 +5,12 @@
  */
 // ==UserScript==
 // @name           FetLife ASL Search (Extened Edition)
-// @version        0.4.4.2
+// @version        0.4.4.3
 // @namespace      http://maybemaimed.com/playground/fetlife-aslsearch/
 // @updateURL      https://github.com/meitar/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js
 // @description    Allows you to search for FetLife profiles based on age, sex, location, and role.
 // @require        https://code.jquery.com/jquery-2.1.4.min.js
-// @include        https://fetlife.com/administrative_areas*
-// @include        https://fetlife.com/cities*
-// @include        https://fetlife.com/countries*
-// @include        https://fetlife.com/events*
-// @include        https://fetlife.com/fetishes*
-// @include        https://fetlife.com/fetlife*
-// @include        https://fetlife.com/groups*
-// @include        https://fetlife.com/home*
-// @include        https://fetlife.com/improvements*
-// @include        https://fetlife.com/places*
-// @include        https://fetlife.com/posts*
-// @include        https://fetlife.com/search*
-// @include        https://fetlife.com/users*
-// @include        https://fetlife.com/videos*
+// @include        https://fetlife.com/*
 // @include        https://www.creepshield.com/search*
 // @exclude        https://fetlife.com/adgear/*
 // @exclude        https://fetlife.com/chat/*
@@ -184,13 +171,6 @@ GM_addStyle('\
 }\
 #fetlife_asl_search_classic input { width: auto; }\
 #fetlife_asl_search_results { clear: both; }\
-#fetlife_asl_search_extended_wrapper { position: relative; }\
-#fetlife_asl_search_extended_cover {\
-    background: #000;\
-    width: 100%; height: 53px;\
-    position: absolute; top: 23px; left: 0;\
-    font-size: xx-large;\
-}\
 ');
 FL_ASL.init = function () {
     FL_ASL.CONFIG.search_form = document.querySelector('form[action="/search"]').parentNode;
@@ -674,66 +654,9 @@ FL_ASL.attachSearchForm = function () {
 
     // Extended search tab
     html_string = '<div id="fetlife_asl_search_extended_wrapper">';
-    html_string += '<div><button id="fetlife_asl_search_extended_enlarge">Enlarge</button></div>'
-    html_string += '<iframe id="fetlife_asl_search_extended_iframe" src="' + FL_ASL.CONFIG.gasapp_url + '"';
-    html_string += ' style="width: 100%; min-height: 400px;">';
-    html_string += 'Your browser does not support the <code>&lt;iframe&gt;</code> element, which is required for FetLife A/S/L Extended search.';
-    html_string += '</iframe>';
-    if (!FL_ASL.CONFIG.debug) {
-        html_string += '<div id="fetlife_asl_search_extended_cover">FetLife A/S/L Search (Extended Edition)</div>';
-    }
+    html_string += '<h2><a href="' + FL_ASL.CONFIG.gasapp_url.split('?')[0] + '" target="_blank">Open Extended A/S/L Search</a></h2>';
     html_string += '</div><!-- #fetlife_asl_search_extended_wrapper -->';
     var newdiv = container.appendChild(FL_ASL.createSearchTab('fetlife_asl_search_extended', html_string));
-    // Google Chrome is far stricter about iframes, so just offer a pop-out instead, for now.
-    // And apparently, both Chrome and Firefox on Windows disallow this, too. So don't show
-    // the framed content to any Google Chrome users, or any user not on a Mac.
-    // This means only Firefox on Mac will show framed content. Ah well. C'est la vie.
-    if (window.navigator.vendor.match(/Google/) || !window.navigator.platform.match(/^Mac/)) {
-        jQuery(newdiv).find('#fetlife_asl_search_extended_enlarge').remove();
-        jQuery(newdiv).find('#fetlife_asl_search_extended_cover').remove();
-        jQuery(newdiv).find('#fetlife_asl_search_extended_wrapper').html('<h2><a href="#">Open Extended A/S/L Search</a></h2>').on('click', function () {
-            GM_openInTab(FL_ASL.CONFIG.gasapp_url.split('?')[0]);
-            jQuery('[data-fl-asl-section-id="fetlife_asl_search_about"]').click();
-        });
-        jQuery(newdiv).find('#fetlife_asl_search_extended_iframe').remove();
-    } else {
-        jQuery(newdiv).find('#fetlife_asl_search_extended_enlarge').on('click', function () {
-            var iframe = jQuery('#fetlife_asl_search_extended_iframe');
-            var cover = jQuery('#fetlife_asl_search_extended_cover');
-            jQuery(this).after('<button>&times; Close FetLife ASL Search</button>').next('button').on('click', function () {
-                iframe.css({
-                    'position': 'static',
-                    'height': '400px',
-                    'width': '950px'
-                });
-                cover.css({
-                    'position': 'absolute',
-                    'width': '950px',
-                    'top': '23px',
-                    'text-align': 'left'
-                });
-                jQuery(this).remove();
-            }).css({'position':'fixed', 'z-index':'9999', 'top': 0, 'left': 0});
-            iframe.css({
-                'position': "fixed",
-                'bottom':   "0",
-                'left':     "0",
-                'z-index':  "8888",
-                'margin':   "0",
-                'height':   "100%",
-                'border':   "none"
-            });
-            iframe.width(jQuery(window).width());
-            cover.css({
-                'position': 'fixed',
-                'top': '0',
-                'z-index': '8890',
-                'width': '100%',
-                'text-align': 'center'
-            });
-        });
-    }
-
 
     // Main ASL search option interface
     html_string = '<fieldset><legend>Search for user profiles of the following gender/sex:</legend><p>';
