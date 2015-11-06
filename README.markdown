@@ -93,6 +93,8 @@ That said, since this script is public domain, it's entirely use-at-your-own-ris
 
 ## Change log
 
+* Version 0.4.4.4
+    * [Bugfix](https://github.com/meitar/fetlife-aslsearch/issues/22): Fix an issue for Google Chrome users where event listeners on `window` object would occasionally fail to run. This should fix the missing "A/S/L?" checkbox for Chrome users.
 * Version 0.4.4.3
     * [Bugfix](https://github.com/meitar/fetlife-aslsearch/issues/19): Load this script on all `fetlife.com/*` URLs, to catch any new additions. (This should resolve the issue where the "A/S/L?" checkbox "doesn't show up" for those users who only ever bothered to check if the script works on one of FetLife's new pages, as opposed to, say, the home page of the site. Because FetLife users are fucking geniuses.)
 * Version 0.4.4.2
