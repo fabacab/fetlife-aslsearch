@@ -1647,7 +1647,7 @@ FAADE.createAbuseReportLink = function (id, nick) {
     a.setAttribute('class', 'faade_report_link');
     a.setAttribute('target', '_blank');
     var href = 'https://docs.google.com/forms/d/' + FAADE.getReportFormKey() + '/viewform';
-    href += '&entry_2952262=' + id;
+    href += '?entry_2952262=' + id;
     href += '&entry_1000001=' + nick;
     a.setAttribute('href', href);
     a.innerHTML = '(report a consent violation by ' + nick + ')';
