@@ -1152,8 +1152,8 @@ FL_ASL.main = function () {
 FAADE = {};
 FAADE.CONFIG = {
     'debug': false, // switch to true to debug.
-    'gdocs_key': '1yrQprLmi5yanOwn1tLEAnhAGjOA4mx0RpcTLhSMleeE',
-    'gform_key': 'dGNVT1kzSzFnOXhHRjh1RnczZVVmMXc6MQ',
+    'gdocs_key': '1xJDW-i4oqfCKN02KmOJi8uORiV-xRtw0erXWOw50mOo',
+    'gform_key': '1Zpmq4ZgrcUMAcDHgfT4ne_eAq71IKnONIbrQNfCP8gs',
     'gdocs_development_key': '1z53rFX1g0E8DzuyXfyDrK9N1E3D-YFGvyFktqnHpLII',
     'gform_development_key': 'dGxjMUhyR0FzLWJicHNXUFdxckFEQWc6MQ',
 };
@@ -1615,9 +1615,9 @@ FAADE.createAbuseReportLink = function (id, nick) {
     var a = document.createElement('a');
     a.setAttribute('class', 'faade_report_link');
     a.setAttribute('target', '_blank');
-    var href = 'https://docs.google.com/spreadsheet/viewform?formkey=' + FAADE.getReportFormKey();
-    href += '&entry_0=' + id;
-    href += '&entry_1=' + nick;
+    var href = 'https://docs.google.com/forms/d/' + FAADE.getReportFormKey() + '/viewform';
+    href += '&entry_2952262=' + id;
+    href += '&entry_1000001=' + nick;
     a.setAttribute('href', href);
     a.innerHTML = '(report a consent violation by ' + nick + ')';
     return a;
