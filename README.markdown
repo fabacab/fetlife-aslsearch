@@ -93,6 +93,13 @@ That said, since this script is public domain, it's entirely use-at-your-own-ris
 
 ## Change log
 
+* Version 0.4.5
+    * [Bugfix](https://github.com/meitar/fetlife-aslsearch/issues/27): Proactively check for removal of the search form and re-attach it if needed.
+    * Bugfix: Fix "Classic mode" searches to correctly parse FetLife's newer HTML blocks. This fixes issues many users experienced with the script not returning correct results in "Classic" mode.
+    * Bugfix: Switch to new Google Spreadsheet back-end for Predator Alert Tool for FetLife integration, because apparently Google is a pro-rape company? See [the commit log message here](https://github.com/meitar/fetlife-aslsearch/commit/6b1968089db3b472e67119a655cfa4c1ea7835fc) for more details:
+        * Google flagged the PAT-FetLife spreadsheet database as "inappropriate" and revoked its "sharing" permission, effectively censoring survivors of sadomasochistic rapes from communicating with one another. Such survivor-to-survivor communication is the explicit purpose of the Predator Alert Tool suite of browser plugins, which depend on Google's Spreadsheets service to share data between one another in a way that the social networks in question cannot censor (which they have done).
+        * It is unfortunate that a company like Google considers rape survivors to be doing something "inappropriate" when they try to warn their peers that they have been sexually abused in an effort to prevent others from falling victim to predators.
+        * Please consider voicing your displeasure at Google's explicit pro-rape stance on this issue in whatever way you can. Google can be reached here: https://www.google.com/contact/
 * Version 0.4.4.4
     * [Bugfix](https://github.com/meitar/fetlife-aslsearch/issues/22): Fix an issue for Google Chrome users where event listeners on `window` object would occasionally fail to run. This should fix the missing "A/S/L?" checkbox for Chrome users.
 * Version 0.4.4.3

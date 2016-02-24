@@ -5,7 +5,7 @@
  */
 // ==UserScript==
 // @name           FetLife ASL Search (Extened Edition)
-// @version        0.4.4.4
+// @version        0.4.5
 // @namespace      http://maybemaimed.com/playground/fetlife-aslsearch/
 // @updateURL      https://github.com/meitar/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js
 // @description    Allows you to search for FetLife profiles based on age, sex, location, and role.
@@ -422,7 +422,7 @@ FL_ASL.getKinkstersFromURL = function (url) {
         'onload': function (response) {
             var parser = new DOMParser();
             var doc = parser.parseFromString(response.responseText, 'text/html');
-            var els = doc.querySelectorAll('.user_in_list');
+            var els = doc.querySelectorAll('.fl-member-card');
             var fl_profiles = [];
             for (var i = 0; i < els.length; i++) {
                 fl_profiles.push(FL_ASL.scrapeUserInList(els[i]));
@@ -485,7 +485,7 @@ FL_ASL.getKinkstersFromURL = function (url) {
 };
 
 /**
- * Determines whether a "user_in_list" block matches the searched-for parameters.
+ * Determines whether a "fl-member-card" block matches the searched-for parameters.
  *
  * @return True if block matches all search parameters, false otherwise.
  */
@@ -509,7 +509,7 @@ FL_ASL.matchesSearchParams = function (el) {
     }
 
     // Does block match gender/sex selection?
-    if (-1 === search_params.sex.indexOf(FL_ASL.getSex(el))) {
+    if (-1 === search_params.sex.indexOf(FL_ASL.getGender(el))) {
         return false;
     }
 
@@ -522,30 +522,41 @@ FL_ASL.matchesSearchParams = function (el) {
     return true;
 };
 
-FL_ASL.getSex = function (el) {
-    var x = el.querySelector('.quiet').innerHTML;
-    var sex = x.match(/^\d\d(\S*)/);
-    return sex[1];
-};
-
+FL_ASL.getGender = function (el) {
+    var parsed = FL_ASL.scrapeUserInList(el);
+    if (parsed.gender) {
+        return parsed.gender;
+    } else {
+        return '';
+    }
+}
 FL_ASL.getAge = function (el) {
-    var x = el.querySelector('.quiet').innerHTML;
-    var age = x.match(/^\d\d/);
-    return parseInt(age);
+    var parsed = FL_ASL.scrapeUserInList(el);
+    if (parsed.age) {
+        return parseInt(parsed.age);
+    } else {
+        return '';
+    }
 };
-
 FL_ASL.getRole = function (el) {
-    var x = el.querySelector('.quiet').innerHTML;
-    var role = x.match(/ (.*)$/);
-    return role[1];
+    var parsed = FL_ASL.scrapeUserInList(el);
+    if (parsed.role) {
+        return parsed.role;
+    } else {
+        return '';
+    }
 };
 FL_ASL.getLocationString = function (el) {
-    return el.querySelector('em').innerHTML;
+    if (el.querySelector('.fl-member-card__location')) {
+        return el.querySelector('.fl-member-card__location').innerHTML.trim();
+    } else {
+        return '';
+    }
 };
 
 FL_ASL.displayResult = function (el) {
-    var id = el.querySelector('a').getAttribute('href').match(/\d+$/);
-    var name = el.querySelector('.large a').childNodes[0].nodeValue;
+    var id = FL_ASL.scrapeUserInList(el).user_id;
+    var name = FL_ASL.scrapeUserInList(el).nickname;
     var a = document.createElement('a');
     a.href = 'https://fetlife.com/conversations/new?with=' + id;
     a.innerHTML = '(send ' + name + ' a message)';
@@ -831,6 +842,17 @@ FL_ASL.attachSearchForm = function () {
     prog = document.createElement('p');
     prog.setAttribute('id', FL_ASL.CONFIG.progress_id);
     FL_ASL.CONFIG.search_form.appendChild(prog);
+
+    // Re-attach the search form after page load if for "some reason" it is not here.
+    // See https://github.com/meitar/fetlife-aslsearch/issues/27
+    window.addEventListener('DOMContentLoaded', function () {
+            setInterval(function () {
+                if (!window.document.querySelector('#fetlife_asl_search_ui_container')) {
+                    FL_ASL.attachSearchForm();
+                }
+            }, 2000)
+        }
+    );
 };
 
 // ****************************************************
@@ -853,6 +875,9 @@ FL_ASL.GAS.ajaxPost = function (data)  {
         },
         'onload': function (response) {
             FL_ASL.log('POST response received: ' + response.responseText);
+        },
+        'onerror': function (response) {
+            FL_ASL.log('Error POSTing to ' + url + ', response received: ' + response.responseText);
         }
     });
 };
@@ -1089,7 +1114,7 @@ FL_ASL.scrapeProfile = function (user_id) {
 }
 FL_ASL.scrapeUserInList = function (node) {
     // Deal with location inconsistencies.
-    var loc_parts = jQuery(node).find('.small').first().text().split(', ');
+    var loc_parts = jQuery(node).find('.fl-member-card__location').first().text().split(', ');
     var locality = ''; var region = ''; var country = '';
     if (2 === loc_parts.length) {
         locality = loc_parts[0];
@@ -1097,18 +1122,24 @@ FL_ASL.scrapeUserInList = function (node) {
     } else if (1 === loc_parts.length) {
         country = loc_parts[0];
     }
-
     var profile_data = {
         'user_id': jQuery(node).find('a').first().attr('href').match(/\d+$/)[0],
         'nickname': jQuery(node).find('img').first().attr('alt'),
-        'age': jQuery(node).find('.quiet').first().text().match(/^\d+/)[0],
-        'gender': jQuery(node).find('.quiet').first().text().match(/[^\d ]+/)[0],
-        'role': jQuery(node).find('.quiet').first().text().match(/ (.*)$/)[1],
-        'location_locality': locality,
-        'location_region': region,
-        'location_country': country,
+        'location_locality': locality.trim(),
+        'location_region': region.trim(),
+        'location_country': country.trim(),
         'avatar_url': jQuery(node).find('img').first().attr('src')
     };
+    var member_info = jQuery(node).find('.fl-member-card__info').text().trim();
+    if (member_info.match(/^\d+/) instanceof Array) {
+        profile_data['age'] = member_info.match(/^\d+/)[0].trim();
+    }
+    if (member_info.match(/[^\d ]+/) instanceof Array) {
+        profile_data['gender'] = member_info.match(/[^\d ]+/)[0].trim();
+    }
+    if (member_info.match(/ (.*)$/) instanceof Array) {
+        profile_data['role'] = member_info.match(/ (.*)$/)[1].trim();
+    }
     for (var k in profile_data) {
         if ('' === profile_data[k]) {
             delete profile_data[k];
@@ -1136,8 +1167,8 @@ FL_ASL.main = function () {
         FL_ASL.log('Scraping profile ' + m[1]);
         fl_profiles.push(FL_ASL.scrapeProfile(m[1]));
     }
-    if (document.querySelectorAll('.user_in_list').length) {
-        jQuery('.user_in_list').each(function () {
+    if (document.querySelectorAll('.fl-member-card').length) {
+        jQuery('.fl-member-card').each(function () {
             fl_profiles.push(FL_ASL.scrapeUserInList(this));
         });
     }
