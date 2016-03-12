@@ -93,6 +93,8 @@ That said, since this script is public domain, it's entirely use-at-your-own-ris
 
 ## Change log
 
+* Version 0.4.6
+    * [Bugfix](https://github.com/meitar/fetlife-aslsearch/issues/27): Fix disappearing "A/S/L?" checkbox for Google Chrome browser users.
 * Version 0.4.5
     * [Bugfix](https://github.com/meitar/fetlife-aslsearch/issues/27): Proactively check for removal of the search form and re-attach it if needed.
     * Bugfix: Fix "Classic mode" searches to correctly parse FetLife's newer HTML blocks. This fixes issues many users experienced with the script not returning correct results in "Classic" mode.
