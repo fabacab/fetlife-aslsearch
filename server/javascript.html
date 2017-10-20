@@ -3,8 +3,8 @@
 <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
 <script src="//cdn.datatables.net/plug-ins/1.10.7/integration/bootstrap/3/dataTables.bootstrap.js"></script>
 <script src="//cdn.datatables.net/responsive/1.0.6/js/dataTables.responsive.js"></script>
-<script src="//datatables.net/release-datatables/extensions/ColVis/js/dataTables.colVis.js"></script>
-<script src="//datatables.net/release-datatables/extensions/TableTools/js/dataTables.tableTools.js"></script>
+<script src="//cdn.datatables.net/colvis/1.1.1/js/dataTables.colVis.js"></script>
+<script src="//cdn.datatables.net/tabletools/2.2.4/js/dataTables.tableTools.js"></script>
 <script>
 jQuery(document).ready(function () {
   jQuery('[data-toggle="popover"]').popover();
@@ -185,7 +185,7 @@ function handleSearchSuccess (results, interval_id) {
     },
     'tableTools': {
       // TODO: This "sSwfPath" option won't load?
-      'sSwfPath': '//datatables.net/release-datatables/extensions/TableTools/swf/copy_csv_xls_pdf.swf',
+      'sSwfPath': '//cdn.datatables.net/tabletools/2.2.4/swf/copy_csv_xls.swf',
       'aButtons': [
         'print'
       ]
