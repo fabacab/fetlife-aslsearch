@@ -5,7 +5,7 @@
  */
 // ==UserScript==
 // @name           FetLife ASL Search (Extened Edition)
-// @version        0.4.6
+// @version        0.4.7
 // @namespace      http://maybemaimed.com/playground/fetlife-aslsearch/
 // @updateURL      https://github.com/meitar/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js
 // @description    Allows you to search for FetLife profiles based on age, sex, location, and role.
@@ -666,9 +666,9 @@ FL_ASL.attachSearchForm = function () {
     container.appendChild(FL_ASL.createSearchTab('fetlife_asl_search_about', html_string));
 
     // Extended search tab
-    html_string = '<div id="fetlife_asl_search_extended_wrapper">';
-    html_string += '<h2><a href="' + FL_ASL.CONFIG.gasapp_url.split('?')[0] + '" target="_blank">Open Extended A/S/L Search</a></h2>';
-    html_string += '</div><!-- #fetlife_asl_search_extended_wrapper -->';
+    html_string = '<br><div id="fetlife_asl_search_extended_wrapper">';
+    html_string += '<iframe src="' + FL_ASL.CONFIG.gasapp_url.split('?')[0] + '" width="100%" height="500px"><h2><a href="' + FL_ASL.CONFIG.gasapp_url.split('?')[0] + '" target="_blank">Open Extended A/S/L Search</a></h2></iframe>';
+    html_string += '</div><!-- # -->';
     var newdiv = container.appendChild(FL_ASL.createSearchTab('fetlife_asl_search_extended', html_string));
 
     // Main ASL search option interface
