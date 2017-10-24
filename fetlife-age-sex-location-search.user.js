@@ -25,9 +25,10 @@
 // @grant          GM_openInTab
 // ==/UserScript==
 
+
 FL_UI = {}; // FetLife User Interface module
 FL_UI.Text = {
-    'donation_appeal': '<p>FetLife ASL Search is provided as free software, but sadly grocery stores do not offer free food. If you like this script, please consider <a href="http://Cyberbusking.org/">making a donation</a> to support its continued development. &hearts; Thank you. :)</p>'
+    'donation_appeal': '<br><hr><p>FetLife ASL Search is provided as free software, but sadly grocery stores do not offer free food. If you like this script, please consider <a href="http://Cyberbusking.org/">making a donation</a> to support its continued development. &hearts; Thank you. :)</p><hr><Br><br>'
 };
 FL_UI.Dialog = {};
 FL_UI.Dialog.createLink = function (dialog_id, html_content, parent_node) {
@@ -141,6 +142,7 @@ GM_addStyle('\
     clear: both;\
     background-color: #111;\
     position: relative;\
+    z-index: 2;\
     top: -2px;\
 }\
 #fetlife_asl_search_ui_container div a, #fetlife_asl_search_results div a {\
@@ -154,6 +156,8 @@ GM_addStyle('\
 #fetlife_asl_search_ui_container ul.tabs li {\
     display: inline-block;\
     margin-right: 10px;\
+    position: relative;\
+    z-index: 2;\
 }\
 #fetlife_asl_search_ui_container ul.tabs li a { color: #888; }\
 #fetlife_asl_search_ui_container ul.tabs li.in_section a {\
@@ -162,6 +166,7 @@ GM_addStyle('\
     position: relative;\
     top: 2px;\
     padding-top: 5px;\
+    z-index: 2;\
 }\
 #fetlife_asl_search_classic fieldset { clear: both; margin: 0; padding: 0; }\
 #fetlife_asl_search_classic legend { display: none; }\
@@ -590,8 +595,8 @@ FL_ASL.createTabList = function () {
     var ul = document.createElement('ul');
     ul.setAttribute('class', 'tabs');
     html_string = '<li data-fl-asl-section-id="fetlife_asl_search_about"><a href="#">About FetLife ASL Search ' + GM_info.script.version + '</a></li>';
-    html_string += '<li class="in_section" data-fl-asl-section-id="fetlife_asl_search_extended"><a href="#">Extended A/S/L search</a></li>';
-    html_string += '<li data-fl-asl-section-id="fetlife_asl_search_classic"><a href="#">Classic (slow) search</a></li>';
+    html_string += '<li class="in_section" data-fl-asl-section-id="fetlife_asl_search_extended"><a href="#">Extended Search</a></li>';
+    html_string += '<li data-fl-asl-section-id="fetlife_asl_search_classic"><a href="#">Legacy Search</a></li>';
     ul.innerHTML = html_string;
     ul.addEventListener('click', function (e) {
         var id_to_show = jQuery(e.target.parentNode).data('fl-asl-section-id');
@@ -666,14 +671,16 @@ FL_ASL.attachSearchForm = function () {
     container.appendChild(FL_ASL.createSearchTab('fetlife_asl_search_about', html_string));
 
     // Extended search tab
-    html_string = '<div id="fetlife_asl_search_extended_wrapper">';
-    html_string += '<h2><a href="' + FL_ASL.CONFIG.gasapp_url.split('?')[0] + '" target="_blank">Open Extended A/S/L Search</a></h2>';
+    html_string = '<br><div id="fetlife_asl_search_extended_wrapper">';
+    html_string += '<h5><b><a href="' + FL_ASL.CONFIG.gasapp_url.split('?')[0] + '" target="_blank">Extended A/S/L Search</a><b></h5><hr>';
+    html_string += '<iframe src="' + FL_ASL.CONFIG.gasapp_url.split('?')[0] + '" width="100%" height="500px"><h2><a href="' + FL_ASL.CONFIG.gasapp_url.split('?')[0] + '" target="_blank">Open Extended A/S/L Search</a></h2></iframe>';
     html_string += '</div><!-- #fetlife_asl_search_extended_wrapper -->';
     var newdiv = container.appendChild(FL_ASL.createSearchTab('fetlife_asl_search_extended', html_string));
 
     // Main ASL search option interface
-    html_string = '<fieldset><legend>Search for user profiles of the following gender/sex:</legend><p>';
-    html_string += 'Show me profiles of people with a gender/sex of&hellip;';
+    html_string =  '<br><hr>This legacy mode is known to be detectable by fetlife and should not be used, use at your own risk.<br><hr><br>';
+    html_string += '<fieldset><legend>Search for user profiles of the following gender/sex:</legend><p>';
+    html_string += 'Show me profiles of people with a gender/sex of&hellip;<br>';
     html_string += '<label><input type="checkbox" name="user[sex]" value="M" checked="checked" /> Male</label>';
     html_string += '<label><input type="checkbox" name="user[sex]" value="F" /> Female</label>';
     html_string += '<label><input type="checkbox" name="user[sex]" value="CD/TV" />Crossdresser/Transvestite</label>';
@@ -690,7 +697,7 @@ FL_ASL.attachSearchForm = function () {
     html_string += '&hellip;who are also <label>at least <input type="text" name="min_age" id="min_age" placeholder="18" size="2" /> years old</label> and <label>at most <input type="text" name="max_age" id="max_age" placeholder="92" size="2" /> years old&hellip;</label>';
     html_string += '</p></fieldset>';
     html_string += '<fieldset><legend>Search for user profiles whose role is:</legend><p>';
-    html_string += '&hellip;who identify their role as ';
+    html_string += '&hellip;who identify their role as <br>';
     // Note that these values are what show up, not necessarily what's sent to the FetLife backend.
     html_string += '<label><input type="checkbox" value="Dom" name="user[role]" />Dominant</label>';
     html_string += '<label><input type="checkbox" value="Domme" name="user[role]" />Domme</label>';
