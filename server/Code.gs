@@ -16,6 +16,7 @@ function doGet (e) {
       output = t.evaluate().setSandboxMode(HtmlService.SandboxMode.IFRAME);
       break;
   }
+  output.setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   return output;
 }
 
