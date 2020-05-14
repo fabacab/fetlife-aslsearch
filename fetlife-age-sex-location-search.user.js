@@ -7,7 +7,7 @@
 // @name           FetLife ASL Search (Extened Edition)
 // @version        0.4.6
 // @namespace      http://maybemaimed.com/playground/fetlife-aslsearch/
-// @updateURL      https://github.com/meitar/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js
+// @updateURL      https://github.com/fabacab/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js
 // @description    Allows you to search for FetLife profiles based on age, sex, location, and role.
 // @require        https://code.jquery.com/jquery-2.1.4.min.js
 // @include        https://fetlife.com/*
@@ -662,7 +662,7 @@ FL_ASL.attachSearchForm = function () {
     html_string = '<p>The FetLife Age/Sex/Location Search user script allows you to search for profiles on <a href="https://fetlife.com/">FetLife</a> by age, sex, location, or orientation. This user script implements what is, as of this writing, the <a href="https://fetlife.com/improvements/78">most popular suggestion in the FetLife suggestion box</a>:</p>';
     html_string += '<blockquote><p>Search for people by Location/Sex/Orientation/Age</p><p>Increase the detail of the kinkster search by allowing us to narrow the definition of the search by the traditional fields.</p></blockquote>';
     html_string += '<p>With the FetLife Age/Sex/Location Search user script installed, a few clicks will save hours of time. Now you can find profiles that match your specified criteria in a matter of seconds. The script even lets you send a message to the profiles you found right from the search results list.</p>';
-    html_string += '<p>Stay up to date with the <a href="https://github.com/meitar/fetlife-aslsearch/">latest FetLife ASL Search improvements</a>. New versions add new features and improve search performance.</p>';
+    html_string += '<p>Stay up to date with the <a href="https://github.com/fabacab/fetlife-aslsearch/">latest FetLife ASL Search improvements</a>. New versions add new features and improve search performance.</p>';
     container.appendChild(FL_ASL.createSearchTab('fetlife_asl_search_about', html_string));
 
     // Extended search tab
@@ -844,7 +844,7 @@ FL_ASL.attachSearchForm = function () {
     FL_ASL.CONFIG.search_form.appendChild(prog);
 
     // Re-attach the search form after page load if for "some reason" it is not here.
-    // See https://github.com/meitar/fetlife-aslsearch/issues/27
+    // See https://github.com/fabacab/fetlife-aslsearch/issues/27
     setInterval(function () {
         if (!window.document.querySelector('#fetlife_asl_search_ui_container')) {
             FL_ASL.attachSearchForm();

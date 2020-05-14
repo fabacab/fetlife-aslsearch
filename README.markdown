@@ -26,13 +26,13 @@ If you use the [Google Chrome](https://chrome.google.com/) web browser (version 
 
 ## Installing
 
-To install FetLife Age/Sex/Location Search, go to [https://maybemaimed.com/playground/fetlife-aslsearch/](https://maybemaimed.com/playground/fetlife-aslsearch/) and click the "[Download and install](https://github.com/meitar/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js)" near the middle of the page:
+To install FetLife Age/Sex/Location Search, go to [https://maybemaimed.com/playground/fetlife-aslsearch/](https://maybemaimed.com/playground/fetlife-aslsearch/) and click the "[Download and install](https://github.com/fabacab/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js)" near the middle of the page:
 
-> [Download and install FetLife Age/Sex/Location Search](https://github.com/meitar/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js)
+> [Download and install FetLife Age/Sex/Location Search](https://github.com/fabacab/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js)
 
 If you enjoy this script, please consider tossing a few metaphorical coins in [my cyberbusking hat](https://maybemaimed.com/cyberbusking/). :) Your donations are sincerely appreciated! Can't afford to part with any coin? It's cool. [Tweet your appreciation, instead](https://twitter.com/intent/tweet?text=Ever%20wanted%20to%20search%20%23FetLife%20profiles%20by%20age%2Fsex%2Flocation%2Frole%3F%20Now%20we%20can%3A%20http%3A%2F%2Fmaybemaimed.com%2Fplayground%2Ffetlife-aslsearch%2F%20All%20thx%20to%20%40maymaym%3A%20http%3A%2F%2Fmaybemaimed.com%2Fcyberbusking%2F).
 
-If [maybemaimed.com is censored](https://maybemaimed.com/where-im-censored/) where you are, you can alternatively go to [the GreasyFork.org page for FetLife Age/Sex/Location Search](https://greasyfork.org/scripts/2679) and click on "[Install this script](https://greasyfork.org/scripts/2679-fetlife-asl-search/code/FetLife%20ASL%20Search.user.js)". If the script is also unavailable at GreasyFork.org, you can download and install it directly from [GitHub.com](https://github.com/meitar/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js).
+If [maybemaimed.com is censored](https://maybemaimed.com/where-im-censored/) where you are, you can alternatively go to [the GreasyFork.org page for FetLife Age/Sex/Location Search](https://greasyfork.org/scripts/2679) and click on "[Install this script](https://greasyfork.org/scripts/2679-fetlife-asl-search/code/FetLife%20ASL%20Search.user.js)". If the script is also unavailable at GreasyFork.org, you can download and install it directly from [GitHub.com](https://github.com/fabacab/fetlife-aslsearch/raw/master/fetlife-age-sex-location-search.user.js).
 
 ## Using
 
@@ -94,22 +94,22 @@ That said, since this script is public domain, it's entirely use-at-your-own-ris
 ## Change log
 
 * Version 0.4.6
-    * [Bugfix](https://github.com/meitar/fetlife-aslsearch/issues/27): Fix disappearing "A/S/L?" checkbox for Google Chrome browser users.
+    * [Bugfix](https://github.com/fabacab/fetlife-aslsearch/issues/27): Fix disappearing "A/S/L?" checkbox for Google Chrome browser users.
 * Version 0.4.5
-    * [Bugfix](https://github.com/meitar/fetlife-aslsearch/issues/27): Proactively check for removal of the search form and re-attach it if needed.
+    * [Bugfix](https://github.com/fabacab/fetlife-aslsearch/issues/27): Proactively check for removal of the search form and re-attach it if needed.
     * Bugfix: Fix "Classic mode" searches to correctly parse FetLife's newer HTML blocks. This fixes issues many users experienced with the script not returning correct results in "Classic" mode.
-    * Bugfix: Switch to new Google Spreadsheet back-end for Predator Alert Tool for FetLife integration, because apparently Google is a pro-rape company? See [the commit log message here](https://github.com/meitar/fetlife-aslsearch/commit/6b1968089db3b472e67119a655cfa4c1ea7835fc) for more details:
+    * Bugfix: Switch to new Google Spreadsheet back-end for Predator Alert Tool for FetLife integration, because apparently Google is a pro-rape company? See [the commit log message here](https://github.com/fabacab/fetlife-aslsearch/commit/6b1968089db3b472e67119a655cfa4c1ea7835fc) for more details:
         * Google flagged the PAT-FetLife spreadsheet database as "inappropriate" and revoked its "sharing" permission, effectively censoring survivors of sadomasochistic rapes from communicating with one another. Such survivor-to-survivor communication is the explicit purpose of the Predator Alert Tool suite of browser plugins, which depend on Google's Spreadsheets service to share data between one another in a way that the social networks in question cannot censor (which they have done).
         * It is unfortunate that a company like Google considers rape survivors to be doing something "inappropriate" when they try to warn their peers that they have been sexually abused in an effort to prevent others from falling victim to predators.
         * Please consider voicing your displeasure at Google's explicit pro-rape stance on this issue in whatever way you can. Google can be reached here: https://www.google.com/contact/
 * Version 0.4.4.4
-    * [Bugfix](https://github.com/meitar/fetlife-aslsearch/issues/22): Fix an issue for Google Chrome users where event listeners on `window` object would occasionally fail to run. This should fix the missing "A/S/L?" checkbox for Chrome users.
+    * [Bugfix](https://github.com/fabacab/fetlife-aslsearch/issues/22): Fix an issue for Google Chrome users where event listeners on `window` object would occasionally fail to run. This should fix the missing "A/S/L?" checkbox for Chrome users.
 * Version 0.4.4.3
-    * [Bugfix](https://github.com/meitar/fetlife-aslsearch/issues/19): Load this script on all `fetlife.com/*` URLs, to catch any new additions. (This should resolve the issue where the "A/S/L?" checkbox "doesn't show up" for those users who only ever bothered to check if the script works on one of FetLife's new pages, as opposed to, say, the home page of the site. Because FetLife users are fucking geniuses.)
+    * [Bugfix](https://github.com/fabacab/fetlife-aslsearch/issues/19): Load this script on all `fetlife.com/*` URLs, to catch any new additions. (This should resolve the issue where the "A/S/L?" checkbox "doesn't show up" for those users who only ever bothered to check if the script works on one of FetLife's new pages, as opposed to, say, the home page of the site. Because FetLife users are fucking geniuses.)
 * Version 0.4.4.2
     * Merge latest Predator Alert Tool for FetLife integration. This may also fix some errors happening for Chrome users.
 * Version 0.4.4.1
-    * [Bugfix](https://github.com/meitar/fetlife-aslsearch/issues/9): Fix the link to "Extended Edition" search options for browsers running in Windows.
+    * [Bugfix](https://github.com/fabacab/fetlife-aslsearch/issues/9): Fix the link to "Extended Edition" search options for browsers running in Windows.
 * Version 0.4.4
     * Feature: Support all new sexual role options in both Extended and Classic search modes.
 * Version 0.4.3
